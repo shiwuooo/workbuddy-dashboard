@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>碎片整理看板 · 2026-07-31</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#fff; --ink:#1f2329; --sub:#6b7280; --line:#e5e7eb;
+    --growth:#10b981; --values:#3b82f6; --idea:#f59e0b; --hold:#9ca3af;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);padding:24px}
+  .wrap{max-width:1120px;margin:0 auto}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:20px;line-height:1.6}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .stat .n{font-size:26px;font-weight:700}
+  .stat .l{font-size:12px;color:var(--sub);margin-top:2px}
+  .stat.growth .n{color:var(--growth)} .stat.values .n{color:var(--values)}
+  .stat.idea .n{color:var(--idea)} .stat.hold .n{color:var(--hold)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .filters button{border:1px solid var(--line);background:#fff;color:var(--ink);
+    padding:7px 16px;border-radius:20px;cursor:pointer;font-size:13px}
+  .filters button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px;display:flex;flex-direction:column;border-left:4px solid var(--line)}
+  .card.growth{border-left-color:var(--growth)}
+  .card.values{border-left-color:var(--values)}
+  .card.idea{border-left-color:var(--idea)}
+  .card.hold{border-left-color:var(--hold)}
+  .card .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .card h3{margin:0;font-size:15px}
+  .badge{font-size:11px;padding:2px 9px;border-radius:10px;color:#fff}
+  .badge.growth{background:var(--growth)} .badge.values{background:var(--values)}
+  .badge.idea{background:var(--idea)} .badge.hold{background:var(--hold)}
+  blockquote{margin:0 0 10px;padding:10px 12px;background:#f3f4f6;border-radius:8px;
+    font-size:13.5px;line-height:1.65;color:#374151;white-space:pre-wrap}
+  .row{font-size:12.5px;line-height:1.6;margin-top:6px}
+  .row .k{color:var(--sub);font-weight:600}
+  .refined{margin-top:28px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:18px}
+  .refined h2{font-size:17px;margin:0 0 12px}
+  .rc{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--line)}
+  .rc:last-child{border:0;margin:0;padding:0}
+  .rc h4{margin:0 0 6px;font-size:14px}
+  .rc p{margin:0;font-size:13px;color:#374151;line-height:1.65}
+  .rc a{color:var(--values);font-size:12px;text-decoration:none}
+  .empty{color:var(--sub);padding:40px;text-align:center}
+  .foot{margin-top:24px;color:var(--sub);font-size:12px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🗂️ 碎片整理看板 · 2026-07-31</h1>
+  <div class="sub">
+    把散落在微信 / 备忘录 / 石墨的「复制了就忘」内容，先<b>带着原文</b>归类、不删除。等所有杂乱堆齐，再统一决定精炼成卡 or 删。
+    四类口径：<b>growth</b> 训练卡（能练）· <b>values</b> 决策过滤器（当标准）· <b>idea</b> 运营/选题（小红书方向）· <b>暂挂</b> 不进成长库。
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="refined">
+    <h2>✅ 已精炼卡片（已进 10-灵感库）</h2>
+    <div class="rc">
+      <h4>① 唯唯诺诺改造 · 训练卡（growth）</h4>
+      <p>12 条自信表达建议 = 民间版 Assertiveness Training。先只练「停顿 3 秒再回」，低风险场景（便利店/外卖/群聊）先练，每天记 1 行。其余姿态类锦上添花，别一上来全练。</p>
+      <a href="../10-灵感库/cards/2026-07-31_唯唯诺诺改造训练卡.md" target="_blank">看完整卡片 →</a>
+    </div>
+    <div class="rc">
+      <h4>② 生活主线 · 决策过滤器（values）</h4>
+      <p>先定主线（健康/成长/自由/财富…），把琐事当噪声过滤。行动：写 1 句主线 → 每周问「这事服务我的主线吗」→ 不服务就标记噪声。绝对化口号（如「钱只给自己花」）打折扣。</p>
+      <a href="../10-灵感库/cards/2026-07-31_生活主线决策过滤器.md" target="_blank">看完整卡片 →</a>
+    </div>
+    <div class="rc">
+      <h4>③ 间隔重复复习卡（治「看过就忘」）</h4>
+      <p>两张卡已拆成 7 张小问答（obsidian-flashcards / Anki 双通道），每天刷一遍。</p>
+      <a href="../10-灵感库/复习卡/README.md" target="_blank">看复习卡说明 →</a>
+    </div>
+  </div>
+
+  <div class="foot">本页由 clip-refine 流程生成 · 原文保留未删 · 双击即可在浏览器查看</div>
+</div>
+
+<script>
+const items = [
+  {id:1, type:"values", title:"脸面与利益",
+   quote:"脸面是富人才需要考虑和保护的，对于穷人来说最好是拿它变现。其实包括很多富人都只认利益愿意拉下脸。",
+   reason:"认知类——重新定义「脸面」的工具属性。可作为「该不该拉下脸争取机会」的判断标准。",
+   action:"待精炼为决策过滤器卡。"},
+  {id:2, type:"idea", title:"反着做的标题",
+   quote:"标题：如何彻底荒废一个周末（建议反着做）",
+   reason:"一句反讽标题，是现成的选题/标题模板（反向 framing）。契合小红书「清单体+反直觉」爆款逻辑。",
+   action:"待精炼为 idea 卡（选题/标题套路）。"},
+  {id:3, type:"values", title:"烦恼是自我投射",
+   quote:"很多世俗烦恼其实是自己意识的投射而钻牛角尖一样。",
+   reason:"认知类——烦恼≠客观事实，是内心投射。可作「我这是在钻牛角尖吗」的自检标准。",
+   action:"待精炼为决策过滤器卡。"},
+  {id:4, type:"values", title:"勇气开道 / 希望不灭",
+   quote:"为什么都是亚古兽第一个进化？那是为了告诉你，无论做什么事，先用勇气开道。为什么巴达兽总是最后一个进化？那是因为当你的友情、诚实、爱心、知识、纯真和光明都被现实无情击碎后仍要充满希望。",
+   reason:"心态类故事。可作「行动前先鼓勇气、低谷时守住希望」的心理锚点。",
+   action:"待精炼为决策过滤器卡（心态向）。"},
+  {id:5, type:"hold", title:"猫与治愈（情感）",
+   quote:"真正喜欢小猫的人从来都不会在意它是什么品种，只会特别爱它。每天下班回来看到它，我一身的疲惫瞬间被猫咪治愈了。#猫 #情绪好稳定的小猫 #萌宠 #萌宠出道计划",
+   reason:"情感/生活共鸣，无 actionable 点，也不算运营知识。先不进成长库。",
+   action:"暂挂。若做「萌宠情绪价值」小红书内容可转 idea；否则留生活记录。"},
+  {id:6, type:"values", title:"重生=让旧地方看见新你",
+   quote:"真正的重生不是离开旧地方，而是让旧地方看见新的你。",
+   reason:"认知类——改变不一定要换环境，可在原地用新状态刷新他人认知。可作「我要不要逃/留」的判断标准。",
+   action:"待精炼为决策过滤器卡。"},
+  {id:7, type:"values", title:"生活在当下",
+   quote:"我们总是等待，等什么时候就能过上理想的生活了，其实不然，我们没有未来，生活就在当下。",
+   reason:"认知类——戒掉「等以后」的拖延幻觉。可作「我是不是又在等以后」的自检。",
+   action:"待精炼为决策过滤器卡。"},
+  {id:8, type:"hold", title:"除法速算提问（知识疑问）",
+   quote:"想问一下有没有除法的速算，多位数除以3位/4位的那种。",
+   reason:"这是提问，不是沉淀片段。不属于成长库。",
+   action:"已口头答（估算试商 + 特殊除数 25/125/99 法）。可单独做 cheat sheet，不进灵感库。"},
+  {id:9, type:"hold", title:"屎尿屁吐槽（观察）",
+   quote:"中国人一讲起来屎尿屁就发狠了忘情了。（04-15 河南 回复）",
+   reason:"社会观察/吐槽，情绪化、无沉淀价值。先不进成长库。",
+   action:"暂挂。若做「国人表达特质」选题可转 idea；否则丢弃。"},
+  {id:10, type:"growth", title:"行动力=逼自己决策",
+   quote:"提高行动力的办法就是让大脑不停做决策，平均每分钟一个决策，没有也要逼着自己作，你就根本不会刷着手机脑子麻木着。",
+   reason:"行为/技能类，强 actionable——用「高频微决策」打断麻木刷手机。可立刻练。",
+   action:"待精炼为训练卡（微习惯：每小时逼自己做一个小决定）。"},
+  {id:11, type:"idea", title:"内容转发原理",
+   quote:"你的内容要想被人转发：第一它有价值、值得传播；第二它要么和「我」有关，要么和我想要分享给的那个人有关。VERITAS 小窍门（实验验证）：引导读者思考「这条内容和自己的关系」——让他们说一句对自己的影响，转发意愿明显上升。",
+   reason:"运营/传播知识，直接对应小红书运营方向。可复用的方法论。",
+   action:"待精炼为 idea 卡（转发/传播套路）。"},
+  {id:12, type:"growth", title:"自律三原则",
+   quote:"1）学习事物运作的规律（阅读、倾听、观察）；2）立即行动，从小事开始培养自律；3）不要试图走捷径，坚持正确的道路。你可以在任何一天彻底改变生活方向。",
+   reason:"行为/技能类清单，可拆成可执行三件事。",
+   action:"待精炼为训练卡（或合并进 #10 行动力卡）。"},
+  {id:13, type:"growth", title:"跳过情绪直接做事",
+   quote:"请跳过情绪 直接做事。「只有一件事会让人精疲力尽，那就是犹豫要不要做。」每做一件事都是对自己的解放。人生最有价值的是把事情做完之后的亲身感受。没有任何事是听或想就能明白的，都是做明白的。",
+   reason:"行为/技能类，强 actionable——用「先做再想」打断犹豫内耗。可立刻练。",
+   action:"待精炼为训练卡（微习惯：犹豫时直接做最小一步）。"}
+];
+
+const labels = {all:"全部", growth:"训练卡 growth", values:"决策过滤器 values", idea:"运营卡 idea", hold:"暂挂 outlier"};
+const typeName = {growth:"训练卡", values:"决策过滤器", idea:"运营卡", hold:"暂挂"};
+
+// 统计
+const counts = {growth:0, values:0, idea:0, hold:0};
+items.forEach(i=>counts[i.type]++);
+document.getElementById('stats').innerHTML = [
+  ['growth','训练卡（能练）',counts.growth],
+  ['values','决策过滤器（标准）',counts.values],
+  ['idea','运营/选题卡',counts.idea],
+  ['hold','暂挂（不进库）',counts.hold]
+].map(([k,l,n])=>`<div class="stat ${k}"><div class="n">${n}</div><div class="l">${l}</div></div>`).join('');
+
+let cur = 'all';
+function renderFilters(){
+  const f = document.getElementById('filters');
+  const keys = ['all','growth','values','idea','hold'];
+  f.innerHTML = keys.map(k=>`<button class="${k===cur?'active':''}" onclick="set('${k}')">${labels[k]}（${k==='all'?items.length:counts[k]}）</button>`).join('');
+}
+function render(){
+  const grid = document.getElementById('grid');
+  const list = items.filter(i=>cur==='all'||i.type===cur);
+  grid.innerHTML = list.length ? list.map(i=>`
+    <div class="card ${i.type}">
+      <div class="top"><h3>#${i.id} ${i.title}</h3><span class="badge ${i.type}">${typeName[i.type]}</span></div>
+      <blockquote>${i.quote}</blockquote>
+      <div class="row"><span class="k">归类理由：</span>${i.reason}</div>
+      <div class="row"><span class="k">处置：</span>${i.action}</div>
+    </div>`).join('') : '<div class="empty">暂无内容</div>';
+}
+function set(t){cur=t;renderFilters();render();}
+renderFilters();render();
+</script>
+</body>
+</html>
