@@ -4,10 +4,10 @@ set "SCRIPT=%~dp0collector.py"
 set "PY="
 where py >nul 2>nul && set "PY=py"
 if not defined PY ( where python >nul 2>nul && set "PY=python" )
-if not defined PY ( echo æœªæ‰¾åˆ° Pythonï¼Œè¯·å…ˆå®‰è£… Python 3.8+ å¹¶å‹¾é€‰â€œAdd to PATHâ€ã€‚ & pause & exit /b 1 )
+if not defined PY ( echo Î´ÕÒµ½ Python£¬ÇëÏÈ°²×° Python 3.8+ ²¢¹´Ñ¡¡°Add to PATH¡±¡£ & pause & exit /b 1 )
 
-echo æ­£åœ¨é‡‡é›†èµ„è®¯ + åŒæ­¥ AI æ¯æ—¥è§£è¯»...
+echo ÕıÔÚ²É¼¯×ÊÑ¶ + Í¬²½ AI Ã¿ÈÕ½â¶Á...
 "%PY%" "%SCRIPT%"
 echo.
-echo å®Œæˆã€‚ç”¨ start.bat æ‰“å¼€é¢æ¿æŸ¥çœ‹ï¼ˆhttp://127.0.0.1:8000ï¼‰ã€‚
+echo Íê³É¡£ÓÃ start.bat ´ò¿ªÃæ°å²é¿´£¨http://127.0.0.1:8000£©¡£
 pause
