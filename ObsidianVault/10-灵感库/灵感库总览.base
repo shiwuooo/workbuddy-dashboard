@@ -1,0 +1,19 @@
+filters: file.inFolder("10-灵感库/cards")
+views:
+  - type: table
+    name: 全部卡片
+    order:
+      - file.basename
+      - type
+      - platform
+      - rating
+      - added
+    sort:
+      - property: file.basename
+        direction: ASC
+  - type: cards
+    name: 卡片墙
+    order:
+      - file.basename
+      - rating
+      - platform
