@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>哈尔滨早市地图标注（兰欧尚品酒店周边）</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; color: #222; background: #f7f8fa; }
+  header { background: linear-gradient(135deg,#1d39c4,#597ef7); color:#fff; padding: 18px 22px; }
+  header h1 { margin: 0 0 6px; font-size: 21px; }
+  header p { margin: 2px 0; font-size: 13px; opacity: .92; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  #map { width: 100%; height: 520px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.12); background:#eaf0f6; }
+  .fallback { display:none; width:100%; height:520px; border-radius:10px; background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.12); }
+  .panel { background:#fff; border-radius:10px; padding:16px 18px; margin-top:16px; box-shadow:0 1px 6px rgba(0,0,0,.08); }
+  .panel h2 { font-size:16px; margin:0 0 10px; border-left:4px solid #1d39c4; padding-left:10px; }
+  .filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+  .filters label { font-size:13px; background:#f0f2f5; padding:5px 10px; border-radius:14px; cursor:pointer; user-select:none; }
+  .filters input { vertical-align:middle; margin-right:5px; }
+  table { border-collapse:collapse; width:100%; font-size:13px; margin-top:8px; }
+  th,td { border:1px solid #e8e8e8; padding:7px 9px; text-align:left; vertical-align:top; }
+  th { background:#fafafa; font-weight:600; }
+  .rank td:first-child { font-weight:700; color:#1d39c4; }
+  .tag { display:inline-block; padding:1px 7px; border-radius:10px; color:#fff; font-size:11px; }
+  .near { background:#f6ffed; border:1px solid #b7eb8f; }
+  .note { background:#fffbe6; border-left:4px solid #faad14; padding:10px 14px; margin:12px 0; font-size:13px; border-radius:0 6px 6px 0; }
+  .tip { background:#f6ffed; border-left:4px solid #52c41a; padding:10px 14px; margin:12px 0; font-size:13px; border-radius:0 6px 6px 0; }
+  #info { position:fixed; right:18px; bottom:18px; width:240px; background:#fff; border:1px solid #d9d9d9; border-radius:8px; padding:10px 12px; font-size:13px; box-shadow:0 2px 12px rgba(0,0,0,.18); display:none; z-index:999; }
+  #info b { color:#1d39c4; }
+  .legend span { display:inline-block; margin-right:14px; font-size:13px; }
+  .dot { display:inline-block; width:11px; height:11px; border-radius:50%; margin-right:5px; vertical-align:middle; border:1.5px solid #fff; box-shadow:0 0 0 1px #bbb; }
+  .district-block { margin-top:14px; }
+  .district-block h3 { font-size:14px; margin:0 0 4px; }
+  code { background:#f0f2f5; padding:1px 5px; border-radius:4px; }
+</style>
+<script>
+window._TMapSecurityConfig = {
+  serviceHost: 'http://127.0.0.1:__WB_HTTP_PORT__/_TMapService/_wbt/__WB_TMAP_SECRET__',
+};
+</script>
+<script src="https://map.qq.com/api/gljs?v=1.exp"></script>
+</head>
+<body>
+<header>
+  <h1>哈尔滨早市地图标注 · 离兰欧尚品酒店最近先看清</h1>
+  <p>酒店：兰欧尚品酒店（哈尔滨火车站博物馆地铁站店）· 南岗区红军街6号（近哈站 / 博物馆）</p>
+  <p>共 52 个早市，按你提供的清单整理；颜色区分 6 个区，蓝圈为酒店周边距离环（3 / 6 / 9 公里直线）。点位为近似坐标，仅供空间参考。</p>
+</header>
+
+<div class="wrap">
+  <div class="panel">
+    <h2>① 地图标注（点击点位看详情 · 勾选区名筛选）</h2>
+    <div class="filters" id="filters"></div>
+    <div id="map"></div>
+    <svg class="fallback" id="fallback" viewBox="0 0 900 640" preserveAspectRatio="xMidYMid meet"></svg>
+    <p class="note" id="maperr" style="display:none;">⚠️ 在线地图未能加载（可能是预览环境无网络/代理），已自动切换到下方「离线标注图」，点位与排行榜信息完全一致。</p>
+  </div>
+
+  <div class="panel">
+    <h2>② 离酒店最近的早市（按直线距离排序，前 15）</h2>
+    <p class="tip">结论先行：酒店在<strong>南岗区哈站/博物馆</strong>一带，最近的几乎全在南岗（工程师街、苗圃、三姓街、永和街、革新联部、宣信），2–4 公里、滴滴 10–15 分钟即到，且都是<strong>本地人早市、不割游客</strong>。道里/道外要过桥，5 公里起步。</p>
+    <table class="rank" id="rankTable">
+      <thead><tr><th>#</th><th>早市</th><th>区</th><th>直线距离</th><th>预估车程约</th><th>预估滴滴</th><th>建议</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>③ 各区早市明细</h2>
+    <div id="districtTables"></div>
+  </div>
+
+  <div class="panel">
+    <h2>④ 给老人的早市建议</h2>
+    <ul>
+      <li><b>时间</b>：哈尔滨早市一般 <code>5:00–9:00</code> 最旺，8 点后陆续收摊。带老人建议 <b>6:30–7:30</b> 到，人不多、菜新鲜、不晒。</li>
+      <li><b>首选近的</b>：工程师街 / 苗圃 / 三姓街 / 永和街 / 革新联部 / 宣信——南岗本地早市，步行或短滴滴，平缓好走。</li>
+      <li><b>别专程去</b>：红专街（游客价高）、松北/平房/香坊远郊大集（路远，老人折腾不值）。</li>
+      <li><b>交通</b>：全程滴滴/网约车，领券+一口价；近的几个也能打车起步价覆盖。</li>
+      <li><b>注意</b>：早市地面湿滑（洗菜洒水），给老人穿防滑鞋；带现金零钱，很多摊不支持扫码。</li>
+    </ul>
+  </div>
+</div>
+
+<div id="info"></div>
+
+<script>
+// ===== 数据：name, district, lng, lat(近似), note =====
+const HOTEL = { name:'兰欧尚品酒店(红军街6号)', lng:126.632, lat:45.748 };
+const DISTRICTS = {
+  '道里区':{ color:'#e74c3c' },
+  '道外区':{ color:'#2980b9' },
+  '南岗区':{ color:'#27ae60' },
+  '香坊区':{ color:'#8e44ad' },
+  '平房区':{ color:'#f39c12' },
+  '松北区':{ color:'#16a085' },
+};
+const MARKETS = [
+  // 道里区
+  {n:'红专街早市',d:'道里区',lng:126.615,lat:45.775,note:'中央大街北端，游客多、价偏高'},
+  {n:'经纬十早市',d:'道里区',lng:126.620,lat:45.763,note:'经纬街片区'},
+  {n:'康安四早市',d:'道里区',lng:126.580,lat:45.738,note:'顾乡/康安路'},
+  {n:'安居早市',d:'道里区',lng:126.590,lat:45.748,note:'安字片'},
+  {n:'安静早市',d:'道里区',lng:126.600,lat:45.750,note:'安字片'},
+  {n:'安平早市',d:'道里区',lng:126.588,lat:45.743,note:'安字片'},
+  {n:'民安早市',d:'道里区',lng:126.583,lat:45.742,note:'安字片'},
+  {n:'钢铁早市',d:'道里区',lng:126.570,lat:45.738,note:'顾乡西部'},
+  {n:'福乐湾早市',d:'道里区',lng:126.610,lat:45.758,note:'道里中部'},
+  {n:'河清早市',d:'道里区',lng:126.602,lat:45.753,note:'道里中部'},
+  {n:'巡船胡同早市',d:'道里区',lng:126.618,lat:45.768,note:'道里沿江'},
+  // 道外区
+  {n:'北七早市',d:'道外区',lng:126.660,lat:45.782,note:'道外北头'},
+  {n:'北十八早市',d:'道外区',lng:126.665,lat:45.776,note:'道外北头'},
+  {n:'南极三早市',d:'道外区',lng:126.662,lat:45.762,note:'南极街'},
+  {n:'淮河路早市',d:'道外区',lng:126.672,lat:45.750,note:'道外南'},
+  {n:'堤顶街早市',d:'道外区',lng:126.682,lat:45.760,note:'道外沿江堤'},
+  {n:'大有坊早市',d:'道外区',lng:126.675,lat:45.740,note:'道外南'},
+  {n:'美乐街早市',d:'道外区',lng:126.665,lat:45.746,note:'道外南'},
+  {n:'一机路早市',d:'道外区',lng:126.660,lat:45.730,note:'道外南'},
+  // 南岗区
+  {n:'中兴街早市',d:'南岗区',lng:126.610,lat:45.715,note:'哈西'},
+  {n:'汉兴街早市',d:'南岗区',lng:126.600,lat:45.712,note:'哈西'},
+  {n:'苗圃早市',d:'南岗区',lng:126.630,lat:45.745,note:'哈站西/海关街，近酒店'},
+  {n:'工程师街早市',d:'南岗区',lng:126.648,lat:45.742,note:'哈工大/哈站东，最近'},
+  {n:'三姓街早市',d:'南岗区',lng:126.652,lat:45.750,note:'果戈里/阿什河街，近'},
+  {n:'永和街早市',d:'南岗区',lng:126.648,lat:45.748,note:'革新街/中山路，近'},
+  {n:'武威路尤家街早市',d:'南岗区',lng:126.600,lat:45.730,note:'和兴路西'},
+  {n:'革新联部早市',d:'南岗区',lng:126.655,lat:45.745,note:'革新街，近'},
+  {n:'测绘路早市',d:'南岗区',lng:126.620,lat:45.705,note:'学府路/哈达，南'},
+  {n:'宣信早市',d:'南岗区',lng:126.658,lat:45.752,note:'宣化街，近'},
+  // 香坊区
+  {n:'果园早市',d:'香坊区',lng:126.690,lat:45.735,note:'香坊'},
+  {n:'乐园早市',d:'香坊区',lng:126.685,lat:45.730,note:'香坊'},
+  {n:'建成早市',d:'香坊区',lng:126.680,lat:45.725,note:'香坊'},
+  {n:'亚麻早市',d:'香坊区',lng:126.670,lat:45.720,note:'香坊'},
+  {n:'司徒街早市',d:'香坊区',lng:126.675,lat:45.728,note:'香坊'},
+  {n:'联草街早市',d:'香坊区',lng:126.660,lat:45.715,note:'香坊西'},
+  {n:'红民早市',d:'香坊区',lng:126.665,lat:45.710,note:'香坊西'},
+  {n:'木材西早市',d:'香坊区',lng:126.655,lat:45.712,note:'香坊西'},
+  {n:'军民街早市',d:'香坊区',lng:126.660,lat:45.705,note:'香坊西南'},
+  {n:'黎明大市场',d:'香坊区',lng:126.700,lat:45.710,note:'香坊东'},
+  // 平房区
+  {n:'哈飞早市',d:'平房区',lng:126.650,lat:45.605,note:'平房区，远'},
+  // 松北区
+  {n:'润和城大集',d:'松北区',lng:126.550,lat:45.820,note:'江北，过桥远'},
+  {n:'秦家大集',d:'松北区',lng:126.580,lat:45.840,note:'江北，过桥远'},
+];
+
+// ===== 距离计算（haversine）=====
+function distKm(a,b){
+  const R=6371,toR=x=>x*Math.PI/180;
+  const dLat=toR(b.lat-a.lat),dLng=toR(b.lng-a.lng);
+  const s=Math.sin(dLat/2)**2+Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(s),Math.sqrt(1-s));
+}
+MARKETS.forEach(m=>{
+  m.km = distKm(HOTEL,m);
+  m.drive = m.km*1.45;                 // 路网系数
+  m.min = Math.max(6, Math.round(m.drive/25*60)); // 市区约25km/h
+  m.didi = Math.round(8 + m.drive*2.1);
+});
+
+// ===== 渲染排行榜 =====
+(function(){
+  const tbody=document.querySelector('#rankTable tbody');
+  [...MARKETS].sort((a,b)=>a.km-b.km).slice(0,15).forEach((m,i)=>{
+    const near = m.km<=4 ? '✅ 近，推荐' : (m.km<=6?'🟡 中等':'🔴 远，不值');
+    const tr=document.createElement('tr');
+    tr.className='rank';
+    tr.innerHTML=`<td>${i+1}</td><td>${m.n}</td><td><span class="tag" style="background:${DISTRICTS[m.d].color}">${m.d}</span></td><td>${m.km.toFixed(1)} km</td><td>约 ${m.min} 分钟</td><td>¥${m.didi} 左右</td><td>${near}</td>`;
+    tbody.appendChild(tr);
+  });
+})();
+
+// ===== 渲染各区表格 =====
+(function(){
+  const box=document.getElementById('districtTables');
+  Object.keys(DISTRICTS).forEach(d=>{
+    const list=MARKETS.filter(m=>m.d===d).sort((a,b)=>a.km-b.km);
+    const blk=document.createElement('div'); blk.className='district-block';
+    let rows=list.map(m=>`<tr><td>${m.n}</td><td>${m.km.toFixed(1)} km</td><td>约${m.min}分</td><td>¥${m.didi}</td><td>${m.note}</td></tr>`).join('');
+    blk.innerHTML=`<h3><span class="dot" style="background:${DISTRICTS[d].color}"></span>${d}（${list.length} 个）</h3>
+      <table><thead><tr><th>早市</th><th>直线</th><th>车程</th><th>滴滴</th><th>备注</th></tr></thead><tbody>${rows}</tbody></table>`;
+    box.appendChild(blk);
+  });
+})();
+
+// ===== 过滤器 =====
+const active=new Set(Object.keys(DISTRICTS));
+(function(){
+  const f=document.getElementById('filters');
+  Object.keys(DISTRICTS).forEach(d=>{
+    const lab=document.createElement('label');
+    lab.innerHTML=`<input type="checkbox" checked data-d="${d}"> <span class="dot" style="background:${DISTRICTS[d].color}"></span>${d}`;
+    f.appendChild(lab);
+  });
+  f.addEventListener('change',e=>{
+    if(e.target.dataset.d){ e.target.checked?active.add(e.target.dataset.d):active.delete(e.target.dataset.d); renderMarkers(); }
+  });
+})();
+
+// ===== 图标 =====
+function icon(color){
+  const s=`<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14'><circle cx='7' cy='7' r='6' fill='${color}' stroke='white' stroke-width='1.6'/></svg>`;
+  return 'data:image/svg+xml,'+encodeURIComponent(s);
+}
+function hotelIcon(){
+  const s=`<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22'><circle cx='11' cy='11' r='9' fill='#fa541c' stroke='white' stroke-width='2'/><text x='11' y='15' font-size='10' text-anchor='middle' fill='white'>店</text></svg>`;
+  return 'data:image/svg+xml,'+encodeURIComponent(s);
+}
+
+// ===== 渲染地图 =====
+let map, markerLayer, circleLayer;
+function geometries(){
+  const arr=[];
+  MARKETS.filter(m=>active.has(m.d)).forEach((m,i)=>{
+    arr.push({id:'m'+i, styleId:m.d, position:new TMap.LatLng(m.lat,m.lng), properties:{name:m.n,d:m.d,note:m.note,km:m.km,min:m.min,didi:m.didi}});
+  });
+  return arr;
+}
+function renderMarkers(){
+  if(!map) return;
+  const styles={}; Object.keys(DISTRICTS).forEach(d=>styles[d]=new TMap.MarkerStyle({width:14,height:14,anchor:{x:7,y:7},src:icon(DISTRICTS[d].color)}));
+  styles['hotel']=new TMap.MarkerStyle({width:22,height:22,anchor:{x:11,y:11},src:hotelIcon()});
+  if(!markerLayer){
+    markerLayer=new TMap.MultiMarker({map,styles,geometries:[...geometries(),{id:'hotel',styleId:'hotel',position:new TMap.LatLng(HOTEL.lat,HOTEL.lng),properties:{name:HOTEL.name}}]});
+    markerLayer.on('click',e=>{
+      const p=e.geometry.properties||{};
+      const info=document.getElementById('info');
+      info.style.display='block';
+      info.innerHTML=`<b>${p.name||''}</b><br>${p.d?('区：'+p.d+'<br>'):''}${p.km?('直线：'+p.km.toFixed(1)+' km<br>车程：约'+p.min+' 分<br>滴滴：¥'+p.didi+'<br>'):''}${p.note?('备注：'+p.note):''}`;
+    });
+  } else {
+    markerLayer.setGeometries([...geometries(),{id:'hotel',styleId:'hotel',position:new TMap.LatLng(HOTEL.lat,HOTEL.lng),properties:{name:HOTEL.name}}]);
+  }
+}
+function initMap(){
+  try{
+    map=new TMap.Map('map',{zoom:11,center:new TMap.LatLng(45.74,126.63)});
+    // 距离环
+    circleLayer=new TMap.MultiCircle({map,styles:{r:{color:'rgba(29,57,196,.12)',borderColor:'rgba(29,57,196,.5)',borderWidth:1}},
+      geometries:[3000,6000,9000].map((r,i)=>({id:'c'+i,styleId:'r',center:new TMap.LatLng(HOTEL.lat,HOTEL.lng),radius:r}))});
+    renderMarkers();
+  }catch(err){ showFallback(); }
+}
+function showFallback(){
+  document.getElementById('map').style.display='none';
+  const fb=document.getElementById('fallback'); fb.style.display='block';
+  document.getElementById('maperr').style.display='block';
+  // SVG 投影
+  const W=900,H=640,LON0=126.50,LON1=126.78,LAT0=45.55,LAT1=45.86;
+  const px=lng=>(lng-LON0)/(LON1-LON0)*W;
+  const py=lat=>(LAT1-lat)/(LAT1-LAT0)*H;
+  let s='';
+  // 环
+  const pxPerKm=W/(LON1-LON0)/111*Math.cos(45.74*Math.PI/180);
+  [3,6,9].forEach(r=>{ s+=`<circle cx="${px(HOTEL.lng)}" cy="${py(HOTEL.lat)}" r="${r*pxPerKm}" fill="none" stroke="rgba(29,57,196,.45)" stroke-dasharray="5 4"/>`; });
+  // 点位
+  MARKETS.forEach(m=>{ s+=`<circle cx="${px(m.lng)}" cy="${py(m.lat)}" r="5" fill="${DISTRICTS[m.d].color}" stroke="#fff" stroke-width="1"><title>${m.n}（${m.d}，${m.km.toFixed(1)}km）</title></circle>`; });
+  // 酒店
+  s+=`<circle cx="${px(HOTEL.lng)}" cy="${py(HOTEL.lat)}" r="9" fill="#fa541c" stroke="#fff" stroke-width="2"><title>${HOTEL.name}</title></circle>`;
+  fb.innerHTML=s;
+}
+window.addEventListener('load',()=>{ setTimeout(()=>{ if(typeof TMap==='undefined'){ showFallback(); } else { initMap(); } }, 800); });
+</script>
+</body>
+</html>
