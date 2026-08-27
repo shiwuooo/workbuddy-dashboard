@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大庆2.5天 · 超大游览地图（比例尺·轮廓版）</title>
+<style>
+  body{background:#efe9dd;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;padding:14px;color:#222}
+  h1{font-size:18px;margin:4px 0 2px}
+  .sub{font-size:12px;color:#666;margin-bottom:10px}
+  .mapbox{background:#fff;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:auto;max-width:100%}
+  svg{display:block}
+  .legend{font-size:12px;margin:8px 0 4px}
+  .legend span{display:inline-block;margin-right:14px}
+  .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:3px;vertical-align:-1px}
+  .tip{font-size:12px;color:#777;margin-top:6px}
+</style>
+</head>
+<body>
+<h1>大庆 2.5 天 · 超大游览地图</h1>
+<div class="sub">比例尺：1km = 50px（图上距离与比例尺严格一致，5km 线段 = 10km 线段的一半）· 湖泊/湿地/广场为轮廓示意（接近真实形态，非精确测绘）</div>
+
+<div class="mapbox">
+<svg viewBox="0 0 1900 940" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+  <!-- 背景 -->
+  <rect x="0" y="0" width="1900" height="940" fill="#faf7f0"/>
+  <!-- 分区底色 -->
+  <rect x="0" y="0" width="430" height="940" fill="#eef3ee" opacity=".6"/>
+  <text x="30" y="30" font-size="20" fill="#8aa08a">让胡路区</text>
+  <rect x="430" y="0" width="820" height="940" fill="#fdf6e8" opacity=".6"/>
+  <text x="450" y="30" font-size="20" fill="#b0966a">萨尔图区</text>
+  <rect x="1250" y="0" width="650" height="940" fill="#e8f0f7" opacity=".6"/>
+  <text x="1270" y="30" font-size="20" fill="#7d9bb8">龙凤区</text>
+
+  <!-- ======== 湖泊/湿地轮廓（示意） ======== -->
+  <!-- 龙凤湿地（大面积不规则，锯齿边） -->
+  <polygon points="1290,520 1420,470 1560,480 1650,450 1770,470 1820,540 1780,620 1830,700 1760,790 1680,880 1560,840 1480,880 1380,840 1310,880 1250,800 1290,700 1240,620" fill="#a5d6a7" stroke="#4a7c59" stroke-width="3"/>
+  <polygon points="1380,540 1500,520 1600,560 1520,600 1410,590" fill="#81c784" opacity=".5"/>
+  <polygon points="1600,640 1720,620 1760,680 1660,700" fill="#81c784" opacity=".5"/>
+  <text x="1540" y="660" font-size="26" font-weight="bold" fill="#2e5d34">龙凤湿地</text>
+  <text x="1520" y="690" font-size="13" fill="#2e5d34">（亚洲最大城中湿地）</text>
+
+  <!-- 黎明湖（南北长条） -->
+  <path d="M1130,300 Q1155,320 1148,365 Q1158,410 1140,440 Q1128,410 1135,365 Q1122,325 1130,300 Z" fill="#b3d9f2" stroke="#5b9bd5" stroke-width="2"/>
+  <text x="1088" y="355" font-size="15" fill="#2b7fb8">黎明湖</text>
+
+  <!-- 滨洲湖（大椭圆，黎明湖西北） -->
+  <ellipse cx="975" cy="280" rx="120" ry="60" fill="#b3d9f2" stroke="#5b9bd5" stroke-width="2"/>
+  <text x="930" y="275" font-size="15" fill="#2b7fb8">滨洲湖</text>
+
+  <!-- 三永湖（恒大御湖北） -->
+  <ellipse cx="1205" cy="745" rx="85" ry="40" fill="#b3d9f2" stroke="#5b9bd5" stroke-width="2"/>
+  <circle cx="1205" cy="745" r="8" fill="#e53935"/>
+  <text x="1155" y="800" font-size="13" fill="#2b7fb8">三永湖</text>
+
+  <!-- 万宝湖（椭圆+湖心岛） -->
+  <ellipse cx="720" cy="448" rx="62" ry="38" fill="#b3d9f2" stroke="#5b9bd5" stroke-width="2"/>
+  <circle cx="730" cy="442" r="10" fill="#66bb6a" stroke="#388e3c"/>
+  <text x="655" y="465" font-size="14" fill="#2b7fb8">万宝湖</text>
+
+  <!-- 城市森林（绿地地块） -->
+  <rect x="600" y="95" width="150" height="105" rx="14" fill="#c8e6c9" stroke="#4a7c59" stroke-width="2"/>
+  <rect x="668" y="105" width="52" height="40" rx="4" fill="#d7ccc8" stroke="#8d6e63"/>
+  <text x="672" y="130" font-size="12" fill="#5d4037">果成寺</text>
+  <text x="615" y="160" font-size="15" fill="#2e5d34">城市森林公园</text>
+  <text x="615" y="180" font-size="11" fill="#4a7c59">英烈碑·菩心湖·百年榆</text>
+
+  <!-- 铁人广场（矩形） -->
+  <rect x="150" y="438" width="120" height="55" fill="#e0e0e0" stroke="#757575" stroke-width="2"/>
+  <circle cx="210" cy="465" r="8" fill="#e53935"/>
+  <text x="195" y="482" font-size="12" fill="#333">铁人广场</text>
+
+  <!-- ======== 建筑点 ======== -->
+  <g font-size="13" text-anchor="middle">
+    <rect x="180" y="385" width="46" height="34" rx="6" fill="#fff" stroke="#37474f" stroke-width="2"/><text x="203" y="397" font-size="11">铁人</text><text x="203" y="410" font-size="11">纪念馆</text>
+    <rect x="225" y="372" width="46" height="34" rx="6" fill="#fff" stroke="#37474f" stroke-width="2"/><text x="248" y="384" font-size="11">石油科</text><text x="248" y="397" font-size="11">技馆</text>
+    <rect x="140" y="475" width="46" height="30" rx="6" fill="#ffecb3" stroke="#e08e0b" stroke-width="2"/><text x="163" y="494" font-size="11">溢香楼</text>
+    <rect x="630" y="485" width="46" height="30" rx="6" fill="#fff" stroke="#37474f" stroke-width="2"/><text x="653" y="504" font-size="11">石油馆</text>
+    <rect x="678" y="485" width="46" height="30" rx="6" fill="#fff" stroke="#37474f" stroke-width="2"/><text x="701" y="504" font-size="11">万达</text>
+    <rect x="880" y="350" width="46" height="30" rx="6" fill="#ffecb3" stroke="#e08e0b" stroke-width="2"/><text x="903" y="369" font-size="11">猎户烧烤</text>
+    <rect x="855" y="392" width="46" height="30" rx="6" fill="#ffe0b2" stroke="#e08e0b" stroke-width="2"/><text x="878" y="411" font-size="11">义耕夜市</text>
+    <rect x="900" y="272" width="46" height="30" rx="6" fill="#ffe0b2" stroke="#e08e0b" stroke-width="2"/><text x="923" y="291" font-size="11">滨州小院</text>
+    <rect x="1230" y="525" width="46" height="30" rx="6" fill="#fff" stroke="#37474f" stroke-width="2"/><text x="1253" y="544" font-size="11">大庆东站</text>
+    <rect x="1275" y="470" width="46" height="30" rx="6" fill="#fff" stroke="#37474f" stroke-width="2"/><text x="1298" y="489" font-size="11">博物馆</text>
+    <rect x="1315" y="575" width="46" height="30" rx="6" fill="#ffecb3" stroke="#e08e0b" stroke-width="2"/><text x="1338" y="594" font-size="11">嘎吧锅</text>
+    <rect x="1150" y="825" width="60" height="34" rx="8" fill="#fff3e0" stroke="#ef6c00" stroke-width="3"/><text x="1180" y="847" font-size="13" font-weight="bold">🏠恒大御湖</text>
+  </g>
+
+  <!-- ======== 路线 ======== -->
+  <!-- Day1 红 -->
+  <g fill="none" stroke="#e0392b" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10">
+    <path d="M1253,555 L1298,500 L1338,605"/>
+    <path d="M1338,605 L665,515"/>
+    <path d="M665,515 L720,505"/>
+    <path d="M720,470 L760,450"/>
+    <path d="M760,445 L910,380"/>
+    <path d="M910,380 L900,420"/>
+    <path d="M900,420 L1140,420"/>
+    <path d="M1140,420 L1180,840"/>
+  </g>
+  <g fill="#e0392b">
+    <circle cx="1253" cy="555" r="7"/><circle cx="1298" cy="500" r="7"/><circle cx="1338" cy="605" r="7"/>
+    <circle cx="665" cy="515" r="7"/><circle cx="720" cy="505" r="7"/><circle cx="760" cy="450" r="7"/>
+    <circle cx="910" cy="380" r="7"/><circle cx="900" cy="420" r="7"/><circle cx="1140" cy="420" r="7"/>
+  </g>
+  <text x="1030" y="500" font-size="15" fill="#e0392b" font-weight="bold">Day1</text>
+
+  <!-- Day2 蓝 -->
+  <g fill="none" stroke="#1f6fb8" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10">
+    <path d="M1160,845 L260,405"/>
+    <path d="M260,405 L225,395"/>
+    <path d="M225,395 L215,455"/>
+    <path d="M215,455 L170,490"/>
+    <path d="M170,490 L1340,600"/>
+    <path d="M1340,600 L1500,640"/>
+    <path d="M1500,700 L910,385"/>
+    <path d="M910,385 L1180,840"/>
+  </g>
+  <g fill="#1f6fb8">
+    <circle cx="260" cy="405" r="7"/><circle cx="225" cy="395" r="7"/><circle cx="215" cy="455" r="7"/>
+    <circle cx="170" cy="490" r="7"/><circle cx="1340" cy="600" r="7"/><circle cx="1500" cy="640" r="7"/><circle cx="910" cy="385" r="7"/>
+  </g>
+  <text x="700" y="640" font-size="15" fill="#1f6fb8" font-weight="bold">Day2</text>
+
+  <!-- Day3 绿 -->
+  <g fill="none" stroke="#3a8f4f" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 10">
+    <path d="M1180,845 L675,175"/>
+    <path d="M675,175 L1240,540"/>
+  </g>
+  <g fill="#3a8f4f">
+    <circle cx="675" cy="175" r="7"/><circle cx="1240" cy="540" r="7"/>
+  </g>
+  <text x="950" y="300" font-size="15" fill="#3a8f4f" font-weight="bold">Day3</text>
+
+  <!-- ======== 比例尺 ======== -->
+  <g transform="translate(1400,915)">
+    <rect x="0" y="0" width="630" height="3" fill="#333"/>
+    <rect x="0" y="-6" width="210" height="15" fill="#333"/>
+    <rect x="210" y="-6" width="210" height="15" fill="#fff" stroke="#333"/>
+    <rect x="420" y="-6" width="210" height="15" fill="#333"/>
+    <text x="0" y="28" font-size="13" text-anchor="middle" fill="#333">0</text>
+    <text x="210" y="28" font-size="13" text-anchor="middle" fill="#333">5km</text>
+    <text x="420" y="28" font-size="13" text-anchor="middle" fill="#333">10km</text>
+    <text x="630" y="28" font-size="13" text-anchor="middle" fill="#333">15km</text>
+  </g>
+  <text x="20" y="920" font-size="15" fill="#333">N ↑</text>
+</svg>
+</div>
+
+<div class="legend">
+  <span><span class="dot" style="background:#e0392b"></span>Day1 7.22（全室内）：东站→博物馆→嘎吧锅→万达→石油馆→万宝湖→猎户烧烤→义耕夜市→黎明湖→回</span>
+  <span><span class="dot" style="background:#1f6fb8"></span>Day2 7.23：恒大御湖→科技馆→铁人馆→铁人广场→溢香楼→湿地→晚餐→回</span>
+  <span><span class="dot" style="background:#3a8f4f"></span>Day3 7.24：恒大御湖→城市森林+果成寺→东站返程</span>
+</div>
+<div class="legend">
+  <span><span class="dot" style="background:#ffecb3"></span>餐 厅</span>
+  <span><span class="dot" style="background:#fff"></span>景 点</span>
+  <span><span class="dot" style="background:#b3d9f2"></span>湖 泊</span>
+  <span><span class="dot" style="background:#a5d6a7"></span>湿 地</span>
+</div>
+<div class="tip">注：轮廓为示意图（湿地为不规则湿地+内水道、万宝湖带湖心岛、黎明湖/滨洲湖/三永湖为湖形），非精确测绘；图上距离按比例尺换算，标注为约值。跨区大距离（龙凤↔让胡路）受图幅限制略有压缩，以每段标注的公里数为准。</div>
+</body>
+</html>
