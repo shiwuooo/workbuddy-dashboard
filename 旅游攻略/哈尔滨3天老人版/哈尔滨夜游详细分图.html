@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哈尔滨夜游 4 点详细分图（含沿江走法 + 两日就近分组）</title>
+<style>
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 920px; margin: 0 auto; padding: 20px; background: #fff; color: #222; line-height: 1.6; }
+  h1 { font-size: 22px; border-bottom: 2px solid #333; padding-bottom: 8px; }
+  h2 { font-size: 18px; margin-top: 30px; color: #1d39c4; border-left: 5px solid #1d39c4; padding-left: 10px; }
+  h3 { font-size: 15px; color: #333; margin-top: 14px; }
+  .svgbox { border: 1px solid #e8e8e8; border-radius: 6px; margin: 12px 0; background: #fafafa; }
+  .legend { font-size: 13px; background: #f5f5f5; padding: 10px 14px; border-radius: 4px; margin: 10px 0; }
+  .legend span { display: inline-block; margin-right: 16px; }
+  .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: middle; margin-right: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 13px; }
+  th, td { border: 1px solid #d9d9d9; padding: 7px 10px; text-align: left; vertical-align: top; }
+  th { background: #f5f5f5; }
+  .day1 { background: #e6f0ff; }
+  .day2 { background: #fff2e8; }
+  .note { background: #fffbe6; border-left: 4px solid #faad14; padding: 10px 14px; margin: 10px 0; border-radius: 0 4px 4px 0; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<h1>哈尔滨夜游 4 点详细分图</h1>
+<p>范围：仅 <b>圣索菲亚 / 中央大街 / 铁路大桥夜景 / 中华巴洛克</b>，不含吃、酒店、太阳岛、早市、老厨家、其他教堂。
+图上坐标为<strong>示意分布</strong>（非测绘级），门牌以高德/百度实时为准。路线按「<span style="color:#1d39c4">道里 3 点放一天（步行串联）</span> + <span style="color:#d4380d">道外巴洛克单独一天（滴滴往返）</span>」就近分组。</p>
+
+<div class="legend">
+  <span><i class="dot" style="background:#1d39c4"></i>Day1 道里夜游（索菲亚/中央大街/铁路大桥）</span>
+  <span><i class="dot" style="background:#d4380d"></i>Day2 道外夜游（中华巴洛克）</span>
+  <span><i class="dot" style="background:#faad14"></i>步行路段</span>
+  <span><i class="dot" style="background:#f5222d"></i>滴滴路段</span>
+  <span><i class="dot" style="background:#1677ff"></i>松花江</span>
+</div>
+
+<!-- ============ 总图 ============ -->
+<h2>总图：4 点位置 + 两日分组 + 夜游路线</h2>
+<div class="svgbox">
+<svg viewBox="0 0 860 520" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- 松花江 -->
+  <rect x="0" y="40" width="860" height="70" fill="#d6e8ff" opacity="0.7"/>
+  <text x="14" y="80" font-size="13" fill="#1677ff" font-weight="bold">松花江</text>
+  <!-- 江南岸陆地 -->
+  <rect x="0" y="110" width="860" height="410" fill="#f9f9f9"/>
+  <text x="14" y="500" font-size="12" fill="#999">江南岸（道里区 / 道外区）</text>
+
+  <!-- 铁路大桥 跨江 -->
+  <line x1="150" y1="75" x2="250" y2="115" stroke="#444" stroke-width="6"/>
+  <line x1="150" y1="60" x2="250" y2="100" stroke="#888" stroke-width="2"/>
+  <text x="120" y="55" font-size="12" fill="#333">③铁路大桥(跨江步行桥)</text>
+
+  <!-- 中央大街 纵向主轴 -->
+  <line x1="330" y1="150" x2="330" y2="380" stroke="#1d39c4" stroke-width="5"/>
+  <text x="345" y="270" font-size="13" fill="#1d39c4" font-weight="bold">②中央大街</text>
+
+  <!-- 索菲亚 -->
+  <circle cx="430" cy="400" r="9" fill="#1d39c4"/>
+  <text x="445" y="405" font-size="13" fill="#1d39c4" font-weight="bold">①圣索菲亚</text>
+
+  <!-- 防洪纪念塔（中央大街北端/江边） -->
+  <circle cx="330" cy="150" r="8" fill="#1d39c4"/>
+  <text x="345" y="145" font-size="12" fill="#1d39c4">防洪纪念塔(中央大街北端·江边)</text>
+
+  <!-- 中华巴洛克 道外 -->
+  <circle cx="650" cy="430" r="9" fill="#d4380d"/>
+  <text x="665" y="435" font-size="13" fill="#d4380d" font-weight="bold">④中华巴洛克</text>
+
+  <!-- Day1 路线：索菲亚→中央大街(南到北)→沿江→铁路大桥 -->
+  <path d="M430,400 L330,380 L330,150" stroke="#faad14" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+  <path d="M330,150 L250,115" stroke="#faad14" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+  <text x="370" y="300" font-size="11" fill="#a87400">步行</text>
+  <text x="250" y="135" font-size="11" fill="#a87400">沿江</text>
+
+  <!-- Day2 路线：酒店↔巴洛克 滴滴（示意从左侧） -->
+  <path d="M120,430 L650,430" stroke="#f5222d" stroke-width="3" stroke-dasharray="6,4" fill="none" marker-end="url(#arr2)"/>
+  <text x="350" y="418" font-size="11" fill="#cf1322">滴滴 ≈3km / 15分 / ¥15-25</text>
+
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#faad14"/>
+    </marker>
+    <marker id="arr2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#f5222d"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+<table>
+  <tr><th>日</th><th>区域</th><th>串联点</th><th>交通</th><th>总步行</th></tr>
+  <tr class="day1"><td><b>Day1</b></td><td>道里区（江南岸）</td><td>①索菲亚 → ②中央大街(南→北防洪塔) → 沿江 → ③铁路大桥夜景</td><td>全程步行</td><td>≈2.5–3km 平缓</td></tr>
+  <tr class="day2"><td><b>Day2</b></td><td>道外区</td><td>④中华巴洛克（单独一晚）</td><td>酒店↔巴洛克 滴滴</td><td>区内巷子≈0.5–1km</td></tr>
+</table>
+
+<!-- ============ 分图① 索菲亚 ============ -->
+<h2>分图 ① 圣索菲亚 · 街巷分布</h2>
+<div class="svgbox">
+<svg viewBox="0 0 760 360" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- 广场 -->
+  <rect x="280" y="120" width="220" height="150" fill="#f0f5ff" stroke="#adc6ff"/>
+  <text x="345" y="200" font-size="13" fill="#1d39c4" font-weight="bold">索菲亚广场</text>
+  <!-- 教堂主体 -->
+  <polygon points="390,90 370,150 410,150" fill="#2f54eb"/>
+  <rect x="375" y="150" width="30" height="40" fill="#5b8ff9"/>
+  <circle cx="390" cy="85" r="10" fill="#237804"/>
+  <text x="415" y="120" font-size="12" fill="#1d39c4">教堂(绿顶)</text>
+
+  <!-- 周边街道 -->
+  <line x1="60" y1="200" x2="700" y2="200" stroke="#bbb" stroke-width="2"/>
+  <text x="10" y="195" font-size="11" fill="#666">透笼街(正门南)</text>
+  <line x1="200" y1="40" x2="200" y2="320" stroke="#bbb" stroke-width="2"/>
+  <text x="150" y="35" font-size="11" fill="#666">兆麟街</text>
+  <line x1="560" y1="40" x2="560" y2="320" stroke="#bbb" stroke-width="2"/>
+  <text x="565" y="35" font-size="11" fill="#666">地段街</text>
+  <line x1="640" y1="40" x2="640" y2="320" stroke="#bbb" stroke-width="2"/>
+  <text x="645" y="35" font-size="11" fill="#666">买卖街</text>
+  <line x1="120" y1="40" x2="120" y2="320" stroke="#bbb" stroke-width="2"/>
+  <text x="20" y="35" font-size="11" fill="#666">一面街</text>
+  <line x1="350" y1="40" x2="350" y2="320" stroke="#bbb" stroke-width="2"/>
+  <text x="300" y="35" font-size="11" fill="#666">石头道街</text>
+  <!-- 西头道街（去中央大街方向） -->
+  <line x1="280" y1="280" x2="700" y2="280" stroke="#faad14" stroke-width="3"/>
+  <text x="500" y="300" font-size="11" fill="#a87400">→ 西头道街，向东走≈0.7km到中央大街</text>
+</svg>
+</div>
+<p class="note">正门在透笼街；想接着去中央大街，从广场东出走<b>西头道街向东 ≈0.7km（步行10分）</b>即达中央大街南端。</p>
+
+<!-- ============ 分图② 中央大街 + 北端沿江走法 ============ -->
+<h2>分图 ② 中央大街 · 主轴 + 北端「到头后沿江怎么走」</h2>
+<div class="svgbox">
+<svg viewBox="0 0 860 460" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- 松花江（顶部） -->
+  <rect x="0" y="0" width="860" height="60" fill="#d6e8ff" opacity="0.7"/>
+  <text x="14" y="38" font-size="13" fill="#1677ff" font-weight="bold">↑ 松花江（上游方向）</text>
+
+  <!-- 中央大街主轴 纵向 -->
+  <line x1="400" y1="60" x2="400" y2="400" stroke="#1d39c4" stroke-width="6"/>
+  <text x="415" y="230" font-size="14" fill="#1d39c4" font-weight="bold">中央大街(主轴)</text>
+
+  <!-- 南端 经纬街 -->
+  <line x1="250" y1="400" x2="600" y2="400" stroke="#bbb" stroke-width="2"/>
+  <text x="610" y="405" font-size="11" fill="#666">经纬街(南端起点)</text>
+
+  <!-- 西平行 尚志大街 -->
+  <line x1="330" y1="60" x2="330" y2="400" stroke="#ccc" stroke-width="2"/>
+  <text x="250" y="55" font-size="11" fill="#666">尚志大街(西平行)</text>
+  <!-- 东平行 通江街 -->
+  <line x1="480" y1="60" x2="480" y2="400" stroke="#ccc" stroke-width="2"/>
+  <text x="490" y="55" font-size="11" fill="#666">通江街(东平行)</text>
+
+  <!-- 横向交叉街 -->
+  <g font-size="10" fill="#888">
+    <line x1="300" y1="380" x2="520" y2="380" stroke="#ddd" stroke-width="1"/>
+    <text x="525" y="383">西头道街</text>
+    <line x1="300" y1="350" x2="520" y2="350" stroke="#ddd" stroke-width="1"/>
+    <text x="525" y="353">西二道街</text>
+    <line x1="300" y1="310" x2="520" y2="310" stroke="#ddd" stroke-width="1"/>
+    <text x="525" y="313">西五道街</text>
+    <line x1="300" y1="270" x2="520" y2="270" stroke="#ddd" stroke-width="1"/>
+    <text x="525" y="273">西七道街</text>
+    <line x1="300" y1="220" x2="520" y2="220" stroke="#ddd" stroke-width="1"/>
+    <text x="525" y="223">西十道街</text>
+    <line x1="300" y1="170" x2="520" y2="170" stroke="#ddd" stroke-width="1"/>
+    <text x="525" y="173">西十二道街</text>
+    <line x1="300" y1="130" x2="520" y2="130" stroke="#ddd" stroke-width="1"/>
+    <text x="525" y="133">西十五道街</text>
+  </g>
+
+  <!-- 北端 防洪纪念塔（江边） -->
+  <circle cx="400" cy="60" r="10" fill="#1d39c4"/>
+  <text x="415" y="50" font-size="12" fill="#1d39c4" font-weight="bold">防洪纪念塔(北端·江边)</text>
+
+  <!-- 沿江走法放大：从防洪塔沿江南岸步道向西北(上游)到铁路大桥 -->
+  <path d="M400,60 C300,55 230,50 170,40" stroke="#faad14" stroke-width="4" fill="none" stroke-dasharray="2,2" marker-end="url(#arrY)"/>
+  <text x="210" y="30" font-size="11" fill="#a87400">沿江步道(斯大林/九站公园) ≈1.0–1.2km / 12–15分</text>
+
+  <!-- 铁路大桥 在江上西北 -->
+  <line x1="150" y1="20" x2="210" y2="50" stroke="#444" stroke-width="5"/>
+  <text x="80" y="18" font-size="11" fill="#333">铁路大桥(步行观光桥)</text>
+
+  <defs>
+    <marker id="arrY" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#faad14"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+<table>
+  <tr><th>节点</th><th>走法</th><th>距离/时长</th><th>看点</th></tr>
+  <tr><td>中央大街南端(经纬街)</td><td>沿主轴向北走</td><td>≈1.4km / 18–20分</td><td>面包石路面、欧式建筑灯、马迭尔总店</td></tr>
+  <tr><td>北端 = 防洪纪念塔</td><td>到江边即终点</td><td>—</td><td>江景、纪念塔灯光</td></tr>
+  <tr><td><b>到头之后沿江走</b></td><td>沿江南岸步道向<b>西北（上游）</b>走，经斯大林公园→九站公园</td><td><b>≈1.0–1.2km / 12–15分</b></td><td>江风、老江桥远景、公园长椅可坐；走到铁路大桥南引桥</td></tr>
+  <tr><td>铁路大桥</td><td>上桥（步行观光桥）</td><td>桥上≈0.5km</td><td>桥体钢铁灯光、江两岸夜景、网红打卡</td></tr>
+</table>
+<p class="note">「中央大街到头」= 北端防洪纪念塔。别往回走，<b>顺江边往上游（西北）溜达</b>最舒服，平缓、有长椅、风凉，直接连到铁路大桥夜景，省得绕路。</p>
+
+<!-- ============ 分图③ 铁路大桥 ============ -->
+<h2>分图 ③ 铁路大桥（滨洲铁路桥）· 夜景 + 接驳</h2>
+<div class="svgbox">
+<svg viewBox="0 0 760 320" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- 江 -->
+  <rect x="0" y="120" width="760" height="80" fill="#d6e8ff" opacity="0.7"/>
+  <text x="14" y="165" font-size="12" fill="#1677ff" font-weight="bold">松花江</text>
+  <!-- 桥斜跨 -->
+  <line x1="120" y1="80" x2="640" y2="200" stroke="#444" stroke-width="6"/>
+  <g stroke="#888" stroke-width="1.5">
+    <line x1="200" y1="95" x2="200" y2="135"/>
+    <line x1="300" y1="115" x2="300" y2="155"/>
+    <line x1="400" y1="135" x2="400" y2="175"/>
+    <line x1="500" y1="155" x2="500" y2="195"/>
+  </g>
+  <text x="320" y="70" font-size="13" fill="#333" font-weight="bold">滨洲铁路桥(步行观光桥)</text>
+  <!-- 南引桥接江边步道 -->
+  <path d="M640,200 C680,210 700,220 700,250" stroke="#faad14" stroke-width="3" fill="none" marker-end="url(#arrY2)"/>
+  <text x="600" y="270" font-size="11" fill="#a87400">南引桥 → 接江南岸步道(即中央大街沿江走来方向)</text>
+  <!-- 北岸（江北） -->
+  <text x="120" y="60" font-size="11" fill="#888">江北(太阳岛/群力方向)</text>
+  <defs>
+    <marker id="arrY2" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+      <path d="M0,0 L7,3 L0,6 Z" fill="#faad14"/>
+    </marker>
+  </defs>
+</svg>
+</div>
+<p class="note">铁路大桥是<b>步行观光桥</b>，从江南岸步道（中央大街沿江走来的方向）上南引桥即达。桥上灯光好拍，但桥面有缝、风大，老人扶栏慢走。</p>
+
+<!-- ============ 分图④ 中华巴洛克 ============ -->
+<h2>分图 ④ 中华巴洛克 · 整街网格 + 四大区域</h2>
+<div class="svgbox">
+<svg viewBox="0 0 820 460" width="100%" xmlns="http://www.w3.org/2000/svg">
+  <!-- 横向街道 -->
+  <g font-size="11" fill="#555">
+    <line x1="40" y1="80" x2="780" y2="80" stroke="#333" stroke-width="3"/>
+    <text x="40" y="72">靖宇街(主轴·加粗)</text>
+    <line x1="40" y1="150" x2="780" y2="150" stroke="#bbb" stroke-width="1.5"/>
+    <text x="40" y="143">南勋街</text>
+    <line x1="40" y1="220" x2="780" y2="220" stroke="#bbb" stroke-width="1.5"/>
+    <text x="40" y="213">南平街</text>
+    <line x1="40" y1="290" x2="780" y2="290" stroke="#bbb" stroke-width="1.5"/>
+    <text x="40" y="283">纯化街</text>
+    <line x1="40" y1="360" x2="780" y2="360" stroke="#bbb" stroke-width="1.5"/>
+    <text x="40" y="353">大新街/北环路</text>
+  </g>
+  <!-- 竖向街道 江侧(北) -->
+  <g font-size="10" fill="#888">
+    <line x1="120" y1="60" x2="120" y2="380" stroke="#ccc"/>
+    <text x="110" y="55">北头道街</text>
+    <line x1="220" y1="60" x2="220" y2="380" stroke="#ccc"/>
+    <text x="210" y="55">北四道街</text>
+    <line x1="320" y1="60" x2="320" y2="380" stroke="#ccc"/>
+    <text x="310" y="55">北七道街</text>
+    <line x1="440" y1="60" x2="440" y2="380" stroke="#ccc"/>
+    <text x="430" y="55">北十道街</text>
+    <line x1="560" y1="60" x2="560" y2="380" stroke="#ccc"/>
+    <text x="550" y="55">北十二道街</text>
+  </g>
+  <!-- 竖向街道 南 -->
+  <g font-size="10" fill="#888">
+    <line x1="160" y1="60" x2="160" y2="380" stroke="#ccc"/>
+    <text x="150" y="400">南头道街</text>
+    <line x1="260" y1="60" x2="260" y2="380" stroke="#ccc"/>
+    <text x="250" y="400">南三道街</text>
+    <line x1="380" y1="60" x2="380" y2="380" stroke="#ccc"/>
+    <text x="370" y="400">南七道街</text>
+    <line x1="500" y1="60" x2="500" y2="380" stroke="#ccc"/>
+    <text x="490" y="400">南十二道街</text>
+    <line x1="620" y1="60" x2="620" y2="380" stroke="#ccc"/>
+    <text x="610" y="400">南十六道街</text>
+  </g>
+  <!-- 四大区域 -->
+  <rect x="80" y="95" width="170" height="60" fill="#fff2e8" stroke="#d4380d"/>
+  <text x="95" y="118" font-size="11" fill="#d4380d">A区 北头道-北四道</text>
+  <text x="95" y="138" font-size="10" fill="#d4380d">老字号/牌匾</text>
+  <rect x="180" y="95" width="170" height="60" fill="#fff7e6" stroke="#fa8c16"/>
+  <text x="195" y="118" font-size="11" fill="#d4380d">B区 南头道-南四道</text>
+  <text x="195" y="138" font-size="10" fill="#d4380d">院落精华·张包铺胡同</text>
+  <rect x="300" y="165" width="180" height="60" fill="#fff7e6" stroke="#fa8c16"/>
+  <text x="315" y="188" font-size="11" fill="#d4380d">C区 南勋街院落群</text>
+  <text x="315" y="208" font-size="10" fill="#d4380d">大院落/浮雕</text>
+  <rect x="420" y="235" width="170" height="60" fill="#fff2e8" stroke="#d4380d"/>
+  <text x="435" y="258" font-size="11" fill="#d4380d">D区 南平-纯化广场</text>
+  <text x="435" y="278" font-size="10" fill="#d4380d">广场/照明</text>
+  <!-- 张包铺点位 -->
+  <circle cx="250" cy="120" r="6" fill="#d4380d"/>
+  <text x="258" y="123" font-size="10" fill="#d4380d">张包铺(南二道街)</text>
+  <!-- 老鼎丰 -->
+  <circle cx="160" cy="100" r="6" fill="#d4380d"/>
+  <text x="20" y="103" font-size="10" fill="#d4380d">老鼎丰</text>
+</svg>
+</div>
+<table>
+  <tr><th>区域</th><th>范围</th><th>看什么</th></tr>
+  <tr><td>A区</td><td>北头道街—北四道街</td><td>临江侧，老字号集中、老牌匾</td></tr>
+  <tr><td><b>B区</b></td><td>南头道街—南四道街</td><td>院落精华，<b>张包铺胡同</b>（排骨包子）、巴洛克浮雕最密</td></tr>
+  <tr><td>C区</td><td>南勋街院落群</td><td>大院落、砖雕门楼，适合细看</td></tr>
+  <tr><td>D区</td><td>南平街—纯化街广场</td><td>开阔广场、灯光好拍</td></tr>
+</table>
+<p class="note">夜游建议：从<b>B区张包铺胡同</b>进 → 沿靖宇街向东慢走看灯光 → 拐 C区院落 → 收尾 D区广场。巷子是老石板/修补路面，不平，穿平底防滑鞋。</p>
+
+<!-- ============ 两日分组时间轴 ============ -->
+<h2>两日就近分组 · 时间轴</h2>
+<table>
+  <tr><th>日</th><th>时间</th><th>安排</th><th>交通</th></tr>
+  <tr class="day1">
+    <td rowspan="5"><b>Day1<br>道里夜游</b></td>
+    <td>18:30</td><td>酒店→①圣索菲亚（看绿顶夜景外观 / 如进内部需20:45前）</td><td>滴滴 10–15分 / ¥12–18</td>
+  </tr>
+  <tr class="day1"><td>19:00–19:40</td><td>①索菲亚 → ②中央大街南端（西头道街向东走）</td><td>步行 ≈0.7km / 10分</td></tr>
+  <tr class="day1"><td>19:40–20:20</td><td>②中央大街（南→北防洪纪念塔）</td><td>步行 ≈1.4km / 18–20分</td></tr>
+  <tr class="day1"><td>20:20–20:35</td><td><b>到头后沿江向西北</b> → ③铁路大桥</td><td>步行 ≈1.0–1.2km / 12–15分</td></tr>
+  <tr class="day1"><td>20:35–21:15</td><td>③铁路大桥夜景（上桥看灯）</td><td>步行</td></tr>
+  <tr class="day2">
+    <td rowspan="3"><b>Day2<br>道外夜游</b></td>
+    <td>18:30</td><td>酒店 → ④中华巴洛克</td><td>滴滴 ≈3km / 15分 / ¥15–25</td>
+  </tr>
+  <tr class="day2"><td>19:00–20:30</td><td>④巴洛克（B区张包铺胡同→靖宇街→C区院落→D区广场）</td><td>步行 ≈0.5–1km</td></tr>
+  <tr class="day2"><td>20:30</td><td>④巴洛克 → 酒店</td><td>滴滴 20–25分 / ¥20–28</td></tr>
+</table>
+<p class="note">Day2 只有巴洛克一个点，整晚较宽松，可弹性提前或延后。若想两天连着玩，两晚都安排在行程里靠后的日子（如 8/10、8/11 晚）即可，不影响白天景点。</p>
+
+</body>
+</html>
