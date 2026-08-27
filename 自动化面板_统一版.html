@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkBuddy 自动化总面板（统一版）</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1f2933;--muted:#6b7280;--line:#e5e7eb;
+--accent:#2563eb;--accent2:#1e3a8a;--green:#16a34a;--red:#dc2626;--amber:#d97706;--violet:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
+.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 18px}
+.top h1{font-size:18px;margin:0;color:var(--accent2);display:inline-block}
+.top .sub{color:var(--muted);font-size:12px;margin-left:8px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.bar input[type=text]{padding:7px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;width:220px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 13px;font-size:13px;cursor:pointer;color:var(--ink)}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{background:#1d4ed8;color:#fff}
+.btn.sm{padding:4px 9px;font-size:12px}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin:14px 18px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:90px;cursor:pointer}
+.stat b{display:block;font-size:20px;color:var(--accent2)}
+.stat span{font-size:12px;color:var(--muted)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 18px 0;padding:4px;background:var(--border-light);border-radius:10px}
+.tab-btn{padding:8px 14px;border:none;background:transparent;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted)}
+.tab-btn:hover{background:rgba(37,99,235,.08)}
+.tab-btn.active{background:#fff;color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.wrap{padding:14px 18px 80px;max-width:1280px;margin:0 auto}
+.sec-title{font-size:15px;font-weight:700;color:var(--accent2);margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-title .badge{font-size:11px;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe;padding:1px 8px;border-radius:999px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;position:relative}
+.card .nm{font-weight:700;font-size:15px;color:var(--ink);word-break:break-all;padding-right:24px}
+.card .id{font-size:11px;color:#9ca3af;margin-top:1px;word-break:break-all}
+.card .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.tag{font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted);background:#f9fafb}
+.tag.green{background:#f0fdf4;color:var(--green);border-color:#bbf7d0}
+.tag.red{background:#fef2f2;color:var(--red);border-color:#fecaca}
+.tag.amber{background:#fffbeb;color:var(--amber);border-color:#fde68a}
+.tag.violet{background:#f5f3ff;color:var(--violet);border-color:#ddd6fe}
+.tag.blue{background:#eff6ff;color:var(--accent);border-color:#bfdbfe}
+.card .meta{font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.5}
+.card .acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.rep{margin-top:8px;font-size:12px;border-top:1px dashed var(--line);padding-top:7px;color:var(--muted)}
+.rep.ok{color:var(--green)} .rep.err{color:var(--red)} .rep.q{color:var(--violet)} .rep.run{color:var(--amber)}
+.startzone{background:linear-gradient(180deg,#eff6ff,#f8fafc);border:1px solid #bfdbfe;border-radius:14px;padding:14px;margin:10px 0 4px}
+.startzone .zh{font-weight:700;color:var(--accent2);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;align-items:center;justify-content:center;padding:18px}
+.modal.open{display:flex}
+.mbox{background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:20px 22px}
+.mbox h3{margin:0 0 14px;color:var(--accent2)}
+.mbox label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+.mbox input,.mbox textarea,.mbox select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit}
+.mbox textarea{height:60px;resize:vertical}
+.mbox .macts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+pre.out{background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;max-height:320px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-all}
+.note{font-size:12px;color:var(--muted);background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:10px 18px}
+.hint{font-size:12px;color:var(--muted);margin:6px 18px}
+.backend-on{color:var(--green)!important} .backend-off{color:var(--amber)!important}
+@media(max-width:640px){.bar input[type=text]{width:100%}.stat{flex:1}}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>🗂️ WorkBuddy 自动化总面板</h1><span class="sub">统一版 · 真实数据 <span id="modeTag"></span></span>
+  <div class="bar">
+    <input type="text" id="search" placeholder="搜索名称/ID/用途…" oninput="render()">
+    <select id="filterStatus" onchange="render()" class="btn"><option value="">全部状态</option><option value="ACTIVE">运行中</option><option value="PAUSED">已暂停</option></select>
+    <button class="btn" id="btnRunAll" disabled onclick="runAll()">▶ 一键启动（启动区）</button>
+    <button class="btn" id="btnRunSel" disabled onclick="runSelected()">▶ 选择性启动</button>
+    <button class="btn" id="btnNewFolder" disabled onclick="addFolder()">＋ 新建文件夹</button>
+    <button class="btn" id="btnExport" disabled onclick="exportCfg()">⤓ 导出配置</button>
+    <button class="btn" id="btnImport" disabled onclick="importCfg()">⤒ 导入配置</button>
+    <button class="btn sm" onclick="copyAllIds()">⧉ 复制全部ID</button>
+    <button class="btn sm" id="btnRefresh" disabled onclick="refresh()">↻ 刷新</button>
+  </div>
+</div>
+
+<div class="stats" id="stats"></div>
+<div class="note" id="modeNote"></div>
+
+<div class="tabs" id="tabs"></div>
+<div class="wrap" id="wrap"></div>
+<div class="hint">生成时间：<span id="gen"></span> · 总数：<span id="total"></span> · 来源：本机 workbuddy.db（automations + automation_runs）</div>
+
+<div class="modal" id="editM"><div class="mbox">
+  <h3>编辑自动化</h3>
+  <label>显示名称</label><input id="e_name">
+  <label>备注 / 介绍</label><textarea id="e_notes"></textarea>
+  <label>分类标签</label><input id="e_cat">
+  <label>归入文件夹</label><select id="e_folder"><option value="">（不归类）</option></select>
+  <label style="display:flex;align-items:center;gap:8px;margin-top:12px"><input type="checkbox" id="e_zone" style="width:auto"> 加入一键启动区</label>
+  <div class="macts"><button class="btn" onclick="closeM('editM')">取消</button><button class="btn primary" onclick="saveEdit()">保存</button></div>
+</div></div>
+<div class="modal" id="repM"><div class="mbox">
+  <h3 id="repTitle">运行报告</h3><div id="repBody"></div>
+  <div class="macts"><button class="btn primary" onclick="closeM('repM')">关闭</button></div>
+</div></div>
+<input type="file" id="impFile" accept=".json" style="display:none" onchange="doImport(this)">
+
+<script>
+const GEN_TIME="2026-08-27 21:28";
+let AUTOS=[{"id": "automation-1784987514976", "name": "申论拆解陪练（每周一三五）", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-25 21:51", "last_run_at": "2026-08-17 00:06", "rrule": "FREQ=WEEKLY;BYDAY=MO,WE,FR;BYHOUR=0;BYMINUTE=0", "purpose": "作为资深公考申论导师（shenlun-tutor 视角），进行一轮申论拆解陪练：\n1) 若用户本回合未提供文章链接，自行用 WebFetch 抓取一篇近期求是网（qstheory.", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-16 23:57", "duration_sec": null, "summary": ""}, "cat": "申论素材", "output": "", "conflict": ""}, {"id": "automation-1784991956285", "name": "求是素材库同步", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-25 23:05", "last_run_at": "2026-08-17 13:36", "rrule": "FREQ=MONTHLY;BYMONTHDAY=2,17;BYHOUR=8;BYMINUTE=0", "purpose": "你是\"求是申论素材库\"的自动同步机器人（飞书推送已暂停）。目标：抓取《求是》文章，按四步法沉淀进申论素材四库，并在采集完成后重建检索网页。当前范围：仅 2024、2025、2026", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-17 12:58", "duration_sec": null, "summary": ""}, "cat": "申论素材", "output": "国考申论/求是申论素材库/求是素材库.html", "conflict": "bank_write"}, {"id": "automation-1785383318303", "name": "申论素材采集Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 11:48", "last_run_at": "2026-08-26 08:47", "rrule": "FREQ=DAILY;BYHOUR=8;BYMINUTE=0", "purpose": "你是申论素材采集助手，调用 shilun-chaijie 技能执行日常采集任务。\n步骤：\n1. 用 WebFetch 抓取最新时评，来源优先级：求是网(qstheory.cn)、人", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 08:46", "duration_sec": null, "summary": ""}, "cat": "申论素材", "output": "国考申论/申论素材阅读器.html", "conflict": "shenlun_site"}, {"id": "automation-1785383318481", "name": "资源需求监控Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 11:48", "last_run_at": "2026-08-26 09:08", "rrule": "FREQ=DAILY;BYHOUR=9;BYMINUTE=0", "purpose": "你是考公/考研资料需求监控助手，调用 card-finder 与 resource-finder 技能执行需求监控任务。\n步骤：\n1. 监控关键词池：申论资料、考公真题、行测刷题、", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 09:08", "duration_sec": null, "summary": ""}, "cat": "赚钱副业", "output": "2026-07-30-10-56-34/reports/resource_demand_report.html", "conflict": ""}, {"id": "automation-1785383318644", "name": "网盘去重整理Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 11:48", "last_run_at": "2026-08-26 10:05", "rrule": "FREQ=DAILY;BYHOUR=10;BYMINUTE=0", "purpose": "你是夸克网盘整理助手，调用 quark-rec 技能对用户的夸克网盘做【近似去重巡检】。\n重要背景：经实测，夸克 file/info 接口不返回 md5/sha1，内容级去重（命名", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 10:04", "duration_sec": null, "summary": ""}, "cat": "赚钱副业", "output": "2026-07-30-10-56-34/reports/netdisk_dedup_report.html", "conflict": "io_heavy"}, {"id": "automation-1785402836456", "name": "真题校验Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 17:13", "last_run_at": "2026-08-17 09:56", "rrule": "FREQ=DAILY;BYHOUR=10;BYMINUTE=0", "purpose": "你是公考真题质量校验助手。任务：保障题库真题纯度，剔除模拟题/伪造题。\n步骤：\n1. 定位题库数据：扫描 D:/workbuddy 下与「上岸通」「粉笔」相关的真题数据文件（.md", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-17 09:50", "duration_sec": null, "summary": ""}, "cat": "考公提分", "output": "2026-07-30-10-56-34/reports/quiz_verify_report.html", "conflict": ""}, {"id": "automation-1785402948186", "name": "答案多源补全Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 17:15", "last_run_at": "2026-08-17 11:03", "rrule": "FREQ=WEEKLY;BYDAY=SU;BYHOUR=11;BYMINUTE=0", "purpose": "你是公考答案补全助手。任务：把答案缺失/仅单家答案的真题，补齐到≥2家可信来源。\n步骤：\n1. 定位题库数据与 enrich_sources.py（若存在）；扫描 D:/workb", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-17 10:55", "duration_sec": null, "summary": ""}, "cat": "考公提分", "output": "2026-07-30-10-56-34/reports/answer_enrich_report.html", "conflict": ""}, {"id": "automation-1785403079104", "name": "错题归因Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 17:17", "last_run_at": "2026-08-16 14:59", "rrule": "FREQ=DAILY;BYHOUR=15;BYMINUTE=0", "purpose": "你是公考错题分析助手。任务：定位薄弱模块，指导复习。\n步骤：\n1. 读取做题记录：D:/workbuddy 下刷题网站的做题导出（.csv/.json），或用户指定的记录文件；若无", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-16 14:55", "duration_sec": null, "summary": ""}, "cat": "考公提分", "output": "2026-07-30-10-56-34/reports/mistake_analysis_report.html", "conflict": ""}, {"id": "automation-1785403201637", "name": "推广素材生成Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 17:20", "last_run_at": "2026-08-26 18:01", "rrule": "FREQ=DAILY;BYHOUR=14;BYMINUTE=0", "purpose": "你是网盘推广素材生成助手。任务：批量生成多平台文案。\n步骤：\n1. 读取资源清单：D:/workbuddy/2026-07-30-10-56-34/reports/resource", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 18:00", "duration_sec": null, "summary": ""}, "cat": "赚钱副业", "output": "2026-07-30-10-56-34/reports/promo_copy_report.html", "conflict": ""}, {"id": "automation-1785403319609", "name": "推广数据追踪Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 17:21", "last_run_at": "2026-08-26 09:10", "rrule": "FREQ=DAILY;BYHOUR=9;BYMINUTE=0", "purpose": "你是网盘推广数据追踪助手。任务：追踪转化，优化推广策略。\n\n步骤：\n0. 先运行自动抓取（已跑通，无需用户操作）：\n   \"C:/Users/石/.workbuddy/binari", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 09:10", "duration_sec": null, "summary": ""}, "cat": "赚钱副业", "output": "2026-07-30-10-56-34/reports/promo_metrics_report.html", "conflict": "io_heavy"}, {"id": "automation-1785403340991", "name": "副业信息聚合Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 17:22", "last_run_at": "2026-08-26 08:44", "rrule": "FREQ=DAILY;BYHOUR=8;BYMINUTE=0", "purpose": "你是副业项目线索聚合助手。任务：建立项目线索库，持续发现赚钱项目。\n步骤：\n1. 按 card-finder / resource-finder 跨平台模板，搜索公众号/即刻/小红", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 08:43", "duration_sec": null, "summary": ""}, "cat": "赚钱副业", "output": "2026-07-30-10-56-34/reports/side_hustle_leads_report.html", "conflict": ""}, {"id": "automation-1785403355404", "name": "项目可信评分Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 17:22", "last_run_at": "2026-08-26 12:01", "rrule": "FREQ=DAILY;BYHOUR=12;BYMINUTE=0", "purpose": "你是项目风险评估助手。任务：筛掉割韭菜项目，只留可落地机会。\n步骤：\n1. 读取副业信息聚合Agent产出的 D:/workbuddy/2026-07-30-10-56-34/re", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 12:00", "duration_sec": null, "summary": ""}, "cat": "赚钱副业", "output": "2026-07-30-10-56-34/reports/project_risk_report.html", "conflict": ""}, {"id": "automation-1785403371327", "name": "套利机会监控Agent", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-30 17:22", "last_run_at": "2026-08-26 13:00", "rrule": "FREQ=DAILY;BYHOUR=13;BYMINUTE=0", "purpose": "你是套利机会监控助手。任务：发现信息差/平台补贴/优惠券套利机会。\n步骤：\n1. 监控电商平台与活动页的优惠、补贴、优惠券、价格差（WebSearch + 指定比价源；如需搜索 A", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 13:00", "duration_sec": null, "summary": ""}, "cat": "赚钱副业", "output": "2026-07-30-10-56-34/reports/arbitrage_report.html", "conflict": ""}, {"id": "automation-1785463809171", "name": "产出自动同步到 Obsidian", "status": "PAUSED", "workspace": "[", "created_at": "2026-07-31 10:10", "last_run_at": "2026-08-26 22:21", "rrule": "FREQ=HOURLY;INTERVAL=6;BYDAY=MO,TU,WE,TH,FR,SA,SU", "purpose": "Obsidian 自动同步任务：把 D:/workbuddy/outputs 下所有 .md 文件（递归扫描，跳过 tools/ 与 guides/ 目录）同步进 Obsidian", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 22:17", "duration_sec": null, "summary": ""}, "cat": "知识管理", "output": "ObsidianVault/灵感库总面板.html", "conflict": ""}, {"id": "automation-1785493158013", "name": "周整理 outputs 文件夹", "status": "ACTIVE", "workspace": "[", "created_at": "2026-07-31 18:19", "last_run_at": "2026-08-24 17:59", "rrule": "FREQ=WEEKLY;BYDAY=SU;BYHOUR=21;BYMINUTE=0", "purpose": "每周扫描 D:/workbuddy/outputs 目录，列出：①散落在根层、未归入具体任务子文件夹的文件；②疑似重复（同名或高度相近）的文件；③超过30天未修改的陈旧文件。给出简", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-24 17:58", "duration_sec": null, "summary": ""}, "cat": "知识管理", "output": "outputs/index.html", "conflict": ""}, {"id": "automation-1785493158258", "name": "周申论素材回顾", "status": "ACTIVE", "workspace": "[", "created_at": "2026-07-31 18:19", "last_run_at": "2026-08-16 09:01", "rrule": "FREQ=WEEKLY;BYDAY=SU;BYHOUR=9;BYMINUTE=0", "purpose": "回顾 D:/workbuddy/国考申论/求是申论素材库：①推荐1-2个近期值得拆解的求是网文章主题方向（结合当前政策热点，不实际联网抓取，只给方向）；②复习上周已存素材中可复用到", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-16 08:50", "duration_sec": null, "summary": ""}, "cat": "申论素材", "output": "", "conflict": ""}, {"id": "automation-1785493169936", "name": "周灵感库速览", "status": "ACTIVE", "workspace": "[", "created_at": "2026-07-31 18:19", "last_run_at": "2026-08-15 09:57", "rrule": "FREQ=WEEKLY;BYDAY=SA;BYHOUR=10;BYMINUTE=0", "purpose": "读取 D:/workbuddy/灵感库（即 ObsidianVault 下的 10-灵感库）最近7天新增的卡片/笔记，做要点汇总；再挑3-5条历史卡片给一句复习提示（为什么值得回看", "report": null, "cat": "知识管理", "output": "ObsidianVault/10-灵感库/index.html", "conflict": ""}, {"id": "automation-1785517652840", "name": "赚钱日报", "status": "PAUSED", "workspace": "[", "created_at": "2026-08-01 01:07", "last_run_at": "2026-08-26 09:08", "rrule": "FREQ=DAILY;BYHOUR=9;BYMINUTE=0", "purpose": "你是一个「赚钱日报」生成器。每天给一位纯小白用户产出一份他能看懂的搞钱/副业/创业/行业动向中文简报，并保存到本地（飞书 + Obsidian 双通道 + 离线成品面板）。\n\n流程", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 09:08", "duration_sec": null, "summary": ""}, "cat": "赚钱副业", "output": "赚钱日报/最新日报.html", "conflict": ""}, {"id": "automation-1785989393376", "name": "求是时评·AI自动拆解", "status": "PAUSED", "workspace": "[", "created_at": "2026-08-06 12:09", "last_run_at": "2026-08-17 12:39", "rrule": "FREQ=DAILY;BYHOUR=8;BYMINUTE=0;BYSECOND=0", "purpose": "【模型铁律·强制 openrouter/free·严禁切换】本任务所有 AI 推理、总结、判断、生成、调用工具时的模型，固定为自定义模型 openrouter/free。严禁使用 ", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-17 12:34", "duration_sec": null, "summary": ""}, "cat": "申论素材", "output": "", "conflict": "shenlun_site"}, {"id": "automation-1786031349224", "name": "限免结束自动暂停全部自动化（9/1）", "status": "ACTIVE", "workspace": "[", "created_at": "2026-08-06 23:49", "last_run_at": null, "rrule": "once:2026-09-01T00:05:00+08:00", "purpose": "【模型铁律·强制 openrouter/free·严禁切换】本任务所有 AI 推理、总结、判断、生成、调用工具时的模型，固定为自定义模型 openrouter/free。严禁使用 ", "report": null, "cat": "系统", "output": "", "conflict": "switch"}, {"id": "automation-1786871164971", "name": "每日整理捕获箱（AI智能分类+总结+关联）", "status": "PAUSED", "workspace": "[", "created_at": "2026-08-16 17:06", "last_run_at": "2026-08-26 22:22", "rrule": "FREQ=DAILY;BYHOUR=21;BYMINUTE=0", "purpose": "读取 D:/workbuddy/ObsidianVault/00-捕获箱/ 下的待处理内容（inbox.md、backup-*.md、或用户导出的捕获箱备份 .md）。对其中尚未处", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 22:21", "duration_sec": null, "summary": ""}, "cat": "知识管理", "output": "ObsidianVault/10-灵感库/关联分析.html", "conflict": ""}, {"id": "automation-1786929177164", "name": "走失儿童-每日AI搜索采集", "status": "PAUSED", "workspace": "[", "created_at": "2026-08-17 09:12", "last_run_at": "2026-08-26 08:43", "rrule": "FREQ=DAILY;BYHOUR=8;BYMINUTE=0", "purpose": "你负责每天主动搜索最新走失儿童/紧急寻人信息，并更新到 D:\\workbuddy\\走失儿童信息工具\\src\\real_data.py，然后生成可分享卡片。\n\n执行步骤：\n1. 用 ", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-26 08:42", "duration_sec": null, "summary": ""}, "cat": "公益", "output": "走失儿童信息工具/output/cards/index.html", "conflict": ""}, {"id": "automation-1786940660922", "name": "新华时评采集·喂料至拆解队列", "status": "PAUSED", "workspace": "[", "created_at": "2026-08-17 12:24", "last_run_at": null, "rrule": "FREQ=DAILY;BYHOUR=7;BYMINUTE=0;BYSECOND=0", "purpose": "你是「新华时评采集」机器人，负责把新华网最新时政评论喂给「求是时评·AI自动拆解」自动化，形成持续采集→拆解→上线的管线。BASE = D:/workbuddy/国考申论/求是申论", "report": null, "cat": "申论素材", "output": "", "conflict": ""}, {"id": "automation-1787279411380", "name": "省考模拟抓取·每小时进度汇报", "status": "PAUSED", "workspace": "[", "created_at": "2026-08-21 10:30", "last_run_at": null, "rrule": "FREQ=DAILY;BYHOUR=0;BYMINUTE=0", "purpose": "【模型铁律·强制 openrouter/free·严禁切换】本任务所有 AI 推理、总结、判断、生成、调用工具时的模型，固定为自定义模型 openrouter/free。严禁使用 ", "report": null, "cat": "考公提分", "output": "", "conflict": "bank_write"}, {"id": "automation-1787571681720", "name": "总控执行器·队列消费", "status": "PAUSED", "workspace": "[", "created_at": "2026-08-24 19:41", "last_run_at": "2026-08-27 02:42", "rrule": "FREQ=HOURLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR,SA,SU", "purpose": "你是「自动化总控面板」的后端执行器。面板（D:/workbuddy/自动化总控/）把用户想运行的 AI 类自动化请求写进 queue/ 目录下的 JSON 文件。你的任务：周期性消", "report": {"status": "PENDING_REVIEW", "started_at": "2026-08-27 02:41", "duration_sec": null, "summary": ""}, "cat": "系统", "output": "", "conflict": "switch"}];
+let CONFIG={folders:[],items:{}};
+let showDel=false,editing=null,selected=new Set();
+let backend=false;
+
+async function probeBackend(){
+  try{const r=await fetch('/api/automations',{method:'GET'});if(r.ok){backend=true;}}catch(e){backend=false;}
+  applyMode();
+}
+function applyMode(){
+  const tag=document.getElementById('modeTag');const note=document.getElementById('modeNote');
+  if(backend){
+    tag.textContent='· 已连接本地后端（可运行/编辑）';tag.className='backend-on';
+    note.innerHTML='检测到本地 <b>server.py</b> 后端，已解锁：运行/批量启动/编辑/文件夹/导出导入/报告。若空白请确认已双击「启动面板.bat」。';
+    ['btnRunAll','btnRunSel','btnNewFolder','btnExport','btnImport','btnRefresh'].forEach(id=>document.getElementById(id).disabled=false);
+  }else{
+    tag.textContent='· 只读模式（GitHub Pages）';tag.className='backend-off';
+    note.innerHTML='当前为 <b>只读展示</b>（GitHub Pages 无后端）。要运行/暂停请在本机双击「启动面板.bat」起后端，或在 WorkBuddy 左侧「自动化」按名称操作。卡片「运行」会提示在 WB 对话中触发；ID 可一键复制定位。';
+  }
+}
+
+async function api(u,m,body){const r=await fetch(u,{method:m,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});try{return await r.json();}catch(e){return {};}}
+async function refresh(){if(!backend)return;try{AUTOS=await api('/api/automations');CONFIG=await api('/api/config');render();}catch(e){}}
+function conflictBadge(g){const m={io_heavy:['重IO互斥','red'],shenlun_site:['站点重建竞态','amber'],bank_write:['题库写竞态','amber'],switch:['总闸·排除','red']};const x=m[g];return x?`<span class="tag ${x[1]}">${x[0]}</span>`:'';}
+
+function gItem(id){return CONFIG.items[id]||{};}
+function visible(){
+  const q=(document.getElementById('search').value||'').toLowerCase();
+  const fs=document.getElementById('filterStatus').value;
+  const cat=window.__cat||'all';
+  return AUTOS.filter(a=>{
+    if(cat!=='all'&&a.cat!==cat)return false;
+    if(fs&&a.status!==fs)return false;
+    if(q&&!(a.name+a.id+(a.purpose||'')).toLowerCase().includes(q))return false;
+    return true;});
+}
+function render(){
+  const vis=visible();
+  const active=AUTOS.filter(a=>a.status==='ACTIVE').length;
+  const paused=AUTOS.length-active;
+  document.getElementById('stats').innerHTML=
+    stat(AUTOS.length,'总数')+stat(active,'运行中')+stat(paused,'已暂停')+stat([...new Set(AUTOS.map(a=>a.cat))].length,'分类');
+  const grouped={};vis.forEach(a=>{const c=a.cat||'其他';(grouped[c]=grouped[c]||[]).push(a);});
+  const wrap=document.getElementById('wrap');wrap.innerHTML='';
+  if(backend){
+    const sz=vis.filter(a=>gItem(a.id).inStartZone);
+    if(sz.length){const z=document.createElement('div');z.className='startzone';
+      z.innerHTML='<div class="zh"><span>🚀 一键启动区（'+sz.length+'）</span><button class="btn sm" onclick="runAll()">▶ 启动本区全部</button></div><div class="grid" id="szg"></div>';
+      wrap.appendChild(z);const g=document.createElement('div');g.className='grid';z.querySelector('#szg').replaceWith(g);sz.forEach(a=>g.appendChild(card(a)));}
+  }
+  Object.keys(grouped).sort().forEach(cat=>{
+    const sec=document.createElement('div');sec.className='sec-title';
+    sec.innerHTML=cat+' <span class="badge">'+grouped[cat].length+'</span>';wrap.appendChild(sec);
+    const grid=document.createElement('div');grid.className='grid';
+    grouped[cat].forEach(a=>grid.appendChild(card(a)));wrap.appendChild(grid);
+  });
+  if(vis.length===0)wrap.innerHTML='<div class="hint">无匹配结果</div>';
+}
+function stat(n,l){return '<div class="stat"><b>'+n+'</b><span>'+l+'</span></div>';}
+function card(a){
+  const st=a.status==='ACTIVE'?'<span class="tag green">运行中</span>':'<span class="tag amber">已暂停</span>';
+  const rep=a.report;let rh='';
+  if(rep&&rep.status){const cls=rep.status==='success'?'ok':rep.status==='error'?'err':rep.status==='queued'?'q':'run';
+    rh='<div class="rep '+cls+'">📊 '+(rep.status==='queued'?'已入队':rep.status==='running'?'运行中…':'上次 '+rep.status)+' · '+(rep.started_at||'')+(rep.duration_sec!=null?' · '+rep.duration_sec+'s':'')+'</div>';}
+  const out=a.output?'<div class="meta">产出：<a class="tag blue" style="text-decoration:none" href="'+a.output+'" target="_blank">查看报告 ↗</a></div>':'';
+  const acts=backend
+    ? '<button class="btn sm primary" onclick="runOne(\''+a.id+'\')">▶ 运行</button><button class="btn sm" onclick="openEdit(\''+a.id+'\')">✎ 编辑</button><button class="btn sm" onclick="openRep(\''+a.id+'\')">📊 报告</button><button class="btn sm" onclick="toggleZone(\''+a.id+'\')">'+(gItem(a.id).inStartZone?'移出启动区':'加入启动区')+'</button><button class="btn sm" onclick="moveFolder(\''+a.id+'\')">📁 归组</button>'
+    : '<button class="btn sm primary" onclick="alert(\'请在 WorkBuddy 对话中输入「运行 '+a.name.replace(/"/g,'')+'」来手动触发（本页只读）\')">运行</button><button class="btn sm" onclick="copyId(\''+a.id+'\')">⧉ 复制ID</button>'+(a.output?'<button class="btn sm" onclick="window.open(\''+a.output+'\')">📊 报告</button>':'');
+  const d=document.createElement('div');d.className='card';
+  d.innerHTML='<div class="nm">'+a.name+'<button class="btn sm" style="position:absolute;top:8px;right:8px;padding:2px 6px" onclick="copyId(\''+a.id+'\')">ID</button></div>'+
+    '<div class="id">'+a.id+'</div>'+
+    '<div class="row">'+st+'<span class="tag blue">'+a.cat+'</span>'+conflictBadge(a.conflict)+'</div>'+
+    '<div class="meta">🕓 '+(a.last_run_at||'未运行')+' · '+(a.rrule||'')+'<br>用途: '+(a.purpose||'').slice(0,80)+'</div>'+
+    out+rh+'<div class="acts">'+acts+'</div>';
+  return d;
+}
+function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+async function runOne(id){await api('/api/run/'+id,'POST');refresh();}
+async function runAll(){const ids=AUTOS.filter(a=>gItem(a.id).inStartZone&&a.status!=='DELETED').map(a=>a.id);if(!ids.length){alert('启动区为空');return;}if(!confirm('将启动启动区内 '+ids.length+' 个自动化，确认？'))return;await api('/api/run_all','POST');refresh();}
+async function runSelected(){const ids=[...selected];if(!ids.length){alert('请先勾选卡片');return;}await api('/api/run_selected','POST',{ids});refresh();}
+function toggleZone(id){const it=CONFIG.items[id]||(CONFIG.items[id]={});it.inStartZone=!it.inStartZone;saveCfg();}
+async function saveCfg(){if(!backend)return;await api('/api/config','POST',CONFIG);refresh();}
+function addFolder(){const f=prompt('文件夹名称:');if(!f)return;CONFIG.folders=CONFIG.folders||[];CONFIG.folders.push({id:'f'+Date.now(),name:f});saveCfg();}
+function moveFolder(id){const f=prompt('输入文件夹名（已有则填同名）:');if(!f)return;let fob=(CONFIG.folders||[]).find(x=>x.name===f);if(!fob){fob={id:'f'+Date.now(),name:f};CONFIG.folders=CONFIG.folders||[];CONFIG.folders.push(fob);}const it=CONFIG.items[id]||(CONFIG.items[id]={});it.folder=fob.id;saveCfg();}
+function openEdit(id){editing=id;const a=AUTOS.find(x=>x.id===id);const it=gItem(id);
+  document.getElementById('e_name').value=it.displayName||a.name;
+  document.getElementById('e_notes').value=it.notes||'';
+  document.getElementById('e_cat').value=it.category||a.cat;
+  const fs=document.getElementById('e_folder');fs.innerHTML='<option value="">（不归类）</option>'+(CONFIG.folders||[]).map(f=>'<option value="'+f.id+'">'+f.name+'</option>').join('');
+  fs.value=it.folder||'';
+  document.getElementById('e_zone').checked=!!it.inStartZone;
+  document.getElementById('editM').classList.add('open');}
+async function saveEdit(){const it=CONFIG.items[editing]||(CONFIG.items[editing]={});
+  it.displayName=document.getElementById('e_name').value;
+  it.notes=document.getElementById('e_notes').value;
+  it.category=document.getElementById('e_cat').value;
+  it.folder=document.getElementById('e_folder').value||null;
+  it.inStartZone=document.getElementById('e_zone').checked;
+  closeM('editM');await saveCfg();}
+async function openRep(id){const r=await api('/api/report/'+id);const a=AUTOS.find(x=>x.id===id);
+  document.getElementById('repTitle').textContent='📊 '+a.name+' · 运行报告';
+  let h='';if(!r||!r.status){h='<div class="meta">暂无运行记录，点「运行」后这里显示本次结果。</div>';}
+  else{h='<div class="rep '+(r.status==='success'?'ok':r.status==='error'?'err':r.status==='queued'?'q':'run')+'" style="border:0;padding:0">状态: <b>'+r.status+'</b> · 开始 '+(r.started_at||'')+' · 用时 '+(r.duration_sec??'-')+'s<br>摘要: '+(r.summary||'')+'</div>'+(r.errors?'<pre class="out">'+esc(r.errors)+'</pre>':'');}
+  document.getElementById('repBody').innerHTML=h;document.getElementById('repM').classList.add('open');}
+function exportCfg(){const b=JSON.stringify(CONFIG,null,2);const u=URL.createObjectURL(new Blob([b],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='自动化总控配置.json';a.click();}
+function importCfg(){document.getElementById('impFile').click();}
+async function doImport(inp){const f=inp.files[0];if(!f)return;try{CONFIG=JSON.parse(await f.text());await saveCfg();alert('导入成功');}catch(e){alert('导入失败: '+e);}}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+
+function copyId(id){navigator.clipboard.writeText(id).then(()=>alert('已复制ID: '+id));}
+function copyAllIds(){const ids=AUTOS.map(a=>a.id).join('\n');navigator.clipboard.writeText(ids).then(()=>alert('已复制全部 '+AUTOS.length+' 个ID'));}
+
+const CATS=['考公提分','申论素材','赚钱副业','网盘工具','知识管理','公益','系统','其他'];
+function buildTabs(){
+  const t=document.getElementById('tabs');
+  const all=['all',...CATS.filter(c=>AUTOS.some(a=>a.cat===c))];
+  t.innerHTML=all.map((c,i)=>'<button class="tab-btn'+(i===0?' active':'')+'" onclick="showCat(\''+c+'\',this)">'+(c==='all'?'全部':c)+'</button>').join('');
+}
+function showCat(c,btn){window.__cat=c;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');render();}
+
+function init(){
+  document.getElementById('gen').textContent=GEN_TIME;
+  document.getElementById('total').textContent=AUTOS.length;
+  buildTabs();render();probeBackend();
+}
+init();
+</script>
+</body>
+</html>
