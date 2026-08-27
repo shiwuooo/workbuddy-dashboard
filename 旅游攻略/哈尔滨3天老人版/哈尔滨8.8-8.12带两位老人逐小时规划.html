@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哈尔滨8.8-8.12 带两位70岁老人逐小时详细规划</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#fff; --ink:#1f2d3d; --sub:#5a6b7b; --line:#e3e8ef;
+    --blue:#1f6fb2; --bluebg:#eaf4fb; --green:#2f8a5b; --greenbg:#e8f6ee; --amber:#c47d12; --amberbg:#fdf4e3; --red:#c0392b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;line-height:1.62}
+  .wrap{max-width:920px;margin:0 auto;padding:16px}
+  header{background:linear-gradient(135deg,#1f6fb2,#134b78);color:#fff;border-radius:14px;padding:20px;margin-bottom:14px}
+  header h1{margin:0 0 6px;font-size:21px}
+  header p{margin:2px 0;opacity:.92;font-size:13.5px}
+  .tags span{display:inline-block;background:rgba(255,255,255,.16);border-radius:20px;padding:3px 11px;font-size:12px;margin:8px 6px 0 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:13px}
+  .card h2{margin:0 0 10px;font-size:17px;color:var(--blue);display:flex;align-items:center;gap:8px}
+  .card h2 .n{background:var(--blue);color:#fff;border-radius:8px;min-width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;padding:0 6px}
+  h3{font-size:14.5px;color:var(--green);margin:14px 0 6px}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+  th{background:var(--bluebg);color:var(--blue);font-weight:600;white-space:nowrap}
+  tr:nth-child(even) td{background:#fafcfe}
+  .day{background:var(--bluebg);border-left:5px solid var(--blue);border-radius:8px;padding:9px 13px;margin:16px 0 8px;font-weight:700;color:var(--blue);font-size:15px}
+  .pill{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:600}
+  .pill.ok{background:var(--greenbg);color:var(--green)}
+  .pill.warn{background:var(--amberbg);color:var(--amber)}
+  .pill.info{background:var(--bluebg);color:var(--blue)}
+  .note{background:var(--amberbg);border-radius:8px;padding:9px 13px;font-size:13px;color:#7a5800;margin:8px 0}
+  .blue{background:var(--bluebg);border-radius:8px;padding:9px 13px;font-size:13px;color:#0d4a73;margin:8px 0}
+  ul{margin:6px 0;padding-left:20px}
+  li{margin:3px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  @media(max-width:600px){.grid2{grid-template-columns:1fr}table{font-size:12px}th,td{padding:5px 6px}}
+  details{border:1px solid var(--line);border-radius:12px;padding:8px 14px;margin-bottom:13px;background:var(--card)}
+  summary{cursor:pointer;font-weight:700;color:var(--blue);font-size:15px}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13px;margin:6px 0}
+  .kv b{color:var(--sub);font-weight:600}
+  footer{text-align:center;color:var(--sub);font-size:11.5px;padding:12px}
+  .price{color:var(--red);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>哈尔滨 8.8 – 8.12 带两位70岁老人 · 逐小时详细规划</h1>
+  <p>酒店：兰欧尚品酒店（哈尔滨火车站博物馆地铁站店）｜南岗区红军街6号</p>
+  <p>人数：2位老人（70岁）+ 你 ｜ 起点：8月8日（周六）16:00 ｜ 终点：8月12日（周三）</p>
+  <p>季节：8月夏末避暑版 ｜ 核心：慢节奏 · 每天午休 · 打车为主 · 老人免票带身份证</p>
+  <div class="tags">
+    <span>每天≤2主景点</span><span>单日步行≤5000步</span><span>强制13:30午休</span>
+    <span>索菲亚周一闭馆→排周日</span><span>虎林园早去</span><span>早市7点前到</span>
+  </div>
+</header>
+
+<!-- 费用总览 -->
+<div class="card">
+  <h2><span class="n">¥</span>费用总览（3人 · 4晚4.5天 · 预估）</h2>
+  <table>
+    <tr><th>项目</th><th>明细</th><th>估算</th><th>备注</th></tr>
+    <tr><td>住宿</td><td>兰欧尚品 红军街6号，约¥209/晚 ×4晚</td><td class="price">≈¥840</td><td>含早¥38/人（老人超1.2m收¥35）</td></tr>
+    <tr><td>餐饮</td><td>早市+正餐，3人约¥160–260/餐</td><td class="price">≈¥2200–3000</td><td>老厨家/张包铺人均偏高</td></tr>
+    <tr><td>门票</td><td>索菲亚内部¥20×1（2老人免）；虎林园惊险车套票¥130×3；太阳岛免费+大熊猫馆¥46–49×3；松花江游船¥60×3</td><td class="price">≈¥740</td><td>70岁多数免/半价，带身份证现场核</td></tr>
+    <tr><td>市内交通</td><td>全程打车为主</td><td class="price">≈¥700–1000</td><td>出租车起步¥9/3km，后¥1.9/km</td></tr>
+    <tr><td>手信</td><td>红肠/大列巴/套娃等</td><td class="price">≈¥300–500</td><td>秋林里道斯总店买</td></tr>
+    <tr><td><b>合计</b></td><td></td><td class="price"><b>≈¥4800–6100</b></td><td>不含往返大交通</td></tr>
+  </table>
+  <div class="note">所有金额为<strong>预估</strong>，以现场实际为准；打车费按地图距离估算，高峰期/堵车会上浮。</div>
+</div>
+
+<!-- ============ Day 0 ============ -->
+<div class="day">Day 0 · 8月8日（周六）16:00 抵达入住 · 轻松适应</div>
+<table>
+  <tr><th>时间</th><th>去哪 / 做什么</th><th>交通（坐什么·多久·费用·打到哪里）</th><th>吃什么 / 注意</th></tr>
+  <tr><td>16:00</td><td>抵达哈尔滨，前往酒店</td><td>飞机：机场大巴/打车约1h <span class="price">¥120–150</span>；火车：哈尔滨站距酒店1.6km打车 <span class="price">¥10</span>，打至「红军街6号 兰欧尚品酒店」</td><td>—</td></tr>
+  <tr><td>17:00</td><td>入住、休息，适应气候</td><td>步行</td><td>酒店旁「黄房子俄罗斯小院街区」(196m)可慢走</td></tr>
+  <tr><td>18:30</td><td>附近晚餐（不折腾老人）</td><td>打车去果戈里大街 <span class="price">¥10/8分钟</span>，打至「果戈里大街」</td><td>果戈里周边东北菜/俄式简餐；或酒店步行范围内解决。第一天少油少盐</td></tr>
+  <tr><td>20:00</td><td>回酒店休息</td><td>打车 <span class="price">¥10</span></td><td>早睡，养足精神应对次日早市</td></tr>
+</table>
+
+<!-- ============ Day 1 ============ -->
+<div class="day">Day 1 · 8月9日（周日）道里核心：早市 + 索菲亚 + 中央大街 + 松花江</div>
+<table>
+  <tr><th>时间</th><th>去哪 / 做什么</th><th>交通</th><th>吃 / 注意</th></tr>
+  <tr><td>06:50</td><td>出发去红专街早市</td><td>酒店→红专街(通江街口)，打车 <span class="price">¥14/15分钟</span>，打至「红专街与通江街交叉口」(西端靠江)</td><td>—</td></tr>
+  <tr><td>07:10–08:30</td><td><b>红专街早市</b>逛吃（详见下方专题）</td><td>步行沿红专街向东走到经纬街端</td><td>尹胖子油炸糕、笨巧手包子、豆腐脑、巧克力油条、肉蛋堡</td></tr>
+  <tr><td>08:40</td><td>去圣索菲亚大教堂</td><td>红专街→索菲亚，步行约15分钟 或 打车 <span class="price">¥10/5分钟</span></td><td>—</td></tr>
+  <tr><td>09:00–10:30</td><td><b>圣索菲亚</b>：外景拍照+内部艺术馆（详见专题）</td><td>步行</td><td>内部¥20(65+免)；公众号「哈尔滨建筑艺术馆」预约</td></tr>
+  <tr><td>10:30</td><td>道里菜市场（索菲亚对面）</td><td>步行3分钟</td><td>红肠、南瓜饼、熏肉大饼、格瓦斯、豆腐脑，可买手信</td></tr>
+  <tr><td>11:00</td><td>中央大街漫步</td><td>步行10分钟</td><td>买<b>马迭尔冰棍</b>(中央大街宾馆楼下总店，原味¥5，老人少量)</td></tr>
+  <tr><td>12:00</td><td>午餐：<b>老厨家</b>（中央大街西七道街店）</td><td>步行(就在中央大街)</td><td>非遗锅包肉(要"老式"现做)、地三鲜、大拉皮、罗宋汤，人均¥80–120</td></tr>
+  <tr><td>13:30</td><td><b>回酒店午休</b>（必做）</td><td>打车 <span class="price">¥15/15分钟</span></td><td>老人恢复体力</td></tr>
+  <tr><td>16:00</td><td>防洪纪念塔 + 松花江</td><td>打车 <span class="price">¥15</span> 打至「防洪纪念塔」</td><td>江边散步，坐短途游船(有顶棚) <span class="price">¥60–80/人</span></td></tr>
+  <tr><td>18:30</td><td>晚餐：<b>华梅西餐厅</b>（中央大街112号）</td><td>步行/打车 <span class="price">¥10</span></td><td>罐焖牛肉(软烂)、红菜汤、奶油烤杂拌，人均¥100–150，适合老人</td></tr>
+  <tr><td>20:00</td><td>索菲亚夜景（可选）</td><td>打车 <span class="price">¥10</span> 看亮灯19:00–21:30</td><td>夜景封神，看完回酒店</td></tr>
+</table>
+
+<!-- ============ Day 2 ============ -->
+<div class="day">Day 2 · 8月10日（周一）江北动物日：虎林园 + 太阳岛（索菲亚今日闭馆，故排今天）</div>
+<table>
+  <tr><th>时间</th><th>去哪 / 做什么</th><th>交通</th><th>吃 / 注意</th></tr>
+  <tr><td>07:30</td><td>酒店早餐</td><td>步行</td><td>自助¥38/人</td></tr>
+  <tr><td>08:00</td><td>出发去东北虎林园</td><td>酒店→松北街88号西北门，打车 <span class="price">¥40–50/40分钟</span>，导航「东北虎林园西北门」</td><td>早去老虎活跃</td></tr>
+  <tr><td>08:45–11:30</td><td><b>东北虎林园</b>（详见专题）</td><td>园内惊险车+步行</td><td>惊险车套票¥130；可自费买肉投喂¥20–30</td></tr>
+  <tr><td>11:30</td><td>出园回市区午餐+午休</td><td>打车回南岗/道里 <span class="price">¥40–50</span></td><td><b>山河屯铁锅炖</b>(南岗花园街282号)炖大鹅软烂</td></tr>
+  <tr><td>13:30</td><td><b>回酒店午休</b></td><td>步行/打车</td><td>—</td></tr>
+  <tr><td>15:30</td><td>太阳岛（下午凉快）</td><td>打车 <span class="price">¥35–45/30分钟</span> 打至「太阳岛风景区」</td><td>坐电瓶车游览(不走路)；大熊猫馆¥46–49可选</td></tr>
+  <tr><td>18:00</td><td>回酒店附近晚餐</td><td>打车 <span class="price">¥35–45</span></td><td>东北菜收尾</td></tr>
+</table>
+
+<!-- ============ Day 3 ============ -->
+<div class="day">Day 3 · 8月11日（周二）老道外 + 购物：中华巴洛克 + 秋林 + 俄罗斯商品</div>
+<table>
+  <tr><th>时间</th><th>去哪 / 做什么</th><th>交通</th><th>吃 / 注意</th></tr>
+  <tr><td>07:30</td><td>酒店早餐</td><td>步行</td><td>—</td></tr>
+  <tr><td>08:30</td><td>去老道外中华巴洛克</td><td>酒店→南二道街，打车 <span class="price">¥18–22/20分钟</span>，打至「南二道街与南勋街口」</td><td>—</td></tr>
+  <tr><td>09:00–10:30</td><td>中华巴洛克老街 + <b>张包铺总店</b></td><td>步行</td><td>排骨包子¥3/个、豆腐包子、老味锅包肉(偏硬慎点)</td></tr>
+  <tr><td>10:30</td><td>去秋林公司买手信</td><td>打车 <span class="price">¥15/15分钟</span> 打至「秋林公司 东大直街319号」</td><td><b>秋林里道斯</b>红肠、大列巴(老人少吃)、格瓦斯</td></tr>
+  <tr><td>11:30</td><td>果戈里大街散步（俄罗斯商品街）</td><td>步行</td><td>买套娃、红肠手信</td></tr>
+  <tr><td>12:30</td><td>午餐：<b>薛府一品酱骨</b>（上游街店）</td><td>打车 <span class="price">¥15</span></td><td>酱大骨软烂吸骨髓、脊骨锅，适合老人，人均¥60–90</td></tr>
+  <tr><td>14:00</td><td><b>回酒店午休</b></td><td>打车 <span class="price">¥15</span></td><td>—</td></tr>
+  <tr><td>16:00</td><td>自由/补逛：黑龙江省博物馆(免费需预约) 或 黄房子俄罗斯小院</td><td>打车 <span class="price">¥10–15</span></td><td>室内不晒，老人友好</td></tr>
+  <tr><td>18:30</td><td>晚餐：哈尔滨特色收尾</td><td>就近</td><td>铁锅炖/东北菜</td></tr>
+</table>
+
+<!-- ============ Day 4 ============ -->
+<div class="day">Day 4 · 8月12日（周三）返程日：轻松 + 补买手信</div>
+<table>
+  <tr><th>时间</th><th>去哪 / 做什么</th><th>交通</th><th>吃 / 注意</th></tr>
+  <tr><td>自然醒</td><td>酒店早餐，睡到自然醒</td><td>步行</td><td>—</td></tr>
+  <tr><td>09:00</td><td>补买手信（若前几日不够）</td><td>打车去中央大街/秋林 <span class="price">¥15</span></td><td>红肠、列巴、套娃</td></tr>
+  <tr><td>11:00</td><td>回酒店收拾行李</td><td>打车</td><td>—</td></tr>
+  <tr><td>12:00</td><td>午餐（附近）</td><td>步行/打车</td><td>最后一顿东北菜</td></tr>
+  <tr><td>下午</td><td>前往机场/火车站返程</td><td>机场打车 <span class="price">¥120–150/1h</span>；哈尔滨站打车¥10</td><td>提前2h出发</td></tr>
+</table>
+
+<!-- ===== 红专街早市专题 ===== -->
+<details open>
+  <summary>🥟 红专街早市专题：从哪头走 · 怎么逛 · 怎么买 · 怎么吃</summary>
+  <div style="margin-top:10px">
+    <div class="kv">
+      <b>位置</b><span>道里区红专街（通江街与经纬街之间），全长约500米，200+摊位</span>
+      <b>营业</b><span>04:30–09:30（夏季稍早，建议<strong>7点前到</strong>，8点人最旺，10点收摊）</span>
+      <b>怎么去</b><span>从酒店打车<span class="price">¥14/15分钟</span>到「红专街与通江街口」；或地铁1号线博物馆站→2号线中央大街站3号口步行8分钟</span>
+      <b>入口服务</b><span>早市入口有游客服务中心：免费热水、行李寄存、特产代邮</span>
+    </div>
+    <h3>从哪一头开始走（路线）</h3>
+    <p>建议<strong>从西端「通江街口」进</strong>（这头靠近松花江/中央大街），顺着红专街<strong>一路向东走到「经纬街口」</strong>。好处：吃完正好从东头出去，步行10分钟直达中央大街/索菲亚，不绕路。</p>
+    <h3>怎么逛 · 怎么买 · 怎么吃（沿路顺序）</h3>
+    <ul>
+      <li><b>尹胖子油炸糕</b>：早市顶流，必排队。玫瑰豆沙馅，外酥里糯，<span class="price">约¥3/个</span>。买5–10个，<strong>趁热吃</strong>，凉了皮软。</li>
+      <li><b>笨巧手包子</b>：老面发酵，推荐干肠酸菜馅/排骨馅，皮软馅香。配豆腐脑是本地经典组合。</li>
+      <li><b>豆腐脑</b>：咸香，配油条/包子。找本地人排队的那家。</li>
+      <li><b>红姐巧克力油条</b>：创新口味，可尝一根，原味更稳妥。</li>
+      <li><b>肉蛋堡（东北汉堡）</b>：扎实管饱，老人分一个尝鲜即可。</li>
+      <li><b>福鼎肉片汤</b>：骨汤烫肉片，撒香菜白胡椒，暖胃，夏季也舒服。</li>
+    </ul>
+    <div class="note">特点：红专街早市是「东北早餐活博物馆」，起源于1980s，最负盛名的游客首选早市。老人注意：地面可能有油渍，穿防滑鞋；早市人多，看好两位老人别走散；带现金零钱更方便。</div>
+  </div>
+</details>
+
+<!-- ===== 东北虎林园专题 ===== -->
+<details open>
+  <summary>🐅 东北虎林园专题：怎么去 · 规划 · 玩什么 · 门票与项目费用</summary>
+  <div style="margin-top:10px">
+    <div class="kv">
+      <b>地址</b><span>松北区松北街88号（统一由中源大道与学子街交叉口<strong>西北门</strong>入园）</span>
+      <b>开放</b><span>夏季 8:30–17:00（16:30停止检票）；冬季 8:30–16:30</span>
+      <b>咨询</b><span>0451-88080680</span>
+    </div>
+    <h3>怎么去（从酒店）</h3>
+    <ul>
+      <li><b>打车（推荐）</b>：酒店→西北门，约12–14km，<span class="price">¥40–50/40分钟</span>，导航「东北虎林园西北门」。</li>
+      <li>公交：35/122路「虎林园站」下车步行3分钟；地铁2号线「世茂大道站」转公交/打车。</li>
+      <li>自驾：导航「东北虎林园停车场」，暑期车位紧，早到。</li>
+    </ul>
+    <h3>园内规划（推荐路线，全程2–3小时）</h3>
+    <p>入园 → <b>惊险车游览（30分钟）</b>：坐笼车进散放区近距离看东北虎 → <b>步行区</b>（不限时，慢慢逛）→ <b>观虎台</b>（俯瞰群虎全景，最佳机位）→ <b>饲养科普体验馆</b> → <b>萌虎乐园</b>（小虎崽打闹，最治愈）→ 文创店 → 出园。</p>
+    <h3>玩什么</h3>
+    <ul>
+      <li>散放区看百兽之王（隔着铁栏，安全）；白虎、白狮、狮虎兽、黑虎、花豹一次看全。</li>
+      <li>可<strong>自费买肉块投喂</strong>（仅园内指定点，约<span class="price">¥20–30</span>），老人不必下车。</li>
+      <li>萌虎乐园看小虎崽，适合拍照。</li>
+      <li>国际马戏城（园内）单独票¥78；虎林园+马戏城套票成人¥200（老人票¥145）。</li>
+    </ul>
+    <h3>门票与项目费用</h3>
+    <table>
+      <tr><th>票种</th><th>价格</th><th>说明</th></tr>
+      <tr><td>全价普通车套票</td><td class="price">¥110</td><td>含¥20观光车票</td></tr>
+      <tr><td>全价惊险车套票</td><td class="price">¥130</td><td>含¥40观光车票，<strong>仅夏季提供</strong>，更刺激推荐</td></tr>
+      <tr><td>半价/老人票(60–65岁)</td><td class="price">¥85(惊险)/¥65(普通)</td><td>含车票，凭证件</td></tr>
+      <tr><td>70岁以上</td><td class="price">现场核</td><td>多数景区免/优惠，<strong>务必带身份证</strong>，以现场为准</td></tr>
+      <tr><td>投喂肉块</td><td class="price">¥20–30</td><td>园内指定点，自愿</td></tr>
+      <tr><td>国际马戏城</td><td class="price">¥78</td><td>或套票¥200(成人)</td></tr>
+    </table>
+    <div class="note">提示：① 建议<strong>早上去</strong>，老虎没进食活跃度高；临近中午吃饱后多趴着（"条纹地毯"）。② 惊险车每20分钟一班。③ 园内禁私自投喂，喂食去指定点。④ 乘车勿伸手出窗。</div>
+  </div>
+</details>
+
+<!-- ===== 圣索菲亚专题 ===== -->
+<details open>
+  <summary>⛪ 圣索菲亚大教堂专题：开放时间 · 怎么进 · 活动 · 门票 · 注意事项 · 历史 · 周边吃</summary>
+  <div style="margin-top:10px">
+    <div class="kv">
+      <b>地址</b><span>道里区透笼街88号</span>
+      <b>外部广场</b><span>全天免费开放，随便拍照</span>
+      <b>内部艺术馆</b><span>8:30–17:00（16:45停止检票），<span class="pill warn">每周一闭馆</span></span>
+      <b>夜景亮灯</b><span>夏季 19:00–21:30（封神，必看）</span>
+      <b>门票</b><span>内部成人<span class="price">¥20</span>；学生¥15；<strong>65岁以上/1.2m以下/军人残疾人免票</strong></span>
+      <b>预约</b><span>公众号「哈尔滨建筑艺术馆」提前约，也可现场购票</span>
+      <b>交通</b><span>地铁2号线中央大街站/尚志大街站步行10–15分钟；从酒店打车<span class="price">¥15/15分钟</span></span>
+    </div>
+    <h3>怎么进</h3>
+    <ul>
+      <li>外部广场：直接进，免费拍照，不需要票。</li>
+      <li>内部艺术馆：公众号预约或现场买¥20票，从正门检票入内（65+免，带身份证）。</li>
+    </ul>
+    <h3>里面有什么活动</h3>
+    <ul>
+      <li>常设：哈尔滨历史与建筑艺术展、画展、钢琴演奏、斑驳建筑与彩窗。</li>
+      <li>不定期<strong>古堡音乐会</strong>（周一三场约13:00/15:30/18:30，每场30分钟，需加钱），氛围感强。</li>
+      <li>印章打卡：带印章卡可打卡留念。</li>
+    </ul>
+    <h3>注意事项</h3>
+    <ul>
+      <li><span class="pill warn">周一闭馆</span>——本行程已把索菲亚排在周日(8/9)，避开通闭馆日。</li>
+      <li>黄金时段：清晨8:30–10:00人少光柔；傍晚16:00–18:00夕照；夜晚亮灯后。避雷11:00–15:00顶光+人挤。</li>
+      <li>最佳机位：广场正中央、侧边斜角、对街远景。</li>
+    </ul>
+    <h3>背景历史</h3>
+    <p>始建于<strong>1907年</strong>，最初是沙俄东西伯利亚第四步兵师修建中东铁路时的<strong>随军教堂</strong>；同年俄商出资改建为全木结构，1911年外包砖墙成砖木结构。1923–1932年第二次重建，由俄国建筑师科亚西科夫设计，成为<strong>远东最大东正教堂</strong>。通高53.25米，拜占庭式+俄罗斯帐篷顶/洋葱头穹顶，可容2000人，7座铜乐钟对应七音符。1986年列一类保护建筑，1996年全国重点文保，<strong>1997年辟为哈尔滨市建筑艺术馆</strong>。是中国现存规模最大的拜占庭式东正教建筑。</p>
+    <h3>周边吃什么（具体分店）</h3>
+    <ul>
+      <li><b>道里菜市场</b>（索菲亚对面，1902年）：红肠、南瓜饼、熏肉大饼、格瓦斯、豆腐脑，室内干净，可买手信。</li>
+      <li><b>老厨家（中央大街西七道街店）</b>：步行10分钟，详见下方餐厅分店。</li>
+      <li><b>马迭尔冰棍</b>：中央大街宾馆楼下总店，步行可达。</li>
+    </ul>
+  </div>
+</details>
+
+<!-- ===== 餐厅分店详解 ===== -->
+<div class="card">
+  <h2><span class="n">🍴</span>餐厅具体分店详解（含做菜水平对比）</h2>
+
+  <h3>① 老厨家（锅包肉鼻祖，郑兴文后人传承）</h3>
+  <div class="grid2">
+    <div>
+      <p><span class="pill info">中央大街西七道街店</span></p>
+      <ul>
+        <li>地址：道里区中央大街西七道街55-1号巴拉斯美食城3楼（近中央大街）</li>
+        <li>营业：10:30–21:00｜人均¥80–150</li>
+        <li>特色：<strong>火车车厢主题大厅</strong>（致敬中东铁路），边吃边看古董展品</li>
+        <li>做菜水平：正宗百年非遗锅包肉，但<strong>游客极多，常排队1小时</strong>，旺季出品稳定性略降</li>
+        <li>点单：说"要老式锅包肉"（糖醋汁现做），第一个上桌趁热吃</li>
+      </ul>
+    </div>
+    <div>
+      <p><span class="pill ok">友谊路总店（更推荐味道稳）</span></p>
+      <ul>
+        <li>地址：道里区友谊路318号</li>
+        <li>营业：约10:30–21:00｜人均¥80–120</li>
+        <li>特色：本地人更认可，环境安静，<strong>做菜水平稳定</strong></li>
+        <li>推荐：非遗锅包肉、地三鲜、大拉皮、罗宋汤、官府豆腐</li>
+        <li>选哪家：要氛围+顺路逛中央大街→西七道街店；要味道稳+少排队→友谊路总店</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>② 张包铺（百年排骨包，1901/1902创）</h3>
+  <ul>
+    <li>总店地址：道外区南勋街与南二道街交叉口西北角（南二道街42号），中华巴洛克内</li>
+    <li>必点：<strong>排骨包子¥3/个</strong>（1901传承，汁多肉嫩，买10个）、豆腐包子（清淡）、老味锅包肉</li>
+    <li>做菜水平：包子一绝；<strong>锅包肉偏硬，牙口不好慎点</strong>。早7点前到不用排队，9点后常拼桌</li>
+  </ul>
+
+  <h3>③ 马迭尔冰棍（百年地标）</h3>
+  <ul>
+    <li>总店：中央大街马迭尔宾馆楼下（中央大街89号附近），<strong>现做现卖、现场排队</strong>最正宗</li>
+    <li>原味奶香¥5左右，老人少量尝；是中央大街打卡地标，别在景区外随便买（易买到山寨）</li>
+  </ul>
+
+  <h3>④ 秋林·里道斯红肠（手信首选）</h3>
+  <ul>
+    <li>总店：南岗区东大直街319号秋林公司内，<strong>最全最正宗</strong>；中央大街有分店但总店品类全</li>
+    <li>买：红肠、大列巴（<strong>偏硬，老人少吃</strong>）、格瓦斯。可真空包装带走</li>
+  </ul>
+
+  <h3>⑤ 华梅西餐厅（俄餐活化石）</h3>
+  <ul>
+    <li>地址：道里区中央大街112号｜人均¥100–150</li>
+    <li>必点：<strong>罐焖牛肉（炖得软烂，列巴蘸汤）</strong>、红菜汤、奶油烤杂拌——适合老人</li>
+  </ul>
+
+  <h3>⑥ 薛府一品酱骨（酱骨界扛把子）</h3>
+  <ul>
+    <li>上游街店：道里区上游街7号｜人均¥60–90</li>
+    <li>必点：<strong>酱大骨（脱骨入味，骨髓吸着吃）</strong>、脊骨锅（加酸菜解腻）——软烂适合老人</li>
+  </ul>
+
+  <h3>⑦ 山河屯铁锅炖（东北乱炖天花板）</h3>
+  <ul>
+    <li>花园街店：南岗区花园街282号｜人均¥70–100</li>
+    <li>必点：铁锅炖大鹅（脱骨入味）、排骨豆角锅；记得提前电话预约座位</li>
+  </ul>
+
+  <h3>⑧ 毛毛熏肉大饼（本地老牌）</h3>
+  <ul>
+    <li>地址：道里区大安街56号｜人均¥35–50</li>
+    <li>必点：熏肉大饼、老式锅包肉（醋味呛鼻、薄脆）、溜肉段</li>
+  </ul>
+</div>
+
+<!-- ===== 交通速查 ===== -->
+<div class="card">
+  <h2><span class="n">🚕</span>从酒店出发 · 打车费用/时长速查</h2>
+  <table>
+    <tr><th>目的地</th><th>距离/时长</th><th>预估费用</th><th>打到哪里</th></tr>
+    <tr><td>红专街早市</td><td>约4km / 15分钟</td><td class="price">¥14</td><td>红专街与通江街口</td></tr>
+    <tr><td>圣索菲亚 / 道里菜市场</td><td>约4km / 15分钟</td><td class="price">¥15</td><td>透笼街88号 / 索菲亚广场</td></tr>
+    <tr><td>中央大街 / 马迭尔 / 华梅</td><td>约4km / 15分钟</td><td class="price">¥15</td><td>中央大街</td></tr>
+    <tr><td>防洪纪念塔 / 松花江</td><td>约5km / 18分钟</td><td class="price">¥15–18</td><td>防洪纪念塔</td></tr>
+    <tr><td>老道外中华巴洛克 / 张包铺</td><td>约6km / 20分钟</td><td class="price">¥18–22</td><td>南二道街与南勋街口</td></tr>
+    <tr><td>秋林公司 / 果戈里大街</td><td>约2km / 10分钟</td><td class="price">¥10–12</td><td>东大直街319号</td></tr>
+    <tr><td>太阳岛</td><td>约10km / 30分钟</td><td class="price">¥35–45</td><td>太阳岛风景区</td></tr>
+    <tr><td>东北虎林园</td><td>约13km / 40分钟</td><td class="price">¥40–50</td><td>松北街88号西北门</td></tr>
+    <tr><td>哈尔滨站</td><td>1.6km / 8分钟</td><td class="price">¥10</td><td>哈尔滨站</td></tr>
+    <tr><td>太平国际机场</td><td>约38km / 1h</td><td class="price">¥120–150</td><td>机场出发层</td></tr>
+  </table>
+  <div class="blue">地铁：酒店近地铁1号线博物馆站，可转2号线去道里/江北；但带老人少换乘，<strong>优先打车</strong>。</div>
+</div>
+
+<!-- ===== 老人专项 ===== -->
+<div class="card">
+  <h2><span class="n">⚠</span>70岁老人专项注意事项（全程贯穿）</h2>
+  <ul>
+    <li><strong>证件</strong>：每人带身份证，70岁多数景区免/半票，索菲亚内部65+免，现场核。</li>
+    <li><strong>节奏</strong>：每天≤2主景点，13:30强制回酒店午休1.5–2h，单日步行≤5000步。</li>
+    <li><strong>防滑</strong>：夏季无冰；早市地面油渍多，穿防滑平底鞋，看好老人别走散。</li>
+    <li><strong>用药</strong>：常用药+速效救心丸+降压药+肠胃药随身，存急诊卡（姓名/病史/家属电话）。</li>
+    <li><strong>饮食</strong>：东北菜油大咸，点菜统一"少油少盐、炖软烂、老人吃"；大列巴偏硬少给。</li>
+    <li><strong>厕所</strong>：每到一处先找洗手间，老人尿频别憋。</li>
+    <li><strong>防暑</strong>：夏末白天可达31°C，备薄外套+遮阳帽+保温杯，正午多在室内/车内。</li>
+    <li><strong>索菲亚</strong>：周一闭馆，已避开；内部需预约/购票，65+免。</li>
+    <li><strong>虎林园</strong>：早去老虎活跃；惊险车仅夏季；投喂去指定点。</li>
+  </ul>
+</div>
+
+<footer>由 WorkBuddy 生成 · 存于 D:\workbuddy\旅游攻略\哈尔滨3天老人版\ · 费用与时间均为预估，以现场为准 · 2026-08-07</footer>
+</div>
+</body>
+</html>
