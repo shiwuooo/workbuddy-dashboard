@@ -1,0 +1,31 @@
+{
+  "rsshub_base": "https://rsshub.app",
+  "feeds": [
+    {"name": "Hacker News 创业", "url": "https://news.ycombinator.com/rss", "region": "海外", "category": "创业", "limit": 10},
+    {"name": "Reddit r/SideHustle", "url": "https://www.reddit.com/r/SideHustle/top/.rss?t=week", "region": "海外", "category": "副业", "limit": 10},
+    {"name": "Reddit r/Entrepreneur", "url": "https://www.reddit.com/r/Entrepreneur/top/.rss?t=week", "region": "海外", "category": "创业", "limit": 10},
+    {"name": "Reddit r/EntrepreneurRideAlong", "url": "https://www.reddit.com/r/EntrepreneurRideAlong/top/.rss?t=week", "region": "海外", "category": "创业", "limit": 8},
+    {"name": "Side Hustle Nation", "url": "https://www.sidehustlenation.com/feed/", "region": "海外", "category": "副业", "limit": 8},
+    {"name": "Smart Passive Income", "url": "https://www.smartpassiveincome.com/feed/", "region": "海外", "category": "被动收入", "limit": 8},
+    {"name": "少数派", "url": "https://sspai.com/feed", "region": "国内", "category": "效率/副业", "limit": 8},
+    {"name": "阮一峰周刊", "url": "https://www.ruanyifeng.com/blog/atom.xml", "region": "国内", "category": "思维", "limit": 5},
+    {"name": "36氪快讯", "url": "https://36kr.com/feed", "region": "国内", "category": "行业动向", "limit": 10},
+    {"name": "知乎·副业搜索", "rsshub": true, "route": "/zhihu/search/%E5%89%AF%E4%B8%9A", "region": "国内", "category": "副业", "limit": 10},
+    {"name": "B站·副业赚钱", "rsshub": true, "route": "/bilibili/search/video?keyword=%E5%89%AF%E4%B8%9A%E8%B5%9A%E9%92%B1", "region": "国内", "category": "副业", "limit": 10},
+    {"name": "微博·副业赚钱", "rsshub": true, "route": "/weibo/keyword/%E5%89%AF%E4%B8%9A%E8%B5%9A%E9%92%B1", "region": "国内", "category": "副业", "limit": 10}
+  ],
+  "projects": [
+    {"name": "Folo（原 Follow）", "desc": "国人团队开发的现代 RSS 阅读器，内置 RSSHub，可订国内外资讯源，有手机 App。", "link": "https://github.com/RSSNext/Folo"},
+    {"name": "RSSHub", "desc": "给知乎、微博、B站、公众号等没有 RSS 的网站生成 RSS 订阅源。可自搭，更稳定。", "link": "https://github.com/DIYgod/RSSHub"},
+    {"name": "FreshRSS", "desc": "自托管 RSS 阅读器，无限订阅源、隐私好、速度快。", "link": "https://github.com/FreshRSS/FreshRSS"},
+    {"name": "Miniflux", "desc": "极简自托管 RSS 阅读器，适合喜欢干净界面的人。", "link": "https://github.com/miniflux/v2"},
+    {"name": "NewsNow", "desc": "实时热榜面板，国内热点一览，适合追热点选题。", "link": "https://github.com/ourongxing/newsnow"},
+    {"name": "awesome-indie", "desc": "独立开发者赚钱资源总集，11k+ Star，项目/工具/思路很全。", "link": "https://github.com/mezod/awesome-indie"},
+    {"name": "awesome-indie-cn", "desc": "awesome-indie 的中文版/补充，国内独立开发者方向。", "link": "https://github.com/timqian/awesome-indie-cn"},
+    {"name": "chinese-independent-developer", "desc": "国内独立开发者项目汇总，看别人在做什么、怎么赚钱。", "link": "https://github.com/1c7/chinese-independent-developer"},
+    {"name": "howto-make-more-money", "desc": "程序员/技术人副业实操指南（easychen），很多可迁移思路。", "link": "https://github.com/easychen/howto-make-more-money"},
+    {"name": "ai-money-maker-handbook", "desc": "AI 副业思路手册，整理各种用 AI 赚钱的方向。", "link": "https://github.com/typusm/ai-money-maker-handbook"},
+    {"name": "MoneyPrinterV2", "desc": "海外自动化变现相关工具/思路，可当参考。", "link": "https://github.com/FullStackMarto/MoneyPrinterV2"},
+    {"name": "Huginn", "desc": "自动化监控全网信息，可自建“赚钱情报机器人”。", "link": "https://github.com/huginn/huginn"}
+  ]
+}
