@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数码宝贝大冒险·养成版</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="digital-bg"></div>
+
+<!-- ========= 开始界面：选择搭档 ========= -->
+<div id="screen-start" class="screen">
+  <div class="start-inner">
+    <div class="game-logo">
+      <div class="logo-sub">DIGIMON ADVENTURE</div>
+      <div class="logo-main">数码宝贝大冒险</div>
+      <div class="logo-tag">— 养成版 · 文件岛篇~最终决战 —</div>
+    </div>
+    <p class="start-desc">1999年8月1日，露营中的你被卷入了数码世界……<br>一只数码宝贝正在等待与你相遇。选择你的搭档吧！</p>
+    <div id="partnerGrid" class="partner-grid"></div>
+  </div>
+</div>
+
+<!-- ========= 主界面 ========= -->
+<div id="screen-main" class="screen hidden">
+  <header class="topbar">
+    <div class="topbar-title">🌐 数码宝贝大冒险</div>
+    <div class="topbar-info">
+      <span id="hdDay">📅 第1天</span>
+      <span id="hdMoney">💰 100</span>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- 左侧：数码宝贝面板 -->
+    <aside class="pet-panel">
+      <div class="pet-stage-tag" id="petStage">幼年期</div>
+      <div class="pet-avatar-ring"><div id="petEmoji" class="pet-avatar">🥚</div></div>
+      <div class="pet-name" id="petName">???</div>
+      <div class="pet-kid" id="petKid">搭档：???</div>
+      <div class="pet-lv-row"><span id="petLv">Lv.1</span><span id="sickBadge" class="sick-badge hidden">🤒生病了</span></div>
+
+      <div class="bar-group">
+        <div class="bar-row"><span class="bar-label">经验</span><div class="bar exp"><div id="expBar"></div></div><span class="bar-val" id="expTxt"></span></div>
+        <div class="bar-row"><span class="bar-label">HP</span><div class="bar hp"><div id="hpBar"></div></div><span class="bar-val" id="hpTxt"></span></div>
+        <div class="bar-row"><span class="bar-label">MP</span><div class="bar mp"><div id="mpBar"></div></div><span class="bar-val" id="mpTxt"></span></div>
+      </div>
+
+      <div class="stat-grid" id="statGrid"></div>
+
+      <div class="bar-group care">
+        <div class="bar-row"><span class="bar-label">🍖满腹</span><div class="bar hunger"><div id="hungerBar"></div></div></div>
+        <div class="bar-row"><span class="bar-label">😊心情</span><div class="bar mood"><div id="moodBar"></div></div></div>
+        <div class="bar-row"><span class="bar-label">⚡体力</span><div class="bar energy"><div id="energyBar"></div></div></div>
+        <div class="bar-row"><span class="bar-label">🫧清洁</span><div class="bar clean"><div id="cleanBar"></div></div></div>
+      </div>
+
+      <button id="evoBtn" class="evo-btn hidden" onclick="doEvolve()">✨ 进 化 ✨</button>
+      <div id="evoHint" class="evo-hint"></div>
+    </aside>
+
+    <!-- 右侧：功能区 -->
+    <section class="content-panel">
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="care" onclick="switchTab('care')">🏠 养成</button>
+        <button class="tab-btn" data-tab="story" onclick="switchTab('story')">📖 冒险</button>
+        <button class="tab-btn" data-tab="wild" onclick="switchTab('wild')">⚔️ 对战</button>
+        <button class="tab-btn" data-tab="shop" onclick="switchTab('shop')">🛒 商店</button>
+        <button class="tab-btn" data-tab="dex" onclick="switchTab('dex')">📚 图鉴</button>
+        <button class="tab-btn" data-tab="sys" onclick="switchTab('sys')">⚙️ 系统</button>
+      </nav>
+
+      <div id="tab-care" class="tab-page">
+        <h3 class="sec-title">日常照顾</h3>
+        <div class="action-grid">
+          <button class="act-btn" onclick="doPlay()">🎾 玩耍<small>心情+20 体力-10</small></button>
+          <button class="act-btn" onclick="doRest()">💤 休息<small>体力/HP/MP全满</small></button>
+          <button class="act-btn" onclick="doCleanUp()">🧹 打扫<small>清洁度回满</small></button>
+          <button class="act-btn" onclick="doCure()">💊 治疗<small>消耗万能药</small></button>
+        </div>
+        <h3 class="sec-title">喂食（背包食物）</h3>
+        <div id="foodList" class="food-list"></div>
+        <h3 class="sec-title">训练（消耗体力20）</h3>
+        <div class="action-grid">
+          <button class="act-btn" onclick="doTrain('atk')">🥊 力量训练<small>攻击+2</small></button>
+          <button class="act-btn" onclick="doTrain('def')">🛡️ 防御训练<small>防御+2</small></button>
+          <button class="act-btn" onclick="doTrain('spd')">👟 速度训练<small>速度+2</small></button>
+          <button class="act-btn" onclick="doTrain('exp')">📖 综合特训<small>大量经验</small></button>
+        </div>
+        <h3 class="sec-title">日志</h3>
+        <div id="homeLog" class="home-log"></div>
+      </div>
+
+      <div id="tab-story" class="tab-page hidden">
+        <h3 class="sec-title">冒险剧情 · 数码宝贝大冒险</h3>
+        <div id="chapterList" class="chapter-list"></div>
+      </div>
+
+      <div id="tab-wild" class="tab-page hidden">
+        <h3 class="sec-title">自由对战（练级 & 赚钱）</h3>
+        <p class="tip">在数码世界中四处走走，会遇到野生数码兽。战斗可以获得经验和数码币，还有机会捡到肉！</p>
+        <button class="big-btn" onclick="startWildBattle()">🌲 出发探索！</button>
+      </div>
+
+      <div id="tab-shop" class="tab-page hidden">
+        <h3 class="sec-title">玄内先生的商店</h3>
+        <div id="shopList" class="shop-list"></div>
+        <h3 class="sec-title">我的背包</h3>
+        <div id="bagList" class="bag-list"></div>
+      </div>
+
+      <div id="tab-dex" class="tab-page hidden">
+        <h3 class="sec-title">数码宝贝图鉴 · 初代搭档进化路线</h3>
+        <div id="dexList"></div>
+      </div>
+
+      <div id="tab-sys" class="tab-page hidden">
+        <h3 class="sec-title">系统</h3>
+        <p class="tip">游戏会在每次操作后自动保存到浏览器本地。</p>
+        <div class="action-grid">
+          <button class="act-btn" onclick="exportSave()">📤 导出存档<small>复制到下方文本框</small></button>
+          <button class="act-btn" onclick="importSave()">📥 导入存档<small>粘贴后点击</small></button>
+          <button class="act-btn danger" onclick="resetGame()">🗑️ 重新开始<small>清空当前存档</small></button>
+        </div>
+        <textarea id="saveBox" class="save-box" placeholder="存档数据..."></textarea>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ========= 战斗界面 ========= -->
+<div id="screen-battle" class="screen hidden">
+  <div class="battle-arena">
+    <div class="battle-title" id="bTitle">战斗！</div>
+    <div class="battle-field">
+      <div class="fighter enemy">
+        <div class="f-name" id="bEnemyName"></div>
+        <div class="bar hp small"><div id="bEnemyHp"></div></div>
+        <div class="f-hptxt" id="bEnemyHpTxt"></div>
+        <div class="f-emoji" id="bEnemyEmoji">👾</div>
+      </div>
+      <div class="vs-mark">VS</div>
+      <div class="fighter player">
+        <div class="f-emoji" id="bPetEmoji">🦖</div>
+        <div class="f-name" id="bPetName"></div>
+        <div class="bar hp small"><div id="bPetHp"></div></div>
+        <div class="f-hptxt" id="bPetHpTxt"></div>
+        <div class="bar mp small"><div id="bPetMp"></div></div>
+      </div>
+    </div>
+    <div id="bLog" class="battle-log"></div>
+    <div id="bActions" class="battle-actions"></div>
+  </div>
+</div>
+
+<!-- ========= 剧情弹窗 ========= -->
+<div id="storyModal" class="modal hidden">
+  <div class="modal-box">
+    <h3 id="storyTitle"></h3>
+    <p id="storyText"></p>
+    <button id="storyBtn" class="big-btn">继续 ▶</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="game.js"></script>
+<script src="battle.js"></script>
+</body>
+</html>

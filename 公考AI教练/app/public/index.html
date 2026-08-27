@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>公考 AI 教练</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#0f1115" />
+  <link rel="apple-touch-icon" href="./icon.svg" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script>
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+  </script>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">公考 AI 教练</div>
+    <nav>
+      <button class="nav active" data-tab="coach">教练</button>
+      <button class="nav" data-tab="graph">错题图谱</button>
+      <button class="nav" data-tab="practice">主动练习</button>
+      <button class="nav" data-tab="shenlun">申论批改</button>
+      <button class="nav" data-tab="settings">设置</button>
+    </nav>
+    <div class="goal" id="goalBox">目标：加载中…</div>
+  </aside>
+
+  <main>
+    <!-- 教练 -->
+    <section class="tab active" id="tab-coach">
+      <div class="chat" id="chat"></div>
+      <div class="composer">
+        <textarea id="msg" placeholder="发任何想法或题目（可粘贴题干）给教练…"></textarea>
+        <button id="send">发送</button>
+      </div>
+    </section>
+
+    <!-- 错题图谱 -->
+    <section class="tab" id="tab-graph">
+      <h2>薄弱模块</h2>
+      <div id="weakBars" class="bars"></div>
+      <h2>错题本</h2>
+      <div id="mistakeList" class="list"></div>
+    </section>
+
+    <!-- 主动练习 -->
+    <section class="tab" id="tab-practice">
+      <div class="row">
+        <h2>今日练习</h2>
+        <button id="genDaily">生成（按薄弱点）</button>
+      </div>
+      <div id="dailyList" class="list"></div>
+      <h2>每周复盘</h2>
+      <button id="genReview">生成复盘报告</button>
+      <pre id="reviewBox" class="report"></pre>
+    </section>
+
+    <!-- 申论批改 -->
+    <section class="tab" id="tab-shenlun">
+      <h2>申论 AI 批改</h2>
+      <p class="hint">粘贴你写的大作文 / 小题答案，教练基于《求是》素材库（规范词·框架·金句·案例）给出评分与改进建议。无 Key 也能用。</p>
+      <textarea id="essay" placeholder="在此粘贴你的申论作答…"></textarea>
+      <div class="row"><button id="gradeBtn">开始批改</button><span id="gradeMsg" class="hint"></span></div>
+      <div id="gradeResult"></div>
+    </section>
+
+    <!-- 设置 -->
+    <section class="tab" id="tab-settings">
+      <h2>AI 私教开关</h2>
+      <p class="hint">不填 Key 也能用：教练会用检索模式返回最相关的真题+官方解析。填入 Key 后升级为一对一 AI 私教。</p>
+      <label><input type="checkbox" id="llmEnabled" /> 启用大模型</label>
+      <label>接口地址 <input type="text" id="baseURL" /></label>
+      <label>API Key <input type="password" id="apiKey" placeholder="在此填入你的 API Key" /></label>
+      <label>模型 <input type="text" id="model" /></label>
+      <label>目标 <input type="text" id="goal" /></label>
+      <button id="saveSettings">保存</button>
+      <p id="settingsMsg" class="hint"></p>
+      <h2>知识库</h2>
+      <p class="hint">题库来自 上岸通（125897 题）。如需重建：在 app 目录运行 <code>node build_kb.js</code></p>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

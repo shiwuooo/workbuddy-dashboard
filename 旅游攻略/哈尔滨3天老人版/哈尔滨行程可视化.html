@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哈尔滨8.8-8.12带两位70岁老人 · 行程可视化</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; max-width: 1000px; margin: 0 auto; padding: 20px; color: #222; background: #f7f9fc; line-height: 1.6; }
+  h1 { font-size: 24px; border-bottom: 3px solid #2f54eb; padding-bottom: 10px; }
+  h2 { font-size: 19px; margin-top: 34px; color: #1d39c4; border-left: 5px solid #2f54eb; padding-left: 10px; }
+  h3 { font-size: 16px; margin-top: 20px; color: #333; }
+  .card { background: #fff; border-radius: 10px; padding: 18px 22px; margin: 14px 0; box-shadow: 0 2px 10px rgba(0,0,0,.06); }
+  .mapwrap { background: #fff; border-radius: 10px; padding: 10px; box-shadow: 0 2px 10px rgba(0,0,0,.06); overflow-x: auto; }
+  svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 10px 0; }
+  th, td { border: 1px solid #e0e0e0; padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #eef2ff; font-weight: 600; }
+  tr:nth-child(even) td { background: #fafbff; }
+  .note { background: #fffbe6; border-left: 4px solid #faad14; padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 14px; }
+  .warn { background: #fff1f0; border-left: 4px solid #f5222d; padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 12px 0; font-size: 14px; }
+  .legend span { display: inline-block; margin-right: 16px; font-size: 13px; }
+  .dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; vertical-align: middle; margin-right: 5px; }
+  .tag { font-size: 12px; color: #555; }
+  .small { font-size: 12px; color: #888; }
+  .daytag { display: inline-block; padding: 2px 10px; border-radius: 12px; color: #fff; font-size: 13px; font-weight: 600; margin-right: 6px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 700px){ .grid2 { grid-template-columns: 1fr; } }
+  .price { color: #cf1322; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>哈尔滨 8.8–8.12 · 带两位70岁老人行程可视化</h1>
+<p class="tag">酒店：兰欧尚品酒店（南岗区红军街6号·博物馆地铁站店）｜「四点」= 老人休息好、可出发的时间，非到达时间｜全程滴滴/地铁，不走游客割韭菜点</p>
+
+<div class="card">
+  <b>五天框架</b>
+  <ul style="margin:8px 0">
+    <li><span class="daytag" style="background:#fa8c16">8/8 周六</span> 下午出发 → 黄房子 → 中央大街(华梅外景) → <b>索菲亚进里面(免票)</b> → 老厨家晚餐 → 夜景(中央大街/防洪纪念塔/江边)</li>
+    <li><span class="daytag" style="background:#52c41a">8/9 周日</span> 早7:00 安静街早市 → 太阳岛(粉樱号环线) → 晚 中央大街+中华巴洛克夜游</li>
+    <li><span class="daytag" style="background:#13c2c2">8/10 周一</span> 教堂专题半日：东大直街三教堂 → 圣阿列克谢耶夫(入内) → 索菲亚夜景(已去过可省)</li>
+    <li><span class="daytag" style="background:#722ed1">8/11 周二</span> 老道外中华巴洛克(白天细逛) + 张包铺午餐 → 网上下单手信</li>
+    <li><span class="daytag" style="background:#8c8c8c">8/12 周三</span> 返程（睡懒觉 → 手机下单手信 → 收拾 → 午餐后走）</li>
+  </ul>
+</div>
+
+<h2>一、行程地图（点位 · 每日路线 · 直线距离 · 距离环）</h2>
+<div class="legend card">
+  <b>图例：</b>
+  <span><span class="dot" style="background:#fa8c16"></span>8/8</span>
+  <span><span class="dot" style="background:#52c41a"></span>8/9</span>
+  <span><span class="dot" style="background:#13c2c2"></span>8/10</span>
+  <span><span class="dot" style="background:#722ed1"></span>8/11</span>
+  <span><span class="dot" style="background:#d4380d"></span>酒店</span>
+  <span class="small">（蓝色虚线圈 = 酒店周边 3/6/9km 直线距离环；连线标注「直线X.Xkm · 交通方式/费用」）</span>
+</div>
+<div class="mapwrap">
+  <svg id="map" viewBox="0 0 640 560" width="640" height="560" font-family="sans-serif"></svg>
+</div>
+<p class="small">说明：点位为近似坐标（按街道位置估算，用于看空间关系，非导航级）。直线距离为 Haversine 计算；实际交通距离/费用/时长见下方速查表。</p>
+
+<h2>二、酒店 → 各点 距离 / 交通 / 费用 速查表</h2>
+<div class="card">
+<table id="distTable">
+  <tr><th>目的地</th><th>直线距离</th><th>交通方式</th><th>时长</th><th>预估费用</th><th>备注</th></tr>
+</table>
+<p class="small">滴滴费用 = 用优惠券/一口价后的估算；地铁按2号线票价（约¥2–3/人）。带老人均优先滴滴（门口到门口少走路）。</p>
+</div>
+
+<h2>三、每日时间轴</h2>
+<div class="card">
+  <svg id="timeline" viewBox="0 0 960 420" width="960" height="420" font-family="sans-serif"></svg>
+  <p class="small">横轴为当日时段（06:00–22:00）。色块=活动，箭头=交通段。每个活动块内标注地点与交通。</p>
+</div>
+
+<h2>四、太阳岛粉樱号环线（放大详解）</h2>
+<div class="card">
+  <svg id="taiyang" viewBox="0 0 760 320" width="760" height="320" font-family="sans-serif"></svg>
+  <table>
+    <tr><th>站</th><th>下不下</th><th>看点</th><th>停留</th></tr>
+    <tr><td>太阳桥站(起)</td><td>不下</td><td>上车枢纽</td><td>—</td></tr>
+    <tr><td>坐龙广场</td><td>可下拍照</td><td>金代铜坐龙复制品，开阔</td><td>5分</td></tr>
+    <tr><td>栖凤台</td><td>仅补给</td><td>小吃摊/厕所</td><td>—</td></tr>
+    <tr><td>笨熊乐园</td><td>❌</td><td>儿童设施，老人无意义</td><td>—</td></tr>
+    <tr><td>水阁云天</td><td>✅</td><td>临湖双层观景阁，可坐</td><td>15–20分</td></tr>
+    <tr><td>浴日台</td><td>⚠️远观</td><td>三足金鸟，夏天或涨水封闭</td><td>—</td></tr>
+    <tr><td>太阳瀑</td><td>✅✅必下</td><td>人工瀑布+溶洞+天鹅湖，避暑</td><td>20–30分</td></tr>
+    <tr><td>寒地动物园</td><td>❌</td><td>另收30–55，不值</td><td>—</td></tr>
+    <tr><td>中东铁路公园</td><td>✅</td><td>老铁轨+火车头，平坦阴凉</td><td>15分</td></tr>
+    <tr><td>松鼠岛</td><td>⚠️</td><td>联票30，不如沿铁路桥免费看</td><td>—</td></tr>
+    <tr><td>抗联纪念园</td><td>⚠️看兴趣</td><td>红色雕塑群，免费平坦</td><td>10分</td></tr>
+    <tr><td>鹿苑</td><td>⚠️远观</td><td>梅花鹿，夏天有味</td><td>—</td></tr>
+    <tr><td>花卉园</td><td>✅看兴趣</td><td>7公顷花海，平坦</td><td>15分</td></tr>
+  </table>
+  <p class="note">票制：粉樱号 <b>25元/人，70岁不免</b>，三人¥75；<b>单圈制</b>（当日当次一圈内有效，途中可下车看完上车续走，一圈走完票核销，不能坐第二圈）。运营 8:30–16:30。老人需家人陪同乘车。大门票免费但需小程序预约。</p>
+</div>
+
+<h2>五、安静街早市（8/9 早7:00）</h2>
+<div class="card">
+  <p><b>位置</b>：道里区安升街与安静街交叉口西20米（中央大街站2号口步行约500米）。距酒店滴滴 <b>12–15分 / ¥12–16</b>。</p>
+  <p><b>本地人认的摊</b>：吕氏蛋堡(肉蛋堡¥3.5) · 尹胖子油炸糕(¥1.5) · 单县全羊汤(¥14/碗) · 晨来粥铺(大包) · 豆浆油条摊。</p>
+  <p><b>走法</b>：从安升街口进 → 沿安静街走，早点摊在中段（吕氏→晨来→单县→尹胖子一路吃）。人均¥10–20。带现金零钱，不少摊不扫码。</p>
+  <p class="warn">避雷：市场里的"俄罗斯商品/蜂蜜"摊多是对游客的，手信走网上官方旗舰店（秋林里道斯等）。</p>
+</div>
+
+<h2>六、索菲亚进里面（8/8 下午）</h2>
+<div class="card">
+  <p><b>免票</b>：内部(建筑艺术馆)成人¥20；<b>65岁以上(含70)凭身份证免票</b>。外部广场全天免费。</p>
+  <p><b>时间</b>：08:30–21:00，20:45停止入场（2026本地宝/实时状态核实）。夜景亮灯约19:00–21:30是<b>外观免费</b>，内部已关。</p>
+  <p><b>4点进里面来得及</b>：16:00出发(滴滴10–15分/¥12–18)→16:15到→内部看45–60分→离关门还有4.5小时，看完吃晚饭再回看夜景，一次覆盖。</p>
+  <p class="small">出发前一天扫公众号「哈尔滨建筑艺术馆」或美团页确认当天时间（少数旧攻略写17:00关，权威源指向21:00）。</p>
+</div>
+
+<h2>七、教堂专题（8/10，老人对教堂感兴趣）</h2>
+<div class="card">
+  <table>
+    <tr><th>教堂</th><th>派别</th><th>能否入内</th><th>距酒店</th><th>门票</th></tr>
+    <tr><td>圣母帡幪(东大直街268)</td><td>东正教</td><td>仅宗教活动</td><td>地铁1号线医大一院站</td><td>免费(外)</td></tr>
+    <tr><td>耶稣圣心(东大直街211)</td><td>天主教</td><td>外全天</td><td>同上，隔街</td><td>免费(外)</td></tr>
+    <tr><td>尼埃拉依(东大直街252)</td><td>基督教新教</td><td>外观为主</td><td>同上</td><td>免费</td></tr>
+    <tr><td>圣阿列克谢耶夫(革新街47)</td><td>天主教(原东正)</td><td><b>可入内+义工讲解</b></td><td>地铁2号线工人文化宫站</td><td>免费</td></tr>
+    <tr><td>犹太老会堂(通江街82)</td><td>犹太教</td><td>入内咖啡馆/弦乐</td><td>中央大街站</td><td>免费</td></tr>
+  </table>
+  <p class="note">半日线：东大直街三教堂(只看外观，彼此步行5–10分) → 滴滴去圣阿列克谢耶夫(入内，人少安静) → 中央大街站旁犹太老会堂喝咖啡听弦乐。平缓、可坐、不累。</p>
+</div>
+
+<h2>八、费用总览（3人，不含大交通/手信）</h2>
+<div class="card">
+  <table>
+    <tr><th>项目</th><th>估算</th></tr>
+    <tr><td>住宿(酒店4晚)</td><td>约 ¥1000–1600（按300–400/晚×2间或1间大床+加床）</td></tr>
+    <tr><td>餐饮(3人5天)</td><td>约 ¥1500–2200</td></tr>
+    <tr><td>门票(索菲亚免/太阳岛观光车¥75/巴洛克免费)</td><td>约 ¥75–200</td></tr>
+    <tr><td>市内交通(滴滴+地铁)</td><td>约 ¥400–600</td></tr>
+    <tr><td><b>合计</b></td><td class="price">约 ¥3000–4600</td></tr>
+  </table>
+</div>
+
+<script>
+// ===== 数据 =====
+const H = {name:"兰欧尚品酒店", lat:45.7635, lng:126.6300, type:"hotel"};
+const pts = {
+  G:{name:"黄房子俄式小院", lat:45.7630, lng:126.6350},
+  C:{name:"中央大街", lat:45.7755, lng:126.6150},
+  M:{name:"华梅西餐厅", lat:45.7745, lng:126.6160},
+  S:{name:"圣索菲亚教堂", lat:45.7710, lng:126.6185},
+  L:{name:"老厨家(友谊路总店)", lat:45.7680, lng:126.6250},
+  T:{name:"防洪纪念塔/江边", lat:45.7795, lng:126.6125},
+  A:{name:"安静街早市", lat:45.7580, lng:126.6150},
+  Y:{name:"太阳岛", lat:45.7840, lng:126.6030},
+  B:{name:"中华巴洛克(道外)", lat:45.7690, lng:126.6430},
+  X:{name:"圣阿列克谢耶夫教堂", lat:45.7580, lng:126.6400},
+  E:{name:"东大直街三教堂", lat:45.7660, lng:126.6400}
+};
+// 每日路线（用key）
+const routes = {
+  "8/8":  [["H","G"],["G","C"],["C","S"],["S","L"],["L","C"],["C","T"],["T","H"]],
+  "8/9":  [["H","A"],["A","C"],["C","Y"],["Y","H"],["H","C"],["C","B"],["B","H"]],
+  "8/10": [["H","E"],["E","X"],["X","C"],["C","H"]],
+  "8/11": [["H","B"],["B","H"]]
+};
+const routeColor = {"8/8":"#fa8c16","8/9":"#52c41a","8/10":"#13c2c2","8/11":"#722ed1"};
+// 交通标注（直线距离由JS算，交通文字固定）
+const transNote = {
+  "H-G":"步行10–15分/滴滴起步价", "G-C":"步行10分/滴滴¥12–18",
+  "C-S":"步行/滴滴¥12–18", "S-L":"滴滴¥12–16", "L-C":"滴滴¥12–18",
+  "C-T":"步行5–10分", "T-H":"滴滴¥12–18",
+  "H-A":"滴滴12–15分/¥12–16", "A-C":"走500米回中央大街站→地铁2号线",
+  "C-Y":"地铁2号线2站¥2–3 / 滴滴过江¥20–28", "Y-H":"地铁/滴滴过江",
+  "H-C":"地铁2号线3站¥2–3 / 滴滴¥12–18", "C-B":"滴滴15–20分/¥15–25",
+  "B-H":"滴滴20–25分/¥20–28", "H-E":"地铁1号线医大一院站", "E-X":"地铁2号线工人文化宫站/滴滴¥15–20",
+  "X-C":"地铁2号线中央大街站", "C-H":"地铁/滴滴"
+};
+// 速查表数据
+const distRows = [
+  ["索菲亚教堂", "S", "地铁1号线→2号线中央大街 / 滴滴", "10–15分", "¥12–18", "内部65+免票"],
+  ["中央大街", "C", "地铁2号线3站 / 滴滴", "10–15分", "¥12–18(地铁¥2–3)", "平缓好走"],
+  ["华梅西餐厅", "M", "中央大街步行", "步行5分", "—", "人均120–150"],
+  ["黄房子俄式小院", "G", "步行 / 滴滴", "10–15分", "滴滴起步价", "免费开放式"],
+  ["老厨家(友谊路)", "L", "滴滴", "约10分", "¥12–16", "锅包肉发源地"],
+  ["安静街早市", "A", "滴滴", "12–15分", "¥12–16", "本地早市，7点到"],
+  ["太阳岛", "Y", "地铁2号线2站 / 滴滴过江", "地铁25–30分 / 滴滴15–25分", "地铁¥2–3 / 滴滴¥20–28", "早高峰桥易堵"],
+  ["中华巴洛克", "B", "滴滴", "20–25分", "¥20–28", "道外，过江"],
+  ["圣阿列克谢耶夫", "X", "地铁2号线工人文化宫 / 滴滴", "约15分", "¥15–20", "可入内免费"],
+  ["东大直街三教堂", "E", "地铁1号线医大一院", "约10分", "地铁¥2–3", "只看外观"]
+];
+
+// ===== 投影 =====
+const SCALE = 9000, OX = 90, OY = 70;
+function proj(p){ return { x: (p.lng-126.590)*SCALE + OX, y: (45.800-p.lat)*SCALE + OY }; }
+function haversine(a,b){
+  const R=6371, toR=Math.PI/180;
+  const dLat=(b.lat-a.lat)*toR, dLng=(b.lng-a.lng)*toR;
+  const s=Math.sin(dLat/2)**2 + Math.cos(a.lat*toR)*Math.cos(b.lat*toR)*Math.sin(dLng/2)**2;
+  return (2*R*Math.asin(Math.sqrt(s))).toFixed(1);
+}
+const all = {H, ...pts};
+
+// ===== 画地图 =====
+const svg = document.getElementById("map");
+const NS="http://www.w3.org/2000/svg";
+function el(t,a){ const e=document.createElementNS(NS,t); for(const k in a) e.setAttribute(k,a[k]); return e; }
+
+// 松花江（横线，约lat45.781）
+const riverY = (45.800-45.781)*SCALE + OY;
+svg.appendChild(el("rect",{x:0,y:riverY-14,width:640,height:28,fill:"#cfe8ff",opacity:.9}));
+svg.appendChild(el("text",{x:530,y:riverY+4,fill:"#2b6cb0","font-size":12}).appendChild(document.createTextNode("松花江（江南 / 江北分界）")).parentNode);
+
+// 距离环
+[3,6,9].forEach(km=>{
+  const r = km/ ( (SCALE/1000) / 1000 ); // km -> px: 1度=SCALE px, 1度≈77km@45.76 => 1km≈ SCALE/77 px
+  const rr = km*(SCALE/77);
+  const c = proj(H);
+  svg.appendChild(el("circle",{cx:c.x,cy:c.y,r:rr,fill:"none",stroke:"#91d5ff","stroke-dasharray":"5,5","stroke-width":1}));
+  svg.appendChild(el("text",{x:c.x+rr-4,y:c.y-4,fill:"#40a9ff","font-size":11,transform:`rotate(-30 ${c.x+rr} ${c.y})`}).appendChild(document.createTextNode(km+"km")).parentNode);
+});
+
+// 路线连线
+for(const day in routes){
+  const col = routeColor[day];
+  routes[day].forEach(([a,b])=>{
+    const pa=proj(all[a]), pb=proj(all[b]);
+    svg.appendChild(el("line",{x1:pa.x,y1:pa.y,x2:pb.x,y2:pb.y,stroke:col,"stroke-width":2.5,opacity:.75,"stroke-linecap":"round"}));
+    // 中间标注
+    const mx=(pa.x+pb.x)/2, my=(pa.y+pb.y)/2;
+    const d = haversine(all[a],all[b]);
+    const note = transNote[a+"-"+b]||"";
+    const txt = el("text",{x:mx,y:my-4,fill:col,"font-size":10,"text-anchor":"middle","font-weight":"600"});
+    txt.appendChild(document.createTextNode("直线"+d+"km"));
+    svg.appendChild(txt);
+    if(note){
+      const t2=el("text",{x:mx,y:my+8,fill:"#666","font-size":9,"text-anchor":"middle"});
+      t2.appendChild(document.createTextNode(note.length>14?note.slice(0,13)+"…":note));
+      svg.appendChild(t2);
+    }
+  });
+}
+
+// 点位
+function drawPt(key,p,isHotel){
+  const c=proj(p);
+  svg.appendChild(el("circle",{cx:c.x,cy:c.y,r:isHotel?8:6,fill:isHotel?"#d4380d":"#fff",stroke:"#333","stroke-width":2}));
+  const t=el("text",{x:c.x+9,y:c.y+4,fill:"#222","font-size":11,"font-weight":isHotel?"700":"500"});
+  t.appendChild(document.createTextNode(p.name));
+  svg.appendChild(t);
+}
+drawPt("H",H,true);
+for(const k in pts) drawPt(k,pts[k],false);
+
+// ===== 速查表 =====
+const dt=document.getElementById("distTable");
+distRows.forEach(r=>{
+  const d=haversine(H, pts[r[1]]);
+  const tr=document.createElement("tr");
+  // 用文本构造避免转义问题
+  const cells=[r[0]+" ("+d+"km直线)",r[2],r[3],r[4],r[5]];
+  tr.innerHTML="<td>"+cells[0]+"</td><td>"+cells[1]+"</td><td>"+cells[2]+"</td><td>"+cells[3]+"</td><td>"+cells[4]+"</td>";
+  dt.appendChild(tr);
+});
+
+// ===== 时间轴 =====
+const tl=document.getElementById("timeline");
+const days=[
+  {tag:"8/8 周六",color:"#fa8c16",acts:[
+    {t:"16:00",d:"出发→黄房子(步行)",c:"#fa8c16"},
+    {t:"17:00",d:"中央大街/华梅外景",c:"#fa8c16"},
+    {t:"18:00",d:"索菲亚进里面(免票)",c:"#d4380d"},
+    {t:"19:30",d:"老厨家晚餐",c:"#fa8c16"},
+    {t:"20:30",d:"夜景:中央大街/江边",c:"#722ed1"}
+  ]},
+  {tag:"8/9 周日",color:"#52c41a",acts:[
+    {t:"07:00",d:"滴滴→安静街早市",c:"#52c41a"},
+    {t:"08:00",d:"地铁→太阳岛",c:"#389e0d"},
+    {t:"08:30",d:"粉樱号环线(下4点)",c:"#52c41a"},
+    {t:"11:30",d:"出岛午餐",c:"#52c41a"},
+    {t:"18:30",d:"中央大街+巴洛克夜游",c:"#722ed1"}
+  ]},
+  {tag:"8/10 周一",color:"#13c2c2",acts:[
+    {t:"09:00",d:"东大直街三教堂(外观)",c:"#13c2c2"},
+    {t:"10:30",d:"圣阿列克谢耶夫(入内)",c:"#08979c"},
+    {t:"12:00",d:"午餐+休息",c:"#13c2c2"},
+    {t:"14:30",d:"犹太老会堂咖啡",c:"#13c2c2"},
+    {t:"16:00",d:"回酒店",c:"#13c2c2"}
+  ]},
+  {tag:"8/11 周二",color:"#722ed1",acts:[
+    {t:"09:30",d:"中华巴洛克(白天细逛)",c:"#722ed1"},
+    {t:"11:30",d:"张包铺午餐",c:"#9254de"},
+    {t:"13:30",d:"回酒店休息",c:"#722ed1"},
+    {t:"15:00",d:"网上下单手信",c:"#722ed1"},
+    {t:"18:00",d:"晚餐",c:"#722ed1"}
+  ]},
+  {tag:"8/12 周三",color:"#8c8c8c",acts:[
+    {t:"09:00",d:"睡懒觉/收拾",c:"#8c8c8c"},
+    {t:"11:00",d:"手机下单手信",c:"#8c8c8c"},
+    {t:"12:30",d:"午餐",c:"#8c8c8c"},
+    {t:"14:00",d:"返程",c:"#595959"}
+  ]}
+];
+const x0=150, x1=940, y0=40, rowH=72, tStart=6, tEnd=22;
+function tx(h){ return x0 + (h-tStart)/(tEnd-tStart)*(x1-x0); }
+days.forEach((day,i)=>{
+  const y=y0+i*rowH;
+  tl.appendChild(el("text",{x:10,y:y+30,fill:day.color,"font-size":13,"font-weight":"700"}).appendChild(document.createTextNode(day.tag)).parentNode);
+  tl.appendChild(el("line",{x1:x0,y1:y+18,x2:x1,y2:y+18,stroke:"#eee","stroke-width":1}));
+  day.acts.forEach((a,idx)=>{
+    const h=parseFloat(a.t.split(":")[0])+parseFloat(a.t.split(":")[1])/60;
+    const bx=tx(h);
+    tl.appendChild(el("rect",{x:bx,y:y+6,width:Math.max(70,(a.d.length*13)),height:24,rx:5,fill:a.c,opacity:.85}));
+    tl.appendChild(el("text",{x:bx+5,y:y+22,fill:"#fff","font-size":11,"font-weight":"600"}).appendChild(document.createTextNode(a.t+" "+a.d)).parentNode);
+  });
+});
+tl.appendChild(el("line",{x1:x0,y1:y0-10,x2:x0,y2:y0+days.length*rowH-30,stroke:"#ccc"}));
+[6,9,12,15,18,21].forEach(h=>{
+  tl.appendChild(el("text",{x:tx(h),y:y0-14,fill:"#888","font-size":11,"text-anchor":"middle"}.hasOwnProperty?{x:tx(h),y:y0-14,fill:"#888","font-size":11,"text-anchor":"middle"}:0));
+  const tt=el("text",{x:tx(h),y:y0-14,fill:"#888","font-size":11,"text-anchor":"middle"});
+  tt.appendChild(document.createTextNode(h+":00"));
+  tl.appendChild(tt);
+  tl.appendChild(el("line",{x1:tx(h),y1:y0-10,x2:tx(h),y2:y0+days.length*rowH-30,stroke:"#f0f0f0"}));
+});
+
+// ===== 太阳岛放大图 =====
+const ty=document.getElementById("taiyang");
+const tstations=[
+  {n:"太阳桥站",x:60,y:160,c:"#000",hub:true},
+  {n:"坐龙广场",x:150,y:120},
+  {n:"栖凤台",x:230,y:100},
+  {n:"笨熊乐园",x:310,y:90},
+  {n:"水阁云天",x:380,y:110,c:"#52c41a"},
+  {n:"浴日台",x:445,y:95},
+  {n:"太阳瀑",x:500,y:90,c:"#d4380d"},
+  {n:"寒地动物园",x:560,y:110},
+  {n:"中东铁路公园",x:610,y:150,c:"#52c41a"},
+  {n:"松鼠岛",x:560,y:210},
+  {n:"抗联纪念园",x:470,y:230},
+  {n:"鹿苑",x:380,y:240},
+  {n:"花卉园",x:280,y:240,c:"#52c41a"}
+];
+// 环线
+let dpath="M "+tstations.map(s=>s.x+" "+s.y).join(" L ")+" Z";
+ty.appendChild(el("path",{d:dpath,fill:"none",stroke:"#fa8c16","stroke-width":2.5,"stroke-dasharray":"6,4"}));
+tstations.forEach(s=>{
+  ty.appendChild(el("circle",{cx:s.x,cy:s.y,r:s.hub?7:5,fill:s.c||"#fff",stroke:"#333","stroke-width":1.5}));
+  ty.appendChild(el("text",{x:s.x+(s.hub?10:-s.n.length*5),y:s.y+(s.hub?4:18),fill:"#222","font-size":11,"font-weight":s.c||s.hub?"700":"400"}.hasOwnProperty?{x:s.x+(s.hub?10:-s.n.length*5),y:s.y+(s.hub?4:18),fill:"#222","font-size":11,"font-weight":(s.c||s.hub)?"700":"400"}:0));
+  const tt=el("text",{x:s.x+(s.hub?10:-s.n.length*5),y:s.y+(s.hub?4:18),fill:"#222","font-size":11,"font-weight":(s.c||s.hub)?"700":"400"});
+  tt.appendChild(document.createTextNode(s.n));
+  ty.appendChild(tt);
+});
+ty.appendChild(el("text",{x:60,y:300,fill:"#fa8c16","font-size":12,"font-weight":"700"}.hasOwnProperty?{x:60,y:300,fill:"#fa8c16","font-size":12,"font-weight":"700"}:0));
+const leg=el("text",{x:60,y:300,fill:"#fa8c16","font-size":12,"font-weight":"700"});
+leg.appendChild(document.createTextNode("一圈车程约20–25分｜红=必下 绿=推荐下 黑=枢纽/可下拍照｜票制：单圈制25元/人(70岁不免)"));
+ty.appendChild(leg);
+</script>
+
+</body>
+</html>

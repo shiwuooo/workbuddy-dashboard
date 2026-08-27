@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵感工作台 · 仪表盘</title>
+<style>
+:root{
+  --bg:#f7f8fa; --card:#ffffff; --ink:#1f2329; --sub:#646a73; --line:#e5e6eb;
+  --accent:#3370ff; --accent2:#00b42a; --warn:#ff7d00; --danger:#f53f3f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding:24px}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-size:24px;margin-bottom:4px}
+.sub{color:var(--sub);font-size:14px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.tag{display:inline-block;font-size:12px;padding:2px 10px;border-radius:999px;background:#eef3ff;color:var(--accent);margin-right:6px;font-weight:600}
+.tag.high{background:#e8ffea;color:var(--accent2)}
+.tag.mid{background:#fff4e0;color:var(--warn)}
+.idea h3{font-size:18px;margin:8px 0}
+.kv{margin:6px 0;font-size:14px}
+.kv b{color:var(--sub);font-weight:600;margin-right:6px;display:inline-block;min-width:84px;vertical-align:top}
+.kv span{display:inline-block;max-width:calc(100% - 92px)}
+ul{margin:6px 0 0 18px;font-size:14px}
+li{margin:2px 0}
+.section-title{font-size:18px;margin:26px 0 10px;font-weight:700;display:flex;align-items:center;gap:8px}
+table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card)}
+th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+th{background:#f2f3f5;font-weight:600}
+.next{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.pill{font-size:14px;padding:8px 14px;border-radius:8px;background:var(--accent);color:#fff}
+.pill.alt{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.foot{color:var(--sub);font-size:13px;margin-top:26px;text-align:center}
+.main-line{font-size:15px}
+.main-line b{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>灵感工作台</h1>
+<div class="sub">把零散想法变成可执行的制作清单 · 数据快照 2026-07-28</div>
+
+<div class="card">
+<strong>一句话主线</strong>
+<p class="main-line">你真正的目标不是"做工具"，而是 <b>把网盘推广跑通并放大</b>。QQ 群发只是其中一个分发渠道，所有工具都该服务于这条主线。</p>
+</div>
+
+<div class="section-title">📥 想法收集箱（INBOX）</div>
+
+<div class="card idea">
+<div><span class="tag">IDEA-001</span><span class="tag mid">中优先级</span><span class="tag">社群运营</span></div>
+<h3>QQ 群自动发送消息工具</h3>
+<div class="kv"><b>原始想法</b><span>做一个能自动往 QQ 群里发消息的工具，省得手动复制粘贴。</span></div>
+<div class="kv"><b>本质</b><span>社群批量触达 + 营销自动化。</span></div>
+<div class="kv"><b>现成工具</b><span>NoneBot2（Python）、Koishi、基于 OneBot 的 go-cqhttp / NapCat；官方合规通道：QQ 频道机器人、企业微信、微信群机器人 Webhook。</span></div>
+<div class="kv"><b>大佬做法</b><span>矩阵小号 + 养号 + "先给价值再广告" + 控制频率错峰；内容前置价值降低被踢率。</span></div>
+<div class="kv"><b>痛点</b><span>协议登录易被腾讯风控封号；稳定性随版本波动；硬广易被踢 / 举报。</span></div>
+<div class="kv"><b>建议自研</b><span>NoneBot2 + 定时任务 + 消息模板库，封装"群发调度器"；优先走官方频道机器人规避封号。</span></div>
+</div>
+
+<div class="card idea">
+<div><span class="tag">IDEA-002</span><span class="tag high">高优先级</span><span class="tag">联盟营销</span></div>
+<h3>网盘推广</h3>
+<div class="kv"><b>原始想法</b><span>想做网盘推广赚钱，但不知道该怎么入手、用什么工具。</span></div>
+<div class="kv"><b>本质</b><span>联盟营销——用"资源 / 内容"吸引用户，通过你的专属链接转存 / 开通会员而转化。</span></div>
+<div class="kv"><b>现成平台</b><span>百度网盘会员推广联盟、夸克"夸克合伙人"、天翼云盘推广等官方联盟；推广形态：分享资源链接 + 你的邀请码 / 渠道参数。</span></div>
+<div class="kv"><b>大佬做法</b><span>资源站 / 公众号 / 短视频"种草"把干货存网盘；自动化：采集热门资源 → 转存 → 生成带渠道链接 → 多平台分发；矩阵账号 + SEO 占位 + 社群裂变。</span></div>
+<div class="kv"><b>痛点</b><span>平台规则多变、佣金结算周期、转化率、内容合规、资源被和谐。</span></div>
+<div class="kv"><b>建议自研</b><span>① 推广链接管理器（渠道参数 + 转化追踪）② 资源采集 + 转存自动化 ③ 多平台分发调度（复用群发）④ 转化数据看板。</span></div>
+</div>
+
+<div class="section-title">🧭 主题聚类</div>
+<div class="card">
+<ul>
+<li><b>A. 变现核心</b>：网盘推广联盟对接 + 转化追踪</li>
+<li><b>B. 内容 / 资源</b>：热门资源采集、转存、生成推广素材</li>
+<li><b>C. 分发渠道</b>：QQ 群发、社群、自媒体多平台分发</li>
+<li><b>D. 数据 / 决策</b>：各渠道转化看板，决定下次往哪用力</li>
+</ul>
+</div>
+
+<div class="section-title">🎯 机会矩阵（价值 ↑ / 难度 →）</div>
+<div class="card" style="padding:0;overflow:hidden">
+<table>
+<thead><tr><th>工具</th><th>价值</th><th>难度</th><th>风险</th><th>建议顺序</th></tr></thead>
+<tbody>
+<tr><td>推广链接管理器 + 渠道追踪</td><td>高</td><td>低</td><td>低</td><td><b>1（地基）</b></td></tr>
+<tr><td>转化数据看板</td><td>高</td><td>中</td><td>低</td><td>2</td></tr>
+<tr><td>QQ 群发调度器（官方频道优先）</td><td>中</td><td>中</td><td>中（封号）</td><td>3</td></tr>
+<tr><td>资源采集 + 转存自动化</td><td>高</td><td>高</td><td>中（合规）</td><td>4</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section-title">➡️ 下一步（待你确认）</div>
+<div class="card">
+<div class="next">
+<span class="pill">方向①：开做「推广链接管理器」（最低风险、最快见效）</span>
+<span class="pill alt">方向②：先写"网盘推广"SOP 文档</span>
+<span class="pill alt">方向③：继续往 INBOX 丢想法，攒够了一起理</span>
+</div>
+</div>
+
+<div class="foot">本页由 WorkBuddy 生成，数据来源：INBOX.md / ROADMAP.md。有新想法随时告诉我，我来更新。</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>粉笔AI / 公考AI工具对标监控</title>
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--line:#e3e6ea;--txt:#1f2328;--sub:#6b7280;--red:#d92d20;--green:#067647;--amber:#b54708;--blue:#175cd3;--purple:#7c3aed}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;padding:20px;max-width:1200px;margin:0 auto}
+h1{font-size:22px;margin-bottom:4px}
+h2{font-size:17px;margin:26px 0 12px;padding-left:10px;border-left:4px solid var(--blue)}
+.sub{color:var(--sub);font-size:13px;margin-bottom:16px}
+.alert{border:1px solid #fecdca;background:#fef3f2;border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:13.5px;line-height:1.7}
+.alert b{color:var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(16,24,40,.04);display:flex;flex-direction:column;gap:9px}
+.card h3{font-size:15px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.badge{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11px;font-weight:600;background:#475467;color:#fff}
+.badge.lead{background:var(--blue)}
+.badge.new{background:var(--purple)}
+.badge.hot{background:var(--red)}
+.badge.warn{background:var(--amber)}
+.vs{display:flex;flex-direction:column;gap:6px;background:#f9fafb;border-radius:8px;padding:10px 12px;font-size:12.5px}
+.vs .row{display:flex;justify-content:space-between;gap:12px}
+.vs .row b{color:var(--sub);font-weight:600;flex-shrink:0}
+.vs .row span{text-align:right}
+.desc{font-size:12.5px;line-height:1.7;color:var(--txt)}
+.desc b{color:var(--sub)}
+.insight{font-size:12.5px;line-height:1.7;background:#eef4ff;border-radius:8px;padding:10px 12px;color:#175cd3}
+.insight.warn{background:#fffaeb;color:#b54708}
+.footer{color:var(--sub);font-size:12px;margin-top:24px;border-top:1px solid var(--line);padding-top:12px;line-height:1.7}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0 6px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#f9fafb;font-weight:600}
+td.done{color:var(--green);font-weight:600}
+td.part{color:var(--amber);font-weight:600}
+td.none{color:#98a2b3}
+</style>
+</head>
+<body>
+<h1>粉笔AI / 公考AI工具对标监控</h1>
+<div class="sub">数据来源：粉笔官方披露 + 行业测评文章 · 采集时间：2026-08-20 · 每周复查更新 · 目的：盯竞品 + 反哺"上岸通/求是素材库"升级方向</div>
+
+<div class="alert"><b>⚠ 重要信号（对你的直接威胁）：</b>粉笔自研"公考垂域大模型"已落地，AI 申论批改月用量翻倍、AI 面试点评上线 40 天破 100 万次、AI 刷题系统班半年销售 1600 万。粉笔是 7000 万用户 + 240 万题库 + 94 亿次答题数据喂出来的——<b>你"上岸通 + 求是素材库 + AI教练"想商业化，等于直接和粉笔 AI 对打，必须在"垂域深度 / 免费 / 差异化"上找活路</b>。你现在的优势是：离线、免费、素材库全、无粉笔版权包袱的真题讲解。</div>
+
+<h2>一、粉笔 AI 产品矩阵（重点盯）</h2>
+<div class="grid">
+  <div class="card">
+    <h3>AI 刷题系统班 <span class="badge lead">核心</span></h3>
+    <div class="vs">
+      <div class="row"><b>定位</b><span>AI数字人老师 + 个性化学习计划</span></div>
+      <div class="row"><b>能力</b><span>科学定制计划/定位薄弱项/推送专项练习</span></div>
+      <div class="row"><b>成绩</b><span>2025上半年销售1600万+</span></div>
+      <div class="row"><b>数据</b><span>学习效率提升近40%</span></div>
+    </div>
+    <div class="desc"><b>你的对照</b>：你的"行测AI陪练-教练版"是同一品类，但你没有 240 万题库和 94 亿次答题数据喂模型，无法做到同等个性化。差异化出路：<b>历年试卷 1:1 克隆 + 免费 + 离线</b>。</div>
+  </div>
+  <div class="card">
+    <h3>AI 申论批改 <span class="badge hot">你的主战场</span></h3>
+    <div class="vs">
+      <div class="row"><b>能力</b><span>逐句诊断/靶向提分/多轮批改</span></div>
+      <div class="row"><b>成绩</b><span>上线后月使用量持续翻倍</span></div>
+      <div class="row"><b>短板</b><span>用户实测：词面匹配逻辑，表述不同就没分；逻辑分/卷面扣分缺失；同卷不同平台差5-10分</span></div>
+    </div>
+    <div class="desc"><b>你的对照</b>：你的"求是素材库 AI批改"已定方向。粉笔短板=纯关键词匹配、无逻辑分——<b>你的机会：把"材料原文第X段第X句"级联标注做深，学"上岸申论批改"的逐句采分点+材料出处</b>。</div>
+  </div>
+  <div class="card">
+    <h3>AI 面试点评 <span class="badge hot">爆款</span></h3>
+    <div class="vs">
+      <div class="row"><b>能力</b><span>模拟考场/个性化分析</span></div>
+      <div class="row"><b>成绩</b><span>上线40天使用量破100万次</span></div>
+      <div class="row"><b>反馈速度</b><span>20分钟→5分钟以内</span></div>
+    </div>
+    <div class="desc"><b>你的对照</b>：你没做面试模块。若做，直接对标"求职精灵面试数字人"（可追问+表情语气还原）——门槛高，建议暂缓。</div>
+  </div>
+  <div class="card">
+    <h3>AI 智能选岗</h3>
+    <div class="vs">
+      <div class="row"><b>能力</b><span>历年考情+个人条件→报考建议</span></div>
+      <div class="row"><b>成绩</b><span>服务数百万考生</span></div>
+    </div>
+    <div class="desc"><b>你的对照</b>：你有历年试卷数据，可做简易版"岗位分数线查询"，但非核心。</div>
+  </div>
+  <div class="card">
+    <h3>24h AI 答疑 <span class="badge lead">基建</span></h3>
+    <div class="vs">
+      <div class="row"><b>能力</b><span>7×24在线，日均处理百万条</span></div>
+      <div class="row"><b>速度</b><span>平均响应&lt;3秒</span></div>
+      <div class="row"><b>验证</b><span>垂域模型在言语/判断/常识/资料科目优于DeepSeek等通用模型</span></div>
+    </div>
+    <div class="desc"><b>你的对照</b>：你的桥接模式（复制prompt→外部AI→贴回）就是被这个打的。要做就只能靠"真题专属解析库"兜底。</div>
+  </div>
+  <div class="card">
+    <h3>SVIP 会员体系</h3>
+    <div class="vs">
+      <div class="row"><b>权益</b><span>AI点评不限次/视频解析/每日晨读等13项</span></div>
+      <div class="row"><b>商业化参考</b><span>免费题库+付费SVIP的分层模型</span></div>
+    </div>
+    <div class="desc"><b>你的对照</b>：这是你未来"上岸通"商业化的模板——免费刷题 + 付费增值。</div>
+  </div>
+</div>
+
+<h2>二、竞品对标（你的差异化参考）</h2>
+<table>
+<tr><th>工具</th><th>申论批改</th><th>行测刷题</th><th>面试</th><th>价格</th><th>可借鉴点</th></tr>
+<tr><td><b>智蛙公考</b></td><td class="done">AI批改 声称92.7%准确率</td><td class="done">垂直大模型+知识图谱</td><td class="done">语音/视频模拟</td><td>月39/年299</td><td>知识图谱+个性化路径（但为软文数据，打折看）</td></tr>
+<tr><td><b>求职精灵</b></td><td class="done">AI批改与人工一致率92%，10秒出结果</td><td class="part">题库每日更新</td><td class="done">面试数字人（可追问）</td><td>待查</td><td>数字人面试是行业标杆</td></tr>
+<tr><td><b>上岸申论批改</b></td><td class="done">逐句标注采分点+材料出处（4-5页报告）</td><td class="part">题库近5年省考国考</td><td class="none">无</td><td>免费+人工付费</td><td><b>最值得学：逐句+材料出处</b></td></tr>
+<tr><td><b>半月谈AI</b></td><td class="part">语义理解打分（非关键词）</td><td class="none">无</td><td class="none">无</td><td>人工批改付费</td><td>语义理解比词面匹配强</td></tr>
+<tr><td><b>中公AI</b></td><td class="part">AI+人工双批</td><td class="part">线下为主</td><td class="part">付费质量一般</td><td>20-7500元</td><td>线下资源融合（你不需要）</td></tr>
+<tr><td><b>华图在线AI</b></td><td class="part">AI初批+人工精批8维度</td><td class="part">模块化</td><td class="part">视频为主</td><td>免费基础+付费高级</td><td>模块化AI功能设计</td></tr>
+<tr><td><b>腰果公考AI</b></td><td class="none">无</td><td class="part">轻量刷题</td><td class="none">无</td><td>完全免费</td><td>轻量化+离线（你的模式）</td></tr>
+</table>
+
+<h2>三、对你升级方向的启示（直说）</h2>
+<div class="grid">
+  <div class="card">
+    <h3>1. 申论批改 = 唯一能打差异化的点</h3>
+    <div class="insight">粉笔批改短板是"词面匹配、无逻辑分"；市面最强是"上岸"（逐句+材料出处）。你的求是素材库天然有"材料原文"库——<b>把 AI 批改做成"逐句标注采分点 + 材料原文第X段第X句"级联，就是超过粉笔的切入点</b>。这是你目前唯一技术可行、又能拉开差距的模块。</div>
+  </div>
+  <div class="card">
+    <h3>2. 别碰 AI 答疑正面战场</h3>
+    <div class="insight warn">粉笔垂域模型 3 秒响应、日均百万条，你的桥接模式没胜算。放弃"通用答疑"，改做"真题专属解析库"——把 107050 题解析做深做准，人搜题比 AI 答疑更可靠，且不受版权指控（解析自己写）。</div>
+  </div>
+  <div class="card">
+    <h3>3. 免费 + 离线 + 历年试卷 = 你的护城河</h3>
+    <div class="insight">粉笔靠付费和用户数据，你有的是：离线可用、不收费、历年试卷 1:1 克隆。商业化模板学粉笔 SVIP：免费刷题 + 付费增值（批改次数/精讲）。但要先解决粉笔模拟题版权问题——<b>只收录真题+自写解析</b>。</div>
+  </div>
+</div>
+
+<h2>四、自动更新说明</h2>
+<div class="sub">本面板为静态快照（2026-08-20）。后续升级：接入 WebSearch 每周复查粉笔 AI 新功能 + 竞品动态，变化时高亮提示（同网盘佣金面板机制）。要启用自动更新请告知。</div>
+
+<div class="footer">
+数据可靠性说明：粉笔数据来自官方披露（头条/网易/官网）；智蛙数据来自其推广软文（gitcode），准确性存疑；申论批改实测对比来自考生真实测评文章。<br>
+本面板用途：帮你盯竞品 + 定"上岸通/求是素材库"升级方向，不替代实测。
+</div>
+</body>
+</html>

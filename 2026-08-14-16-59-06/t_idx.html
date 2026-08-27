@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>历年试卷 · 行测刷题</title>
+<style>
+  :root{
+    --blue:#3b8cff; --blue-d:#1d6de0; --blue-l:#eaf3ff;
+    --green:#22c08d; --green-d:#19a97b; --green-l:#e6f7f1;
+    --orange:#ff9d3b; --orange-d:#f08522; --orange-l:#fff3e6;
+    --bg:#f5f7fb; --card:#fff;
+    --line:#e8ebf0; --line-d:#d8dde6;
+    --txt:#1f2533; --txt2:#545b6a; --mut:#8a93a6; --mut2:#b8bfcc;
+    --ok:#16a34a; --no:#dc2626; --warn:#d97706;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.6;min-height:100vh}
+  a{color:inherit;text-decoration:none}
+
+  /* ===== 顶部导航 ===== */
+  .topnav{background:#fff;border-bottom:1px solid var(--line);height:56px;display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:50}
+  .topnav .logo{display:flex;align-items:center;gap:6px;font-size:20px;font-weight:700;color:#1f2533}
+  .topnav .logo .mark{background:linear-gradient(135deg,#ff5757,#ff9d3b);color:#fff;font-weight:800;padding:3px 8px;border-radius:6px;font-size:13px;letter-spacing:1px}
+  .topnav nav{display:flex;gap:36px;margin-left:auto}
+  .topnav nav a{font-size:15px;color:var(--txt2);padding:18px 0;position:relative;cursor:pointer}
+  .topnav nav a.active{color:var(--blue);font-weight:600}
+  .topnav nav a.active::after{content:"";position:absolute;left:50%;bottom:-1px;width:30px;height:3px;background:var(--blue);border-radius:2px;transform:translateX(-50%)}
+
+  /* ===== 题库标题区 ===== */
+  .head-bar{background:#fff;padding:18px 28px 0;border-bottom:1px solid var(--line)}
+  .head-bar .row1{display:flex;align-items:center;gap:14px}
+  .head-bar h2{font-size:22px;font-weight:700}
+  .exam-type{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#f5f7fb;border-radius:8px;cursor:pointer;font-size:14px;color:var(--txt2)}
+  .exam-type .caret{font-size:10px;color:var(--mut)}
+  .badge-unopened{display:inline-flex;align-items:center;gap:4px;background:#fff7e6;color:var(--warn);border:1px solid #fde2b5;padding:3px 8px;border-radius:6px;font-size:12px}
+  .compass{width:28px;height:28px;border-radius:50%;background:#f5f7fb;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--mut)}
+  .head-bar .tabs{display:flex;gap:8px;margin-top:14px;padding-bottom:0}
+  .tab{padding:10px 20px;font-size:15px;color:var(--txt2);cursor:pointer;border-radius:8px 8px 0 0;font-weight:500}
+  .tab.on{background:var(--blue);color:#fff;font-weight:600}
+
+  /* ===== 三大入口卡 ===== */
+  .entrance{padding:24px 28px 8px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1280px}
+  .entrance-card{position:relative;border-radius:14px;padding:24px 20px;cursor:pointer;min-height:130px;color:#fff;overflow:hidden;transition:.2s}
+  .entrance-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(20,40,80,.12)}
+  .entrance-card.fast{background:linear-gradient(135deg,#5db3ff 0%,#3b8cff 60%,#1d6de0 100%)}
+  .entrance-card.papers{background:linear-gradient(135deg,#5fdcc1 0%,#22c08d 60%,#19a97b 100%);box-shadow:0 4px 18px rgba(34,192,141,.25)}
+  .entrance-card.smart{background:linear-gradient(135deg,#ffc77d 0%,#ff9d3b 60%,#f08522 100%)}
+  .entrance-card .ttl{font-size:22px;font-weight:700;letter-spacing:1px}
+  .entrance-card .stars{margin-top:14px;color:rgba(255,255,255,.5);font-size:14px;letter-spacing:4px}
+  .entrance-card .icon{position:absolute;right:14px;bottom:10px;width:46px;height:46px;background:rgba(255,255,255,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px}
+  .entrance-card.papers .ring{position:absolute;right:-30px;top:-30px;width:120px;height:120px;border:8px solid rgba(255,255,255,.18);border-radius:50%}
+
+  /* ===== 筛选条 ===== */
+  .filter-bar{background:#fff;padding:14px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;flex-wrap:wrap;position:sticky;top:56px;z-index:30}
+  .filter-group{display:flex;align-items:center;gap:8px}
+  .filter-group .lbl{color:var(--mut);font-size:13px;margin-right:2px}
+  .chip{padding:5px 12px;border:1px solid var(--line);border-radius:16px;cursor:pointer;font-size:13px;color:var(--txt2);background:#fff;transition:.15s}
+  .chip:hover{border-color:var(--blue);color:var(--blue)}
+  .chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .filter-bar .right{margin-left:auto;color:var(--mut);font-size:13px}
+
+  /* ===== 试卷列表区 ===== */
+  .papers-wrap{padding:8px 28px 60px;max-width:1280px}
+  .year-group{margin-top:24px}
+  .year-group .year-hd{display:flex;align-items:baseline;gap:14px;margin-bottom:14px}
+  .year-group .year-hd .y{font-size:18px;font-weight:700;color:var(--txt)}
+  .year-group .year-hd .ct{color:var(--mut);font-size:13px}
+  .paper-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:12px;display:flex;align-items:center;gap:18px;transition:.15s}
+  .paper-card:hover{border-color:var(--blue-l);box-shadow:0 4px 12px rgba(59,140,255,.06)}
+  .paper-card .meta-col{flex:1;min-width:0}
+  .paper-card .name{font-size:15px;font-weight:600;color:var(--txt);margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .paper-card .sub{color:var(--mut);font-size:13px;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .paper-card .sub span{display:inline-flex;align-items:center;gap:3px}
+  .paper-card .stat-col{min-width:120px;text-align:center}
+  .paper-card .diff{color:var(--orange);font-size:14px;letter-spacing:2px}
+  .paper-card .diff-i{color:var(--mut2);font-size:12px;margin-top:4px}
+  .paper-card .state-tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;margin-bottom:6px}
+  .paper-card .state-tag.untried{background:#f0f3f8;color:var(--mut)}
+  .paper-card .state-tag.tried{background:var(--green-l);color:var(--green-d)}
+  .paper-card .state-tag.fav{background:#fff3e6;color:var(--warn)}
+  .paper-card .act-col{display:flex;flex-direction:column;gap:8px;min-width:140px}
+  .paper-card .btn-act{padding:7px 14px;border-radius:8px;cursor:pointer;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--txt2);text-align:center;font-weight:500}
+  .paper-card .btn-act.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .paper-card .btn-act:hover{border-color:var(--blue);color:var(--blue)}
+  .paper-card .btn-act.primary:hover{background:var(--blue-d);color:#fff;border-color:var(--blue-d)}
+
+  .empty{padding:80px 0;text-align:center;color:var(--mut)}
+
+  /* ===== 做题页/解析页/报告页 共用容器 ===== */
+  .page{display:none}
+  .page.on{display:block}
+
+  /* ===== 做题页 ===== */
+  .qp-shell{display:flex;flex-direction:column;height:calc(100vh - 56px);background:#fff}
+  .qp-top{display:flex;align-items:center;gap:16px;padding:12px 24px;border-bottom:1px solid var(--line);background:#fff}
+  .qp-top .qp-name{flex:1;font-size:15px;font-weight:600}
+  .qp-top .qp-name small{color:var(--mut);font-weight:400;margin-left:8px;font-size:12px}
+  .qp-timer{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:18px;font-weight:700;color:var(--blue);background:var(--blue-l);padding:6px 14px;border-radius:8px;letter-spacing:1px}
+  .qp-timer.warn{color:var(--warn);background:#fff7e6}
+  .qp-timer.crit{color:#fff;background:var(--no);animation:pulse 1s infinite}
+  @keyframes pulse{50%{opacity:.7}}
+  .qp-mode-toggle{display:flex;background:#f0f3f8;border-radius:8px;padding:2px}
+  .qp-mode-toggle div{padding:5px 14px;font-size:13px;color:var(--txt2);cursor:pointer;border-radius:6px}
+  .qp-mode-toggle div.on{background:#fff;color:var(--blue);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .qp-top .icon-btn{width:34px;height:34px;border-radius:8px;background:#f0f3f8;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txt2);font-size:16px}
+  .qp-top .icon-btn:hover{background:var(--blue-l);color:var(--blue)}
+  .qp-mod-bar{padding:8px 24px;border-bottom:1px solid var(--line);background:#fafbfd;font-size:12px;color:var(--mut);display:flex;gap:18px;align-items:center;overflow-x:auto}
+  .qp-mod-bar .mod-pill{padding:3px 10px;border-radius:10px;cursor:pointer}
+  .qp-mod-bar .mod-pill.on{background:var(--blue-l);color:var(--blue);font-weight:600}
+  .qp-mod-bar .mod-pill .num{margin-left:4px;color:var(--mut)}
+  .qp-mod-bar .mod-pill.on .num{color:var(--blue)}
+  .qp-body{flex:1;overflow-y:auto;padding:28px 36px 24px}
+  .qp-body .qno{color:var(--mut);font-size:13px;margin-bottom:8px}
+  .qp-body .qno .qtype{background:#eef2fb;color:var(--blue-d);padding:2px 8px;border-radius:6px;font-size:12px;margin-left:8px}
+  .qp-body .qstem{font-size:16px;font-weight:500;line-height:1.8;margin-bottom:18px;white-space:pre-wrap}
+  .qp-body .qstem img{max-width:100%;margin:6px 0;border-radius:6px}
+  .qp-body .opts{display:flex;flex-direction:column;gap:10px}
+  .qp-body .opt{display:flex;gap:10px;padding:14px 18px;border:1px solid var(--line);border-radius:10px;cursor:pointer;align-items:flex-start;line-height:1.6;transition:.15s}
+  .qp-body .opt:hover{border-color:var(--blue);background:#fafcff}
+  .qp-body .opt.sel{border-color:var(--blue);background:var(--blue-l)}
+  .qp-body .opt .lt{font-weight:600;color:var(--blue-d);min-width:24px}
+  .qp-body .opt.sel .lt{color:var(--blue)}
+  .qp-body .opt .txt{flex:1}
+  .qp-body .opt .ico{color:var(--mut);font-size:16px}
+  .qp-body .opt.sel .ico{color:var(--blue)}
+  .qp-body .explain{margin-top:20px;padding:18px 20px;background:#f7f9ff;border-left:3px solid var(--blue);border-radius:8px;display:none}
+  .qp-body .explain.show{display:block;animation:slideUp .3s}
+  @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .qp-body .explain .ex-t{font-weight:700;color:var(--blue-d);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .qp-body .explain .ex-ans{color:var(--ok);font-weight:600;margin-bottom:6px}
+  .qp-body .explain .ex-ans.your-no{color:var(--no);margin-right:14px}
+  .qp-body .explain .ex-body{font-size:14px;color:var(--txt);line-height:1.8;white-space:pre-wrap}
+  .qp-body .explain .ex-kp{margin-top:10px;font-size:12px;color:var(--mut);padding-top:10px;border-top:1px dashed var(--line-d)}
+  .qp-foot{padding:12px 24px;border-top:1px solid var(--line);background:#fafbfd;display:flex;align-items:center;gap:10px}
+  .qp-foot .nav-btn{padding:8px 18px;border-radius:8px;cursor:pointer;font-size:14px;border:1px solid var(--line);background:#fff;color:var(--txt2)}
+  .qp-foot .nav-btn:hover{border-color:var(--blue);color:var(--blue)}
+  .qp-foot .nav-btn:disabled{opacity:.4;cursor:not-allowed}
+  .qp-foot .nav-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .qp-foot .star,.qp-foot .flag{cursor:pointer;font-size:18px;padding:6px;color:var(--mut)}
+  .qp-foot .star.on,.qp-foot .flag.on{color:var(--orange)}
+  .qp-foot .note-btn{padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--txt2);margin-left:auto}
+  .qp-foot .note-btn:hover{border-color:var(--blue);color:var(--blue)}
+  .qp-foot .note-btn.has{border-color:var(--orange);color:var(--orange)}
+  .qp-foot .submit-btn{padding:8px 22px;background:var(--no);color:#fff;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;margin-left:auto}
+  .qp-foot .submit-btn:hover{background:#b91c1c}
+
+  /* 答题卡抽屉 */
+  .card-drawer{position:fixed;top:0;right:0;bottom:0;width:480px;background:#fff;box-shadow:-8px 0 24px rgba(0,0,0,.08);transform:translateX(100%);transition:.3s;display:flex;flex-direction:column;z-index:60}
+  .card-drawer.on{transform:translateX(0)}
+  .card-drawer .cd-hd{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .card-drawer .cd-hd h3{font-size:16px}
+  .card-drawer .cd-hd .close{cursor:pointer;color:var(--mut);font-size:18px}
+  .card-drawer .cd-body{flex:1;overflow-y:auto;padding:18px 24px}
+  .card-drawer .cd-legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-bottom:14px;flex-wrap:wrap}
+  .card-drawer .cd-legend span{display:inline-flex;align-items:center;gap:4px}
+  .card-drawer .cd-legend i{display:inline-block;width:14px;height:14px;border-radius:3px}
+  .card-drawer .cd-group{margin-bottom:18px}
+  .card-drawer .cd-group h4{font-size:13px;color:var(--mut);margin-bottom:10px;font-weight:500}
+  .card-drawer .cd-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+  .cd-cell{aspect-ratio:1;border:1px solid var(--line);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;background:#fff;color:var(--txt2);position:relative}
+  .cd-cell.answered{background:var(--green-l);border-color:#b6e3cd;color:var(--ok)}
+  .cd-cell.flag::after{content:"🚩";position:absolute;top:-4px;right:-4px;font-size:9px}
+  .cd-cell.fav::after{content:"⭐";position:absolute;top:-4px;right:-4px;font-size:9px}
+  .cd-cell.current{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:700}
+  .card-drawer .cd-foot{padding:14px 24px;border-top:1px solid var(--line);display:flex;gap:10px}
+  .card-drawer .cd-foot .nav-btn{flex:1;padding:10px;border-radius:8px;cursor:pointer;font-size:14px;border:1px solid var(--line);background:#fff;color:var(--txt2)}
+  .card-drawer .cd-foot .nav-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+  /* ===== 交卷报告页 ===== */
+  .report{padding:32px 36px;background:var(--bg);min-height:calc(100vh - 56px)}
+  .report .card{background:#fff;border-radius:14px;padding:24px 28px;margin-bottom:18px;border:1px solid var(--line)}
+  .report .head-card{display:flex;align-items:center;gap:28px}
+  .report .head-card .score{font-size:48px;font-weight:700;color:var(--blue);line-height:1}
+  .report .head-card .score small{font-size:18px;color:var(--mut);font-weight:400;margin-left:6px}
+  .report .head-card .meta{flex:1}
+  .report .head-card .meta h3{font-size:18px;margin-bottom:6px}
+  .report .head-card .meta p{color:var(--mut);font-size:13px}
+  .report .mod-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .report .mod-row:last-child{border:none}
+  .report .mod-row .mn{width:90px;color:var(--txt2)}
+  .report .mod-row .bar{flex:1;height:10px;background:#f0f3f8;border-radius:5px;overflow:hidden}
+  .report .mod-row .bar i{display:block;height:100%;background:var(--blue);border-radius:5px}
+  .report .mod-row .num{width:140px;text-align:right;color:var(--txt2);font-size:13px}
+  .report .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .report .actions .btn{padding:10px 22px;border-radius:8px;cursor:pointer;font-size:14px;border:1px solid var(--line);background:#fff;color:var(--txt2)}
+  .report .actions .btn:hover{border-color:var(--blue);color:var(--blue)}
+  .report .actions .btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+  .report .wrong-list .wrong-row{display:flex;gap:14px;padding:14px 0;border-bottom:1px dashed var(--line);align-items:center}
+  .report .wrong-list .wrong-row:last-child{border:none}
+  .report .wrong-list .qno-mini{width:50px;text-align:center;font-weight:600;color:var(--no)}
+  .report .wrong-list .stem{flex:1;font-size:14px;line-height:1.5;color:var(--txt)}
+  .report .wrong-list .stem small{color:var(--mut);display:block;margin-top:4px;font-size:12px}
+  .report .wrong-list .go-btn{padding:6px 14px;border-radius:6px;font-size:13px;color:var(--blue);border:1px solid var(--blue-l);background:var(--blue-l);cursor:pointer}
+
+  /* Toast */
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#1f2533;color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;opacity:0;transition:.3s;z-index:90;pointer-events:none}
+  .toast.show{opacity:.95}
+
+  /* 笔记弹窗 */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:80}
+  .modal.on{display:flex}
+  .modal .box{background:#fff;border-radius:12px;padding:24px;width:480px;max-width:90vw}
+  .modal .box h4{font-size:15px;margin-bottom:14px}
+  .modal textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:8px;padding:10px;font-family:inherit;font-size:14px;resize:vertical}
+  .modal .m-foot{margin-top:14px;display:flex;gap:10px;justify-content:flex-end}
+  .modal .m-foot button{padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;border:1px solid var(--line);background:#fff;color:var(--txt2)}
+  .modal .m-foot button.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部导航 ===== -->
+<div class="topnav">
+  <div class="logo"><span class="mark">fb</span><span>粉笔</span></div>
+  <nav id="topnav"><a>首页</a><a>课程</a><a class="active">题库</a><a>关于粉笔</a><a>下载客户端</a><a>投资者关系</a></nav>
+</div>
+
+<!-- ===== 列表页 ===== -->
+<div class="page on" id="page-list">
+  <!-- 题库标题区 -->
+  <div class="head-bar">
+    <div class="row1">
+      <h2>公考笔试</h2>
+      <div class="exam-type" onclick="toggleExamDropdown()">国考 行政执法类 <span class="caret">▼</span></div>
+      <span class="badge-unopened">� 未开通</span>
+      <div class="compass">🧭</div>
+    </div>
+    <div class="tabs"><div class="tab on">行测</div><div class="tab" onclick="switchExam('shenlun')">申论</div></div>
+  </div>
+
+  <!-- 三大入口卡 -->
+  <div class="entrance">
+    <div class="entrance-card fast" onclick="alert('快速练习 — 暂未在本板块展开（按用户要求一个一个来，下一段再补）')">
+      <div class="ttl">快速练习</div>
+      <div class="stars">★★★★★</div>
+      <div class="icon">📱</div>
+    </div>
+    <div class="entrance-card papers">
+      <div class="ring"></div>
+      <div class="ttl">历年试卷</div>
+      <div class="stars">★★★★★</div>
+      <div class="icon">📞</div>
+    </div>
+    <div class="entrance-card smart" onclick="alert('智能组卷 — 暂未在本板块展开')">
+      <div class="ttl">智能组卷</div>
+      <div class="stars">★★★★★</div>
+      <div class="icon">📦</div>
+    </div>
+  </div>
+
+  <!-- 筛选条 -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="lbl">考试类型</span>
+      <span class="chip on" data-f="exam" data-v="all">全部</span>
+      <span class="chip" data-f="exam" data-v="guokao">国考</span>
+      <span class="chip" data-f="exam" data-v="shengkao">省考模拟题</span>
+    </div>
+    <div class="filter-group">
+      <span class="lbl">卷型</span>
+      <span class="chip on" data-f="vol" data-v="all">全部</span>
+      <span class="chip" data-f="vol" data-v="gk-dishi">地市级</span>
+      <span class="chip" data-f="vol" data-v="gk-fsheng">副省级</span>
+      <span class="chip" data-f="vol" data-v="gk-xingzheng" id="chip-xingzheng">行政执法类</span>
+    </div>
+    <div class="right" id="filterStat">共 <b>0</b> 套</div>
+  </div>
+
+  <!-- 试卷列表 -->
+  <div class="papers-wrap" id="papersWrap"><div class="empty">加载中…</div></div>
+</div>
+
+<!-- ===== 做题页 ===== -->
+<div class="page" id="page-qp">
+  <div class="qp-shell">
+    <div class="qp-top">
+      <div class="icon-btn" onclick="backToList()" title="返回列表">←</div>
+      <div class="qp-name" id="qpName">试卷名<small id="qpVol"></small></div>
+      <div class="qp-mode-toggle" id="qpModeToggle">
+        <div class="on" data-m="zuoti">做题</div>
+        <div data-m="beiti">背题</div>
+      </div>
+      <div class="qp-timer" id="qpTimer">120:00</div>
+      <div class="icon-btn" onclick="openNote()" title="笔记">📝</div>
+      <div class="icon-btn" onclick="openCard()" title="答题卡">�</div>
+    </div>
+    <div class="qp-mod-bar" id="qpModBar"></div>
+    <div class="qp-body" id="qpBody"></div>
+    <div class="qp-foot">
+      <span class="flag" id="flagBtn" onclick="toggleFlag()">🚩</span>
+      <span class="star" id="starBtn" onclick="toggleStar()">⭐</span>
+      <button class="nav-btn" id="prevBtn" onclick="prevQ()">上一题</button>
+      <button class="nav-btn primary" id="nextBtn" onclick="nextQ()">下一题</button>
+      <button class="note-btn" id="noteBtn" onclick="openNote()">📝 笔记</button>
+      <button class="submit-btn" onclick="submitPaper()">交卷</button>
+    </div>
+  </div>
+  <div class="card-drawer" id="cardDrawer">
+    <div class="cd-hd"><h3>答题卡</h3><span class="close" onclick="closeCard()">✕</span></div>
+    <div class="cd-body" id="cdBody"></div>
+    <div class="cd-foot"><button class="nav-btn" onclick="closeCard()">继续答题</button><button class="nav-btn primary" onclick="submitPaper()">交卷</button></div>
+  </div>
+</div>
+
+<!-- ===== 报告页 ===== -->
+<div class="page" id="page-report">
+  <div class="report" id="reportBody"></div>
+</div>
+
+<!-- ===== 笔记弹窗 ===== -->
+<div class="modal" id="noteModal">
+  <div class="box">
+    <h4>📝 题目笔记 <small style="color:var(--mut);font-weight:400" id="noteNo"></small></h4>
+    <textarea id="noteText" placeholder="记下你的思路、考点、解法..."></textarea>
+    <div class="m-foot"><button onclick="closeNote()">取消</button><button class="primary" onclick="saveNote()">保存</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+// ============= 数据加载 =============
+const BANK = window.SGT_BANK;
+const MOD_MAP = {zhengzhi:'政治理论',changshi:'常识判断',yanyu:'言语理解',shuliang:'数量关系',panduan:'判断推理',ziliao:'资料分析'};
+const MOD_ORDER = ['zhengzhi','changshi','yanyu','shuliang','panduan','ziliao'];
+const EXAM_LABEL = {guokao:'国考',shengkao:'省考模拟题'};
+const VOL_LABEL = {'gk-dishi':'地市级','gk-fsheng':'副省级','gk-xingzheng':'行政执法类'};
+
+const STATE = {
+  exam: 'all', vol: 'all',
+  records: JSON.parse(localStorage.getItem('sgt_records')||'{}'),
+  favorites: JSON.parse(localStorage.getItem('sgt_favorites')||'[]'),
+  notes: JSON.parse(localStorage.getItem('sgt_notes')||'{}'),
+  currentPaper: null, currentIdx: 0, currentMode: 'zuoti', startedAt: 0,
+  flagged: new Set(),
+};
+
+function saveState(){
+  localStorage.setItem('sgt_records', JSON.stringify(STATE.records));
+  localStorage.setItem('sgt_favorites', JSON.stringify(STATE.favorites));
+  localStorage.setItem('sgt_notes', JSON.stringify(STATE.notes));
+}
+
+function isFav(pid){return STATE.favorites.includes(pid)}
+function toggleFav(pid){
+  const i=STATE.favorites.indexOf(pid);
+  if(i>=0) STATE.favorites.splice(i,1); else STATE.favorites.push(pid);
+  saveState(); renderPapers(); toast(isFav(pid)?'已加入收藏':'已取消收藏');
+}
+
+// ============= 列表筛选 =============
+function toggleExamDropdown(){toast('切换类目 — 暂只展示国考')}
+function switchExam(t){if(t==='shenlun'){toast('申论板块 — 本项目暂只做行测')}}
+
+document.querySelectorAll('.chip').forEach(c=>c.onclick=function(){
+  const f=this.dataset.f;
+  document.querySelectorAll('.chip[data-f="'+f+'"]').forEach(x=>x.classList.remove('on'));
+  this.classList.add('on');
+  STATE[f]=this.dataset.v;
+  renderPapers();
+});
+
+function getFilteredPapers(){
+  // 只展示行测（用户要的就是行测历年试卷）
+  let ps = BANK.papers.filter(p=>p.exam_volume==='行测');
+  if(STATE.vol!=='all') ps = ps.filter(p=>p.exam_type===STATE.vol);
+  // 按年份倒序
+  ps.sort((a,b)=>(b.year||0)-(a.year||0));
+  return ps;
+}
+
+function paperState(pid){
+  const rec = STATE.records[pid];
+  if(!rec) return {tag:'untried',label:'未做'};
+  if(rec.completed) return {tag:'tried',label:'已练'};
+  return {tag:'tried',label:'未完成'};
+}
+
+function paperActions(pid){
+  const rec = STATE.records[pid];
+  if(!rec) return [{t:'开始作答',p:true,a:"start('"+pid+"')"}];
+  if(rec.completed) return [
+    {t:'再做一遍',p:false,a:"start('"+pid+"')"},
+    {t:'查看报告',p:true,a:"report('"+pid+"')"},
+    {t:'查看解析',p:false,a:"review('"+pid+"')"}
+  ];
+  return [
+    {t:'继续作答',p:true,a:"start('"+pid+"')"},
+    {t:'查看解析',p:false,a:"review('"+pid+"')"}
+  ];
+}
+
+function renderPapers(){
+  const papers = getFilteredPapers();
+  document.getElementById('filterStat').innerHTML = `共 <b>${papers.length}</b> 套`;
+  const wrap = document.getElementById('papersWrap');
+  if(!papers.length){wrap.innerHTML='<div class="empty">暂无该筛选下的试卷</div>';return}
+  // 按年份分组
+  const byYear = {};
+  papers.forEach(p=>{const y=p.year||'未知';(byYear[y]=byYear[y]||[]).push(p)});
+  const years = Object.keys(byYear).sort((a,b)=>(+b)-(+a));
+  let html = '';
+  years.forEach(y=>{
+    html += `<div class="year-group"><div class="year-hd"><span class="y">${y}年</span><span class="ct">共${byYear[y].length}套</span></div>`;
+    byYear[y].forEach(p=>{
+      const st = paperState(p.id);
+      const totalQ = BANK.questions.filter(q=>q.paper_id===p.id).length;
+      const acts = paperActions(p.id);
+      const fav = isFav(p.id);
+      html += `
+      <div class="paper-card">
+        <div class="meta-col">
+          <div class="name">
+            ${p.name||'未命名试卷'}
+            ${fav?'<span style="color:var(--orange)">⭐</span>':''}
+          </div>
+          <div class="sub">
+            <span>📚 ${p.mods ? Object.entries(p.mods).map(([m,n])=>MOD_MAP[m]+'×'+n).join(' / ') : ''}</span>
+            <span>📝 ${totalQ}题</span>
+            <span>⏱ 建议${totalQ>120?'120':totalQ>90?'110':'90'}分钟</span>
+          </div>
+        </div>
+        <div class="stat-col">
+          <div class="diff">${'★'.repeat(Math.round(p.difficulty||4))}${'☆'.repeat(5-Math.round(p.difficulty||4))}</div>
+          <div class="diff-i">难度 ${(p.difficulty||4).toFixed(1)}</div>
+        </div>
+        <div class="act-col">
+          <span class="state-tag ${st.tag}">${st.label}</span>
+          ${acts.map(a=>`<div class="btn-act ${a.p?'primary':''}" onclick="${a.a}">${a.t}</div>`).join('')}
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  wrap.innerHTML = html;
+}
+
+// 暂无行政执法真题数据时禁用
+if(!BANK.papers.some(p=>p.exam_type==='gk-xingzheng')){
+  const c=document.getElementById('chip-xingzheng');
+  if(c){c.style.opacity='.4';c.style.cursor='not-allowed';c.onclick=()=>toast('行政执法类真题暂未收录')}
+}
+
+// ============= 做题页 =============
+let QS = [], QIDX = 0, TIMER = null, REMAIN = 0, MOD_START = {}, NOTE_QID = null;
+
+function start(pid){
+  const paper = BANK.papers.find(p=>p.id===pid);
+  QS = BANK.questions.filter(q=>q.paper_id===pid).sort((a,b)=>(+a.qid.split('-').pop())-(+b.qid.split('-').pop()));
+  if(!QS.length) return toast('该试卷无题目');
+  STATE.currentPaper = paper;
+  STATE.startedAt = Date.now();
+  STATE.flagged = new Set((STATE.records[pid]&&STATE.records[pid].flagged)||[]);
+  // 记录上次答到的位置
+  const rec = STATE.records[pid];
+  QIDX = rec && !rec.completed ? (rec.lastIdx||0) : 0;
+  // 初始化计时（120 分钟，按真实国考）
+  REMAIN = (paper.year||0)>=2022 ? 120*60 : 110*60;
+  if(rec && rec.pausedRemain!=null) REMAIN = rec.pausedRemain;
+  document.getElementById('qpName').innerHTML = `${paper.name}<small id="qpVol">${VOL_LABEL[paper.exam_type]||''} · 共${QS.length}题</small>`;
+  document.querySelectorAll('#page-list, #page-qp, #page-report').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-qp').classList.add('on');
+  buildModBar(); renderQ();
+  if(TIMER) clearInterval(TIMER);
+  TIMER = setInterval(tick, 1000);
+}
+
+function tick(){
+  REMAIN--; if(REMAIN<0){REMAIN=0;submitPaper();return}
+  const m=Math.floor(REMAIN/60), s=REMAIN%60;
+  const t=document.getElementById('qpTimer');
+  t.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  t.className = 'qp-timer'+(REMAIN<60?' crit':REMAIN<300?' warn':'');
+}
+
+function buildModBar(){
+  // 统计各模块起止题号
+  const bar = document.getElementById('qpModBar');
+  const ranges = {};
+  let curMod = null, curStart = 0;
+  QS.forEach((q,i)=>{
+    if(q.module !== curMod){
+      if(curMod) ranges[curMod]=[curStart, i-1];
+      curMod = q.module; curStart = i;
+    }
+  });
+  if(curMod) ranges[curMod]=[curStart, QS.length-1];
+  let html = '';
+  MOD_ORDER.forEach(m=>{
+    if(!ranges[m]) return;
+    const [s,e]=ranges[m];
+    const answered = QS.slice(s,e+1).filter(q=>getRecord(q.qid)).length;
+    const on = QS[QIDX].module===m ? 'on' : '';
+    html += `<div class="mod-pill ${on}" onclick="jumpMod('${m}')">${MOD_MAP[m]} <span class="num">${answered}/${e-s+1}</span></div>`;
+  });
+  bar.innerHTML = html;
+}
+
+function jumpMod(m){
+  const i = QS.findIndex(q=>q.module===m);
+  if(i>=0) QIDX=i;
+  renderQ();
+}
+
+function getRecord(qid){const r=STATE.records[STATE.currentPaper.id];return r&&r.answers&&r.answers[qid]}
+function setRecord(qid,v){const r=STATE.records[STATE.currentPaper.id]||{answers:{},completed:false};r.answers[qid]=v;r.lastIdx=QIDX;STATE.records[STATE.currentPaper.id]=r;saveState()}
+
+function renderQ(){
+  const q = QS[QIDX];
+  if(!q) return;
+  const beiti = STATE.currentMode==='beiti';
+  const rec = getRecord(q.qid);
+  document.getElementById('flagBtn').className = 'flag'+(STATE.flagged.has(q.qid)?' on':'');
+  document.getElementById('starBtn').className = 'star'+(isFavQ(q.qid)?' on':'');
+  document.getElementById('noteBtn').className = 'note-btn'+(STATE.notes[q.qid]?' has':'');
+  document.getElementById('prevBtn').disabled = QIDX===0;
+  document.getElementById('nextBtn').disabled = QIDX===QS.length-1;
+  buildModBar();
+  const isMulti = Array.isArray(q.answer) && q.answer.length>1;
+  const opts = (q.options||[]).map((o,i)=>{
+    const lt = String.fromCharCode(65+i);
+    let cls = 'opt';
+    if(rec && rec.includes && rec.includes(i)) cls += ' sel';
+    if(beiti){
+      const ans = Array.isArray(q.answer)?q.answer:[q.answer];
+      if(ans.includes(i)) cls += ' ok';
+      else if(rec && rec.includes && rec.includes(i)) cls += ' no';
+    }
+    return `<div class="${cls}" onclick="pickOpt(${i})"><span class="lt">${lt}</span><span class="txt">${o||''}</span><span class="ico">${cls.includes('sel')?'●':'○'}</span></div>`;
+  }).join('');
+  const qtype = isMulti?'多选题':'单选题';
+  const body = document.getElementById('qpBody');
+  body.innerHTML = `
+    <div class="qno">第 ${QIDX+1} 题 / 共 ${QS.length} 题<span class="qtype">${qtype}</span><span class="qtype">${MOD_MAP[q.module]||''}</span></div>
+    <div class="qstem">${q.stem||''}</div>
+    <div class="opts">${opts}</div>
+    ${beiti || STATE.showExplain ? (function(){
+      const ans = Array.isArray(q.answer)?q.answer:[q.answer];
+      const ansTxt = ans.map(a=>(q.options[a]||'')).join(' / ');
+      const yourTxt = rec ? ans.map(a=>String.fromCharCode(65+a)).join('') : '未作答';
+      return `<div class="explain show">
+        <div class="ex-t">📘 答案解析</div>
+        <div><span class="ex-ans your-no">你的答案：${rec?rec.map(a=>String.fromCharCode(65+a)).join(''):'未作答'}</span><span class="ex-ans">正确答案：${yourTxt}</span></div>
+        <div class="ex-body">${q.analysis||'暂无解析'}</div>
+        <div class="ex-kp">📌 考点：${MOD_MAP[q.module]||''} · ${q.kp||'未分类'} · ${q.year||''}年${VOL_LABEL[q.exam_type]||''}</div>
+      </div>`;
+    })() : '<div class="explain"></div>'}
+  `;
+  document.getElementById('qpBody').scrollTop = 0;
+}
+
+function isFavQ(qid){return STATE.favorites.includes(STATE.currentPaper.id+':'+qid)}
+function pickOpt(i){
+  const q = QS[QIDX];
+  const isMulti = Array.isArray(q.answer) && q.answer.length>1;
+  let cur = getRecord(q.qid) || [];
+  if(isMulti){
+    const j = cur.indexOf(i);
+    if(j>=0) cur.splice(j,1); else cur.push(i);
+    cur.sort((a,b)=>a-b);
+  } else {
+    cur = [i];
+  }
+  setRecord(q.qid, cur);
+  // 背题模式：选完即时判分 + 显示解析
+  if(STATE.currentMode==='beiti'){
+    STATE.showExplain = true;
+  }
+  renderQ();
+}
+function toggleFlag(){const q=QS[QIDX];if(STATE.flagged.has(q.qid))STATE.flagged.delete(q.qid);else STATE.flagged.add(q.qid);const r=STATE.records[STATE.currentPaper.id]||{answers:{},completed:false};r.flagged=Array.from(STATE.flagged);STATE.records[STATE.currentPaper.id]=r;saveState();renderQ()}
+function toggleStar(){const q=QS[QIDX];const k=STATE.currentPaper.id+':'+q.qid;const i=STATE.favorites.indexOf(k);if(i>=0)STATE.favorites.splice(i,1);else STATE.favorites.push(k);saveState();renderQ();toast(isFavQ(q.qid)?'已收藏题目':'已取消收藏')}
+function prevQ(){if(QIDX>0){QIDX--;STATE.showExplain=STATE.currentMode==='beiti';renderQ()}}
+function nextQ(){if(QIDX<QS.length-1){QIDX++;STATE.showExplain=STATE.currentMode==='beiti';renderQ()}}
+document.querySelectorAll('#qpModeToggle div').forEach(d=>d.onclick=function(){
+  document.querySelectorAll('#qpModeToggle div').forEach(x=>x.classList.remove('on'));
+  this.classList.add('on');
+  STATE.currentMode=this.dataset.m;
+  STATE.showExplain = STATE.currentMode==='beiti';
+  renderQ();
+});
+
+function openNote(){NOTE_QID=QS[QIDX].qid;document.getElementById('noteNo').textContent='第'+(QIDX+1)+'题';document.getElementById('noteText').value=STATE.notes[NOTE_QID]||'';document.getElementById('noteModal').classList.add('on')}
+function closeNote(){document.getElementById('noteModal').classList.remove('on');NOTE_QID=null}
+function saveNote(){if(NOTE_QID){STATE.notes[NOTE_QID]=document.getElementById('noteText').value;saveState();renderQ();toast('笔记已保存');closeNote()}}
+
+function openCard(){
+  const drawer = document.getElementById('cardDrawer');
+  drawer.classList.add('on');
+  renderCard();
+}
+function closeCard(){document.getElementById('cardDrawer').classList.remove('on')}
+function renderCard(){
+  const body = document.getElementById('cdBody');
+  const ranges = {};
+  let curMod = null, curStart = 0;
+  QS.forEach((q,i)=>{if(q.module!==curMod){if(curMod)ranges[curMod]=[curStart,i-1];curMod=q.module;curStart=i}});
+  if(curMod) ranges[curMod]=[curStart,QS.length-1];
+  let html = `<div class="cd-legend">
+    <span><i style="background:var(--green-l);border:1px solid #b6e3cd"></i>已答</span>
+    <span><i style="background:#fff;border:1px solid var(--line)"></i>未答</span>
+    <span><i style="background:var(--blue)"></i>当前</span>
+    <span>🚩 标记</span><span>⭐ 收藏</span>
+  </div>`;
+  MOD_ORDER.forEach(m=>{
+    if(!ranges[m]) return;
+    const [s,e]=ranges[m];
+    let cells='';
+    for(let i=s;i<=e;i++){
+      const q=QS[i];
+      const rec=getRecord(q.qid);
+      let cls='cd-cell'+(rec?' answered':'')+(STATE.flagged.has(q.qid)?' flag':'')+(isFavQ(q.qid)?' fav':'')+(i===QIDX?' current':'');
+      cells+=`<div class="${cls}" onclick="jumpTo(${i})">${i+1}</div>`;
+    }
+    html += `<div class="cd-group"><h4>${MOD_MAP[m]}</h4><div class="cd-grid">${cells}</div></div>`;
+  });
+  body.innerHTML = html;
+}
+function jumpTo(i){QIDX=i;STATE.showExplain=STATE.currentMode==='beiti';closeCard();renderQ()}
+
+function backToList(){
+  // 保存当前进度
+  if(STATE.currentPaper){
+    const r=STATE.records[STATE.currentPaper.id]||{answers:{},completed:false};
+    r.lastIdx=QIDX; r.pausedRemain=REMAIN; r.flagged=Array.from(STATE.flagged);
+    STATE.records[STATE.currentPaper.id]=r; saveState();
+  }
+  if(TIMER) clearInterval(TIMER);
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-list').classList.add('on');
+  renderPapers();
+}
+
+function submitPaper(){
+  if(!STATE.currentPaper) return;
+  if(!confirm('确认交卷吗？交卷后将无法继续作答。')) return;
+  if(TIMER) clearInterval(TIMER);
+  const rec = STATE.records[STATE.currentPaper.id]||{answers:{}};
+  rec.completed = true;
+  rec.completedAt = Date.now();
+  rec.spent = Math.round((Date.now()-STATE.startedAt)/1000);
+  STATE.records[STATE.currentPaper.id] = rec; saveState();
+  report(STATE.currentPaper.id);
+}
+
+function report(pid){
+  const paper = BANK.papers.find(p=>p.id===pid);
+  const qs = BANK.questions.filter(q=>q.paper_id===pid);
+  const rec = STATE.records[pid]||{answers:{}};
+  let correct=0, wrongList=[];
+  qs.forEach((q,i)=>{
+    const ans = Array.isArray(q.answer)?q.answer:[q.answer];
+    const your = rec.answers[q.qid];
+    const ok = your && ans.length===your.length && ans.every(a=>your.includes(a));
+    if(ok) correct++;
+    else wrongList.push({i,q,your});
+  });
+  const total = qs.length, acc = correct/total;
+  // 估分（按官方分值参考：言语0.8/判断0.65~0.7/资料1/常识0.5/数量0.7~0.8/政治0.5）
+  const VAL = {yanyu:.8, panduan:.65, ziliao:1, changshi:.5, shuliang:.7, zhengzhi:.5};
+  let score = 0;
+  qs.forEach(q=>{
+    const ans = Array.isArray(q.answer)?q.answer:[q.answer];
+    const your = rec.answers[q.qid];
+    const ok = your && ans.length===your.length && ans.every(a=>your.includes(a));
+    if(ok) score += (VAL[q.module]||0.6)*10;
+  });
+  // 按模块统计
+  const modStat = {};
+  qs.forEach(q=>{
+    modStat[q.module]=modStat[q.module]||{c:0,t:0};
+    modStat[q.module].t++;
+    const ans = Array.isArray(q.answer)?q.answer:[q.answer];
+    const your = rec.answers[q.qid];
+    if(your && ans.length===your.length && ans.every(a=>your.includes(a))) modStat[q.module].c++;
+  });
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-report').classList.add('on');
+  let rows = '';
+  MOD_ORDER.forEach(m=>{
+    if(!modStat[m]) return;
+    const s=modStat[m], pct=Math.round(s.c/s.t*100);
+    rows += `<div class="mod-row"><div class="mn">${MOD_MAP[m]}</div><div class="bar"><i style="width:${pct}%"></i></div><div class="num">${s.c}/${s.t} · ${pct}%</div></div>`;
+  });
+  const wrongHtml = wrongList.slice(0,20).map(w=>`<div class="wrong-row"><div class="qno-mini">${w.i+1}</div><div class="stem">${(w.q.stem||'').slice(0,80)}${(w.q.stem||'').length>80?'…':''}<small>${MOD_MAP[w.q.module]||''} · 你的答案：${w.your?w.your.map(a=>String.fromCharCode(65+a)).join(''):'未作答'}</small></div><div class="go-btn" onclick="goWrong(${w.i})">查看解析</div></div>`).join('') || '<div style="color:var(--mut);padding:20px 0;text-align:center">🎉 全部正确！</div>';
+  document.getElementById('reportBody').innerHTML = `
+    <div class="card head-card">
+      <div class="score">${Math.round(score)}<small>分</small></div>
+      <div class="meta">
+        <h3>${paper.name}</h3>
+        <p>${VOL_LABEL[paper.exam_type]||''} · ${total}题 · 正确率 <b style="color:var(--blue)">${Math.round(acc*100)}%</b> · 用时 ${Math.floor((rec.spent||0)/60)}分${(rec.spent||0)%60}秒</p>
+        <div class="actions" style="margin-top:14px">
+          <button class="btn" onclick="review('${pid}')">查看解析</button>
+          <button class="btn" onclick="redoWrong('${pid}')">重做错题（${wrongList.length}）</button>
+          <button class="btn primary" onclick="start('${pid}')">再做一遍</button>
+          <button class="btn" onclick="backToList()">返回列表</button>
+        </div>
+      </div>
+    </div>
+    <div class="card"><h4 style="margin-bottom:14px">📊 各模块正确率</h4>${rows}</div>
+    <div class="card wrong-list"><h4 style="margin-bottom:14px">❌ 错题列表（${wrongList.length}）</h4>${wrongHtml}</div>
+  `;
+}
+
+function goWrong(i){
+  const pid = STATE.currentPaper.id;
+  // 跳转到该题解析视图（复用做题页）
+  QIDX = i; STATE.showExplain = true; STATE.currentMode='beiti';
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
+  document.getElementById('page-qp').classList.add('on');
+  document.querySelectorAll('#qpModeToggle div').forEach(x=>{x.classList.toggle('on', x.dataset.m==='beiti')});
+  if(TIMER) clearInterval(TIMER);
+  renderQ();
+}
+function review(pid){
+  start(pid);
+  STATE.currentMode='beiti';
+  STATE.showExplain = true;
+  document.querySelectorAll('#qpModeToggle div').forEach(x=>{x.classList.toggle('on', x.dataset.m==='beiti')});
+  renderQ();
+}
+function redoWrong(pid){
+  start(pid);
+  // 清掉当前作答记录（保留错题标记）
+  const r=STATE.records[pid]||{};
+  r.answers={}; r.completed=false; r.lastIdx=0;
+  STATE.records[pid]=r; saveState();
+  STATE.currentMode='zuoti'; STATE.showExplain=false;
+  document.querySelectorAll('#qpModeToggle div').forEach(x=>{x.classList.toggle('on', x.dataset.m==='zuoti')});
+  QIDX=0; renderQ();
+}
+
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
+
+// ============= 初始化 =============
+renderPapers();
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行测分析 · 上岸通考公刷题</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; margin:0; background:#f4f6fb; color:#1f2430; }
+  header { background:linear-gradient(135deg,#2c5fd6,#4a86ff); color:#fff; padding:14px 18px; }
+  header h1 { margin:0; font-size:19px; }
+  header p { margin:4px 0 0; font-size:12px; opacity:.9; }
+  .wrap { max-width:920px; margin:0 auto; padding:14px; }
+  .card { background:#fff; border-radius:10px; padding:14px; margin-bottom:14px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  .card h2 { margin:0 0 10px; font-size:15px; color:#2c5fd6; }
+  label { display:block; font-size:13px; margin:8px 0 4px; color:#444; }
+  input[type=text],input[type=number],textarea { width:100%; padding:8px; border:1px solid #d6dae2; border-radius:6px; font-size:13px; font-family:inherit; }
+  textarea { min-height:64px; resize:vertical; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:8px; }
+  button { cursor:pointer; border:none; border-radius:6px; padding:8px 14px; font-size:13px; background:#2c5fd6; color:#fff; }
+  button.sec { background:#7f8c9a; }
+  button.ghost { background:#eef1f6; color:#333; }
+  button:hover { opacity:.9; }
+  .rec { border:1px solid #e6e9ef; border-radius:8px; padding:10px; margin-top:10px; }
+  .rec .top { display:flex; justify-content:space-between; align-items:center; }
+  .meta { font-size:12px; color:#888; }
+  .body { font-size:13px; white-space:pre-wrap; margin-top:6px; }
+  .pill { display:inline-block; background:#eef1f6; border-radius:10px; padding:2px 8px; font-size:12px; margin:2px 4px 2px 0; }
+  .weak { background:#fdecea; color:#c0392b; border:1px solid #f5c6c0; padding:10px; border-radius:8px; margin-top:8px; }
+  .weak b { color:#c0392b; }
+  canvas { width:100%; max-width:600px; height:200px; }
+  .hint { font-size:12px; color:#999; margin-top:6px; }
+  .rk { display:flex; align-items:center; gap:8px; margin:4px 0; font-size:13px; }
+  .rk .bar { flex:1; height:10px; background:#eee; border-radius:5px; overflow:hidden; }
+  .rk .bar > i { display:block; height:100%; background:#2c5fd6; }
+</style>
+</head>
+<body>
+<header>
+  <h1>行测分析 · 上岸通考公刷题</h1>
+  <p>每次练习录各模块对错 → 薄弱点画像 + 正确率趋势 + 推荐加强练习 + AI 分析。每次独立留痕。</p>
+</header>
+<div class="wrap">
+
+  <div class="card">
+    <h2>① 新增一次练习记录</h2>
+    <div class="grid">
+      <div><label>日期</label><input type="text" id="date" placeholder="2026-08-01"></div>
+      <div><label>来源卷别</label><input type="text" id="source" placeholder="如：国考2024地市级"></div>
+    </div>
+    <div id="modInputs"></div>
+    <label>AI 分析（粘回 WorkBuddy 给的薄弱项/建议，永久留存）</label>
+    <textarea id="aiAnalysis" placeholder="把 WorkBuddy 的分析结论粘回来"></textarea>
+    <div style="margin-top:10px; display:flex; gap:8px;">
+      <button onclick="saveRec()">保存这次练习</button>
+      <button class="ghost" onclick="exportAll()">导出全部</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>② 薄弱点画像（累计）</h2>
+    <div id="weakProfile"></div>
+  </div>
+
+  <div class="card">
+    <h2>③ 正确率趋势</h2>
+    <canvas id="trend" width="600" height="200"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>④ 推荐加强练习</h2>
+    <div id="reco"></div>
+    <p class="hint">建议基于累计最弱模块，去「上岸通」刷题页按该模块筛选加练。</p>
+  </div>
+
+  <div class="card">
+    <h2>⑤ 历次练习记录</h2>
+    <div id="recList"></div>
+  </div>
+
+</div>
+
+<script>
+const MODS = ["言语理解","数量关系","判断推理","资料分析","常识判断"];
+let state = { records: [] };
+
+const $ = id => document.getElementById(id);
+
+async function load() {
+  try { const r = await fetch("/api/load"); state = await r.json(); } catch(e){}
+  if (!state.records) state.records = [];
+  buildModInputs();
+  render();
+}
+async function save() {
+  try { await fetch("/api/save", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(state)}); } catch(e){ alert("保存失败："+e); }
+}
+function buildModInputs() {
+  const c = $("modInputs"); c.innerHTML = "";
+  MODS.forEach(m => {
+    const d = document.createElement("div");
+    d.style.marginTop = "8px";
+    d.innerHTML = '<label>'+m+'（对 / 错）</label><div class="grid"><input type="number" min="0" id="r_'+m+'" placeholder="做对"><input type="number" min="0" id="w_'+m+'" placeholder="做错"></div>';
+    c.appendChild(d);
+  });
+}
+function saveRec() {
+  const mods = {};
+  let ok = false;
+  MODS.forEach(m => {
+    const r = parseInt($("r_"+m).value)||0, w = parseInt($("w_"+m).value)||0;
+    if (r>0 || w>0) { mods[m] = { right:r, wrong:w }; ok = true; }
+  });
+  if (!ok) { alert("至少录一个模块的 对/错"); return; }
+  const rec = {
+    id: Date.now()+"_"+Math.random().toString(36).slice(2,7),
+    date: $("date").value.trim() || new Date().toISOString().slice(0,10),
+    source: $("source").value.trim(),
+    mods,
+    aiAnalysis: $("aiAnalysis").value.trim(),
+    ts: new Date().toISOString()
+  };
+  state.records.push(rec);
+  save(); render();
+  MODS.forEach(m => { $("r_"+m).value=""; $("w_"+m).value=""; });
+  $("source").value=""; $("aiAnalysis").value="";
+  alert("已保存。");
+}
+function acc(m){ const t=m.right+m.wrong; return t? m.right/t : null; }
+function render() {
+  renderWeak();
+  renderTrend();
+  renderReco();
+  renderList();
+}
+function renderWeak() {
+  const agg = {};
+  MODS.forEach(m => agg[m] = {right:0, wrong:0});
+  state.records.forEach(rec => {
+    MODS.forEach(m => { if (rec.mods[m]) { agg[m].right+=rec.mods[m].right; agg[m].wrong+=rec.mods[m].wrong; } });
+  });
+  const c = $("weakProfile"); c.innerHTML = "";
+  let weakest = null, weakVal = 1;
+  MODS.forEach(m => {
+    const t = agg[m].right + agg[m].wrong;
+    const a = t ? agg[m].right/t : null;
+    const d = document.createElement("div"); d.className="rk";
+    const pct = a==null ? "—" : (a*100).toFixed(1)+"%";
+    d.innerHTML = '<span style="width:80px">'+m+'</span><span class="bar"><i style="width:'+(a==null?0:a*100)+'%"></i></span><span>'+pct+'（'+agg[m].right+'/'+t+'）</span>';
+    c.appendChild(d);
+    if (a!=null && a < weakVal) { weakVal = a; weakest = m; }
+  });
+  if (weakest) {
+    const w = document.createElement("div"); w.className="weak";
+    w.innerHTML = "<b>最薄弱模块：" + weakest + "</b>（累计正确率 " + (weakVal*100).toFixed(1) + "%）。优先加练该模块，把它从短板补到平均线以上。";
+    c.appendChild(w);
+  } else {
+    c.innerHTML += '<p class="hint">还没有足够数据，先录几次练习。</p>';
+  }
+}
+function renderTrend() {
+  const cv = $("trend"); const ctx = cv.getContext("2d");
+  ctx.clearRect(0,0,cv.width,cv.height);
+  const recs = state.records.slice().sort((a,b)=>a.ts.localeCompare(b.ts));
+  const pts = recs.map(r => {
+    let rt=0, tt=0;
+    MODS.forEach(m => { if (r.mods[m]) { rt+=r.mods[m].right; tt+=r.mods[m].right+r.mods[m].wrong; } });
+    return tt? rt/tt : null;
+  }).filter(v=>v!=null);
+  if (pts.length < 1) { ctx.fillStyle="#999"; ctx.font="13px sans-serif"; ctx.fillText("暂无数据", 20, 100); return; }
+  const W=cv.width, H=cv.height, pad=30;
+  ctx.strokeStyle="#ccc"; ctx.beginPath(); ctx.moveTo(pad,pad); ctx.lineTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.fillStyle="#666"; ctx.font="11px sans-serif";
+  ctx.fillText("100%", 4, pad+4); ctx.fillText("0%", 12, H-pad);
+  const stepX = pts.length>1 ? (W-2*pad)/(pts.length-1) : 0;
+  ctx.strokeStyle="#2c5fd6"; ctx.lineWidth=2; ctx.beginPath();
+  pts.forEach((v,i) => {
+    const x = pad + stepX*i;
+    const y = (H-pad) - v*(H-2*pad);
+    i? ctx.lineTo(x,y) : ctx.moveTo(x,y);
+    ctx.fillStyle="#2c5fd6"; ctx.arc(x,y,3,0,7); ctx.fill();
+  });
+  ctx.stroke();
+}
+function renderReco() {
+  const agg = {}; MODS.forEach(m=>agg[m]={right:0,wrong:0});
+  state.records.forEach(rec => MODS.forEach(m => { if (rec.mods[m]) { agg[m].right+=rec.mods[m].right; agg[m].wrong+=rec.mods[m].wrong; } }));
+  let weakest=null, wv=1;
+  MODS.forEach(m => { const t=agg[m].right+agg[m].wrong; if (t) { const a=agg[m].right/t; if (a<wv){wv=a;weakest=m;} } });
+  const c = $("reco"); c.innerHTML = "";
+  if (!weakest) { c.innerHTML = '<p class="hint">录够数据后给出推荐。</p>'; return; }
+  const tips = {
+    "言语理解":"每日精做 15 道片段阅读，错题归类（主旨/细节/逻辑填空），背高频成语。",
+    "数量关系":"主攻高频题型（工程/行程/容斥/排列），难题果断放弃，保住基础分。",
+    "判断推理":"图推背常考规律，逻辑判断练翻译推理与削弱加强，定义判断抓关键词。",
+    "资料分析":"练速算（截位/估算法），控制每篇 7 分钟内，公式背熟。",
+    "常识判断":"利用碎片时间刷时政+法律+省情，重在积累而非刷题量。"
+  };
+  c.innerHTML = '<div class="weak"><b>优先补强：'+weakest+'</b><br>'+tips[weakest]+'</div>';
+}
+function renderList() {
+  const list = $("recList"); list.innerHTML = "";
+  const recs = state.records.slice().sort((a,b)=>b.ts.localeCompare(a.ts));
+  recs.forEach(r => {
+    let rt=0, tt=0; MODS.forEach(m=>{ if(r.mods[m]){ rt+=r.mods[m].right; tt+=r.mods[m].right+r.mods[m].wrong; } });
+    const total = tt? (rt/tt*100).toFixed(1)+"%" : "—";
+    const d = document.createElement("div"); d.className="rec";
+    d.innerHTML = '<div class="top"><b>'+(r.source||"未命名")+'</b><span class="meta">'+r.date+' · 总正确率 '+total+'</span></div>';
+    const pills = MODS.filter(m=>r.mods[m]).map(m=>'<span class="pill">'+m+' '+(acc(r.mods[m])==null?"—":(acc(r.mods[m])*100).toFixed(0)+"%")+'</span>').join("");
+    const p = document.createElement("div"); p.className="body"; p.innerHTML = pills;
+    d.appendChild(p);
+    if (r.aiAnalysis) { const a=document.createElement("div"); a.className="body"; a.style.background="#f0f7ff"; a.style.padding="8px"; a.style.borderRadius="6px"; a.innerHTML="<b>AI 分析：</b><br>"+escapeHtml(r.aiAnalysis); d.appendChild(a); }
+    const ops=document.createElement("div"); ops.style.marginTop="8px"; ops.innerHTML='<button class="ghost" onclick="exportOne(\''+r.id+'\')">导出</button> <button class="sec" onclick="delRec(\''+r.id+'\')">删除</button>';
+    d.appendChild(ops);
+    list.appendChild(d);
+  });
+}
+function escapeHtml(s){ return s.replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+function delRec(id){ if(!confirm("删除这条？")) return; state.records=state.records.filter(r=>r.id!==id); save(); render(); }
+function exportOne(id){
+  const r = state.records.find(x=>x.id===id); if(!r) return;
+  let s="【来源】"+r.source+"  【日期】"+r.date+"\n";
+  MODS.forEach(m=>{ if(r.mods[m]) s+="· "+m+"：对"+r.mods[m].right+" 错"+r.mods[m].wrong+"\n"; });
+  s+="\n【之前AI分析】\n"+(r.aiAnalysis||"（无）")+"\n\n---\n请分析我的薄弱模块，给出后续加强练习建议。";
+  download((r.source||"行测")+"_分析.txt", s);
+}
+function exportAll(){ download("行测分析全部记录.json", JSON.stringify(state,null,2)); }
+function download(name,text){ const b=new Blob([text],{type:"text/plain;charset=utf-8"}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; a.click(); }
+
+load();
+</script>
+</body>
+</html>

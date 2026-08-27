@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkBuddy 自动化控制面板</title>
+<style>
+:root {
+  --bg: #F8F9FA;
+  --card-bg: #FFFFFF;
+  --text: #1a1a2e;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-purple: #8b5cf6;
+  --accent-teal: #14b8a6;
+  --accent-coral: #f97316;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg); color: var(--text);
+  line-height: 1.6; font-size: 14px;
+  padding: 16px; max-width: 1200px; margin: 0 auto;
+}
+.header {
+  text-align: center; padding: 32px 0 24px;
+}
+.header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+.header p { color: var(--text-secondary); margin-top: 6px; font-size: 14px; }
+
+.stats-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--card-bg); border-radius: var(--radius);
+  border: 1px solid var(--border-light); padding: 16px; text-align: center;
+  cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  user-select: none;
+}
+.stat-card:hover {
+  transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  border-color: var(--accent-blue);
+}
+.stat-card.active-filter {
+  border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+.stat-num { font-size: 28px; font-weight: 700; color: var(--accent-blue); }
+.stat-num.c-green { color: var(--accent-green); }
+.stat-num.c-amber { color: var(--accent-amber); }
+.stat-num.c-purple { color: var(--accent-purple); }
+.stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+.filter-hint {
+  text-align: center; font-size: 12px; color: var(--text-muted);
+  margin-bottom: 16px; min-height: 18px;
+}
+
+.tabs {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;
+  padding: 4px; background: var(--border-light); border-radius: var(--radius);
+}
+.tab-btn {
+  padding: 8px 16px; border: none; background: transparent;
+  border-radius: var(--radius-sm); cursor: pointer; font-size: 13px;
+  font-weight: 500; color: var(--text-secondary); transition: all 0.15s;
+}
+.tab-btn:hover { background: rgba(59,130,246,0.08); }
+.tab-btn.active { background: var(--card-bg); color: var(--accent-blue);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+.category-section { display: none; }
+.category-section.active { display: block; }
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid var(--border-light);
+}
+.section-title { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.section-count { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+
+.grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  background: var(--card-bg); border-radius: var(--radius);
+  border: 1px solid var(--border-light); padding: 18px;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s; position: relative;
+}
+.card:hover { transform: translateY(-2px); box-shadow: var(--shadow), 0 4px 12px rgba(0,0,0,0.08); }
+.card.filtered-out { display: none !important; }
+
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.card-name { font-size: 15px; font-weight: 600; line-height: 1.3; flex: 1; padding-right: 8px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  white-space: nowrap; flex-shrink: 0;
+}
+.badge-active { background: #ecfdf5; color: #059669; }
+.badge-paused { background: #fef3c7; color: #d97706; }
+.badge-manual { background: #ede9fe; color: #7c3aed; }
+.badge-monthly { background: #e0f2fe; color: #0369a1; }
+.badge-weekly { background: #fce7f3; color: #be185d; }
+.badge-hourly { background: #f3e8ff; color: #9333ea; }
+.badge-once { background: #fef2f2; color: #dc2626; }
+
+.card-freq { font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;
+  display: flex; align-items: center; gap: 6px;
+}
+.card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; margin-bottom: 14px; }
+.card-output { font-size: 11.5px; color: var(--text-muted); margin-bottom: 14px;
+  word-break: break-all; }
+.output-link { color: var(--accent-blue); text-decoration: none; }
+.output-link:hover { text-decoration: underline; }
+
+.card-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn {
+  padding: 6px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--card-bg); cursor: pointer; font-size: 12px; font-weight: 500;
+  transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px;
+}
+.btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+.btn-primary { background: var(--accent-blue); color: white; border-color: var(--accent-blue); }
+.btn-primary:hover { background: #2563eb; color: white; }
+.btn-sm { padding: 4px 10px; font-size: 11.5px; }
+.btn-disabled { opacity: 0.45; cursor: not-allowed; }
+
+.tag {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 500; margin-right: 4px; margin-bottom: 4px;
+}
+.tag-exam { background: #dbeafe; color: #1d4ed8; }
+.tag-shenlun { background: #dcfce7; color: #15803d; }
+tag-money { background: #fef3c7; color: #b45309; }
+.tag-money { background: #fff7ed; color: #c2410c; }
+.tag-disk { background: #f0fdf4; color: #166534; }
+.tag-km { background: #faf5ff; color: #7e22ce; }
+.tag-sys { background: #f5f3ff; color: #6d28d9; }
+.tag-tool { background: #eff6ff; color: #1d4ed8; }
+
+.footer-note { text-align: center; color: var(--text-muted); font-size: 12px;
+  margin-top: 32px; padding: 16px 0; border-top: 1px solid var(--border-light); }
+
+.master-banner { display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin: 0 16px 20px; padding: 12px 18px; border-radius: var(--radius);
+  background: linear-gradient(135deg,#eef2ff 0%,#f0fdf4 100%);
+  border: 1px solid #c7d2fe; font-size: 13.5px; color: #334155; flex-wrap: wrap; }
+.master-banner b { color: #1e40af; }
+.master-banner a { color: #fff; background: var(--accent-blue); padding: 6px 14px;
+  border-radius: 8px; text-decoration: none; font-weight: 600; }
+.master-banner a:hover { background: #2563eb; }
+
+@media (max-width: 640px) {
+  body { padding: 10px; }
+  .grid { grid-template-columns: 1fr; }
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; padding: 4px; }
+  .tab-btn { flex-shrink: 0; }
+}
+
+.icon-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; flex-shrink: 0; margin-top: 6px; }
+
+/* Modal */
+.modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); backdrop-filter:blur(4px); z-index:9999; display:flex; align-items:center; justify-content:center; padding:20px; }
+.modal-box { background:#fff; border-radius:16px; max-width:520px; width:100%; max-height:80vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.15); }
+.modal-header { display:flex; align-items:center; justify-content:space-between; padding:18px 22px; border-bottom:1px solid #eee; }
+.modal-header h3 { font-size:17px; font-weight:700; margin:0; }
+.modal-close { background:none; border:none; font-size:20px; cursor:pointer; color:#999; padding:4px 8px; border-radius:8px; transition:all 0.15s; }
+.modal-close:hover { background:#f4f4f5; color:#333; }
+.modal-body { padding:20px 22px; line-height:1.7; color:#444; font-size:14px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>&#x1F3AF; WorkBuddy 自动化面板</h1>
+  <p>23 个自动化 &middot; 6 大分类 &middot; 一目了然</p>
+</div>
+
+<div class="master-banner">
+  <span>👉 所有产品已汇总到 <b>「总控面板」</b>（含赚钱面板、申论、自媒体、公益工具等 34 个面板，分类陈列 + 搜索）</span>
+  <a href="./总控面板/index.html">打开总控面板 →</a>
+</div>
+
+<!-- 统计卡片：可点击过滤 -->
+<div class="stats-bar">
+  <div class="stat-card" onclick="filterByStatus('active',this)">
+    <div class="stat-num c-green" id="count-active">13</div><div class="stat-label">运行中</div></div>
+  <div class="stat-card" onclick="filterByStatus('paused',this)">
+    <div class="stat-num c-amber" id="count-paused">8</div><div class="stat-label">已暂停</div></div>
+  <div class="stat-card" onclick="filterByStatus('manual',this)">
+    <div class="stat-num c-purple" id="count-manual">5</div><div class="stat-label">手动触发</div></div>
+  <div class="stat-card" onclick="filterByStatus('all',this)">
+    <div class="stat-num">23</div><div class="stat-label">总自动化</div></div>
+</div>
+<div class="filter-hint" id="filter-hint"></div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="showCat('all',this)">全部</button>
+  <button class="tab-btn" onclick="showCat('exam',this)">考公提分</button>
+  <button class="tab-btn" onclick="showCat('shenlun',this)">申论素材</button>
+  <button class="tab-btn" onclick="showCat('money',this)">赚钱副业</button>
+  <button class="tab-btn" onclick="showCat('disk',this)">网盘工具</button>
+  <button class="tab-btn" onclick="showCat('km',this)">知识管理</button>
+  <button class="tab-btn" onclick="showCat('tool',this)">公益工具</button>
+  <button class="tab-btn" onclick="showCat('sys',this)">系统闸</button>
+</div>
+
+<!-- ==================== 考公提分 ==================== -->
+<div class="category-section active" data-cat="exam">
+  <div class="section-header">
+    <div class="section-title">&#x1F4DA; 考公提分</div>
+    <span class="section-count">3 个自动化 · 真题质检 + 答案补全 + 错题分析</span>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-tags="exam" data-status="manual">
+      <div class="card-top">
+        <div class="card-name">真题校验 Agent</div>
+        <span class="badge badge-paused">已暂停</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px">&#x1F504;</span> 手动触发（原每天 10:00）</div>
+      <div class="card-desc">鉴定上岸通题库（107050 题）真假——按白名单（中公/粉笔/华图等）比对，剔除模拟/伪造题。输出校验报告。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/quiz_verify_report.html">quiz_verify_report.html</a></div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="alert('请在 WorkBuddy 对话中输入「运行真题校验」来手动触发')">立即运行</button>
+        <button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/quiz_verify_report.html')">查看报告</button>
+      </div>
+    </div>
+
+    <div class="card" data-tags="exam" data-status="manual">
+      <div class="card-top">
+        <div class="card-name">答案多源补全 Agent</div>
+        <span class="badge badge-paused">已暂停</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px">&#x1F504;</span> 手动触发（原每周日 11:00）</div>
+      <div class="card-desc">给缺答案/单家答案的真题补到 ≥2 家可信来源（中公/华图/粉笔）。幂等处理，不重复写入。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/answer_enrich_report.html">answer_enrich_report.html</a></div>
+      <div class="card-actions">
+        <button class="btn btn-primary btn-sm" onclick="alert('请在 WorkBuddy 对话中输入「运行答案补全」来手动触发')">立即运行</button>
+        <button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/answer_enrich_report.html')">查看报告</button>
+      </div>
+    </div>
+
+    <div class="card" data-tags="exam" data-status="manual">
+      <div class="card-top">
+        <div class="card-name">错题归因 Agent</div>
+        <span class="badge badge-paused">已暂停</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px">&#x1F504;</span> 手动触发（原每天 15:00）</div>
+      <div class="card-desc">分析做题记录，按知识点/年份/难度统计错误率，生成薄弱点报告 + 复习优先级建议。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/mistake_analysis_report.html">mistake_analysis_report.html</a></div>
+      <div class="card-actions">
+        <button class="btn btn-primary" onclick="alert('请先从上岸通导出做题记录，然后在 WorkBuddy 中触发')">刷完题后运行</button>
+        <button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/mistake_analysis_report.html')">查看报告</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== 申论素材 ==================== -->
+<div class="category-section active" data-cat="shenlun">
+  <div class="section-header">
+    <div class="section-title">&#x1F4D6; 申论素材库</div>
+    <span class="section-count">7 个自动化 · 三套采集管道 + 陪练 + 回顾</span>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-tags="shenlun" data-status="active" style="border-left: 3px solid #10b981;">
+      <div class="card-top">
+        <div class="card-name">申论素材采集（人民时评系）</div>
+        <span class="badge badge-active">每天 8:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px">&#x1F4F0;</span> 抓人民日报 / 人民网 / 光明网时评 → 五位一体拆解</div>
+      <div class="card-desc">每日抓 3-5 篇最新时评，四步法拆解后按政治/经济/文化/社会/生态五类归档。<b>60 篇存量</b>，今天 07:56 更新。</div>
+      <div class="card-output">
+        产出：
+        <a class="output-link" href="./国考申论/申论素材阅读器.html">政治</a> ·
+        <a class="output-link" href="./国考申论/申论素材阅读器.html">经济</a> ·
+        <a class="output-link" href="./国考申论/申论素材阅读器.html">文化</a> ·
+        <a class="output-link" href="./国考申论/申论素材阅读器.html">社会</a> ·
+        <a class="output-link" href="./国考申论/申论素材阅读器.html">生态</a>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary btn-sm" onclick="window.open('./国考申论/申论素材阅读器.html')">浏览素材</button>
+        <span class="tag tag-shenlun">核心</span>
+      </div>
+    </div>
+
+    <div class="card" data-tags="shenlun" data-status="manual" style="border-left: 3px solid #3b82f6;">
+      <div class="card-top">
+        <div class="card-name">求是杂志同步（四库）</div>
+        <span class="badge badge-paused">已暂停</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F504;</span> 手动触发（半月刊，原每月 2/17 号）</div>
+      <div class="card-desc">只抓《求是》杂志，按 12 母题沉淀四库（规范词/金句/框架/案例），并重建检索网页。<br><b>2024 年 24/24 期 ✅ · 2025 年 24/24 期 ✅ · 1107 篇已入库</b></div>
+      <div class="card-output">
+        四库：
+        <a class="output-link" href="./国考申论/求是申论素材库/01_规范词库.html">规范词 9500行</a> ·
+        <a class="output-link" href="./国考申论/求是申论素材库/02_金句库.html">金句 5531行</a> ·
+        <a class="output-link" href="./国考申论/求是申论素材库/03_框架库.html">框架 6618行</a> ·
+        <a class="output-link" href="./国考申论/求是申论素材库/04_案例库.html">案例 5907行</a>
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-primary btn-sm" onclick="window.open('./国考申论/求是申论素材库/求是素材库.html')">打开检索站</button>
+        <button class="btn btn-sm" onclick="window.open('https://shiwuooo.github.io/qiushi-shenlun/')">线上版</button>
+        <span class="tag tag-shenlun">核心</span>
+      </div>
+    </div>
+
+    <div class="card" data-tags="shenlun" data-status="manual" style="border-left: 3px solid #f59e0b;">
+      <div class="card-top">
+        <div class="card-name">新华时评喂料 + AI 拆解</div>
+        <span class="badge badge-paused">已暂停</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F504;</span> 手动触发（喂料+拆解+部署一条管线）</div>
+      <div class="card-desc">抓新华网"新华时评"→队列→深度拆解（主旨/立意/母题映射/金句/踩分点）→重建站点→推送 GitHub Pages。<b>56/56 篇已拆完</b>，以后只拆新文。</div>
+      <div class="card-output">产出：<a class="output-link" href="https://shiwuooo.github.io/qiushi-shenlun/">线上站（含新华时评模块）</a></div>
+      <div class="card-actions">
+        <button class="btn btn-sm" onclick="window.open('https://shiwuooo.github.io/qiushi-shenlun/')">查看线上站</button>
+        <span class="tag tag-shenlun">理论储备</span>
+      </div>
+    </div>
+
+    <div class="card" data-tags="shenlun" data-status="paused">
+      <div class="card-top">
+        <div class="card-name">申论拆解陪练</div>
+        <span class="badge badge-paused">已暂停</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F4DD;</span> 原一三五 0:00 · 等你刷完真题再启动</div>
+      <div class="card-desc">自动抓时评 → 四步法拆解 → 出 800-1000 字仿写题 → 你交作业 → 逐段批改打分（一类/二类/三类文）。</div>
+      <div class="card-output">交互式教学，无固定产出文件</div>
+      <div class="card-actions">
+        <button class="btn-disabled">暂未启动</button>
+        <span class="tag tag-shenlun">后期启用</span>
+      </div>
+    </div>
+
+    <div class="card" data-tags="shenlun" data-status="active">
+      <div class="card-top">
+        <div class="card-name">周申论素材回顾</div>
+        <span class="badge badge-weekly">每周日</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F4D6;</span> 每周日 9:00</div>
+      <div class="card-desc">每周"阅兵式"回顾素材库：推荐 1-2 个值得拆的新方向（结合政策热点）+ 复习旧素材可复用角度。<b>纯分析不改文件</b>。</div>
+      <div class="card-output">阅读型周报，无固定文件</div>
+      <div class="card-actions">
+        <button class="btn btn-sm" onclick="showModal('周申论素材回顾','<p>每周日 9:00 自动运行，功能：</p><ul style=\"text-align:left;margin:12px 0;\"><li>扫描素材库近期存量，推荐 1-2 个结合政策热点的拆解方向</li><li>挑出上周已存素材的可复用写作角度</li><li>纯分析建议，不修改任何文件</li></ul><p style=\"color:#888;font-size:12px;\">下次运行：本周日 9:00 · 可在上方「浏览素材」中查看现有素材库</p>')">查看本周回顾</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 申论成果快速入口 -->
+  <div class="card" style="grid-column: 1/-1; background: linear-gradient(135deg,#f0fdf4 0%,#eff6ff 100%); border: 1px solid #bbf7d0;" data-tags="shenlun" data-status="active">
+    <div class="card-top">
+      <div class="card-name" style="font-size:16px;">&#x1F3AF; 申论成果一站式入口</div>
+    </div>
+    <div class="card-desc" style="margin-bottom:12px;">
+      三套独立语料，互补不重叠。人民时评学<b>笔法</b>（更像申论范文），求是杂志建<b>底蕴</b>（政策理论功底），新华时评补<b>深度</b>（数据论据+中央表述）。
+    </div>
+    <div class="card-actions">
+      <button class="btn btn-primary" onclick="window.open('./国考申论/申论素材阅读器.html')">人民时评素材（五位一体）</button>
+      <button class="btn btn-primary" onclick="window.open('./国考申论/求是申论素材库/求是素材库.html')">求是杂志四库（本地站）</button>
+      <button class="btn btn-primary" onclick="window.open('https://shiwuooo.github.io/qiushi-shenlun/')">全部成果（GitHub Pages）</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 赚钱副业 ==================== -->
+<div class="category-section active" data-cat="money">
+  <div class="section-header">
+    <div class="section-title">&#x1F4B0; 赚钱副业</div>
+    <span class="section-count">6 个自动化 · 情报聚合 → 风险评分 → 套利监控 → 文案生成</span>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-tags="money" data-status="active" style="border-left: 3px solid #f59e0b;">
+      <div class="card-top">
+        <div class="card-name">赚钱日报</div>
+        <span class="badge badge-active">每天 9:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F4B0;</span> 国内 + 海外双轮检索</div>
+      <div class="card-desc">每天产一份搞钱简报：筛出对普通人可落地的 3-6 个信号，去广告骗局，存三处（Obsidian / D盘 / 离线 HTML 面板）。</div>
+      <div class="card-output">产出：<a class="output-link" href="./赚钱日报/最新日报.html">今日日报</a> · <a class="output-link" href="./赚钱面板/赚钱面板-成品.html">离线面板</a></div>
+      <div class="card-actions">
+        <button class="btn btn-primary btn-sm" onclick="window.open('./赚钱面板/赚钱面板-成品.html')">打开赚钱面板</button>
+        <span class="tag tag-money">核心</span>
+      </div>
+    </div>
+
+    <div class="card" data-tags="money" data-status="active">
+      <div class="card-top">
+        <div class="card-name">副业信息聚合</div>
+        <span class="badge badge-active">每天 8:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F50E;</span> 全网搜搞钱线索</div>
+      <div class="card-desc">跨平台搜（公众号/即刻/小红书/知乎），提取项目名/平台/玩法/变现方式/门槛，打标签去重。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/side_hustle_leads_report.html">side_hustle_leads_report.html</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/side_hustle_leads_report.html')">查看线索库</button></div>
+    </div>
+
+    <div class="card" data-tags="money" data-status="active">
+      <div class="card-top">
+        <div class="card-name">项目可信评分</div>
+        <span class="badge badge-active">每天 12:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F6E1;</span> 割韭菜风险检测</div>
+      <div class="card-desc">给聚合来的项目打风险分 0-100（越高越危险）。高额入门费+拉人头+承诺稳赚 = ≥80 高危。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/project_risk_report.html">project_risk_report.html</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/project_risk_report.html')">查看评分</button></div>
+    </div>
+
+    <div class="card" data-tags="money" data-status="active">
+      <div class="card-top">
+        <div class="card-name">套利机会监控</div>
+        <span class="badge badge-active">每天 13:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F91D;</span> 信息差 / 补贴 / 优惠券</div>
+      <div class="card-desc">监控电商平台优惠活动，计算可行性（利润 − 时间成本 − 风险成本），分级输出。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/arbitrage_report.html">arbitrage_report.html</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/arbitrage_report.html')">查看机会</button></div>
+    </div>
+
+    <div class="card" data-tags="money" data-status="active">
+      <div class="card-top">
+        <div class="card-name">推广素材生成</div>
+        <span class="badge badge-active">每天 14:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F4AC;</span> 多平台文案批量生成</div>
+      <div class="card-desc">根据资源需求监控结果，按平台调性（小红书/抖音/微博/知乎）生成文案+钩子+标题+海报建议。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/promo_copy_report.html">promo_copy_report.html</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/promo_copy_report.html')">查看文案包</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== 网盘工具 ==================== -->
+<div class="category-section active" data-cat="disk">
+  <div class="section-header">
+    <div class="section-title">&#x1F4C1; 网盘工具</div>
+    <span class="section-count">3 个自动化 · 推广追踪 + 去重 + 需求监控</span>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-tags="disk" data-status="active">
+      <div class="card-top">
+        <div class="card-name">推广数据追踪</div>
+        <span class="badge badge-active">每天 9:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F4CA;</span> 夸克分享数 / 链接变化 / 异常</div>
+      <div class="card-desc">跑 Python 脚本拉夸克 API 快照 → snapshots.csv → 对比前日/前周增量 → 标记异常（突变/失效/私人内容公开）。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/promo_metrics_report.html">promo_metrics_report.html</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/promo_metrics_report.html')">查看报表</button></div>
+    </div>
+
+    <div class="card" data-tags="disk" data-status="active">
+      <div class="card-top">
+        <div class="card-name">网盘去重整理</div>
+        <span class="badge badge-active">每天 10:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F5C1;</span> 近似重复扫描（同名同大小）</div>
+      <div class="card-desc">夸克网盘近似去重分析（只看不删！）。输出重复候选 / 建议保留 vs 可清理 / 预计释放空间。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/netdisk_dedup_report.html">netdisk_dedup_report.html</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/netdisk_dedup_report.html')">查看去重报告</button></div>
+    </div>
+
+    <div class="card" data-tags="disk" data-status="active">
+      <div class="card-top">
+        <div class="card-name">资源需求监控</div>
+        <span class="badge badge-active">每天 9:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F50D;</span> 全网大家在求什么资料</div>
+      <div class="card-desc">监控关键词池（申论/行测/考研/教资/事业单位），跨平台搜热度，输出潜力资源包清单 + 可对接推广方向。</div>
+      <div class="card-output">产出：<a class="output-link" href="./2026-07-30-10-56-34/reports/resource_demand_report.html">resource_demand_report.html</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./2026-07-30-10-56-34/reports/resource_demand_report.html')">查看需求榜</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== 知识管理 ==================== -->
+<div class="category-section active" data-cat="km">
+  <div class="section-header">
+    <div class="section-title">&#x1F4DA; 知识管理</div>
+    <span class="section-count">4 个自动化 · 捕获箱整理 + 灵感速览 + outputs 整理 + Obsidian 同步</span>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-tags="km" data-status="active">
+      <div class="card-top">
+        <div class="card-name">每日整理捕获箱</div>
+        <span class="badge badge-active">每天 21:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F4E1;</span> Obsidian 碎片智能分类</div>
+      <div class="card-desc">读捕获箱待处理 md → LLM 分 4 类（训练卡/决策过滤器/运营卡/暂挂）→ 总结+关联 → 更新关联分析.html。</div>
+      <div class="card-output">产出：<a class="output-link" href="./ObsidianVault/10-灵感库/关联分析.html">关联分析.html</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./ObsidianVault/10-灵感库/关联分析.html')">查看关联</button></div>
+    </div>
+
+    <div class="card" data-tags="km" data-status="active">
+      <div class="card-top">
+        <div class="card-name">周灵感库速览</div>
+        <span class="badge badge-weekly">每周六</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F4D6;</span> 每周六 10:00</div>
+      <div class="card-desc">扫一眼灵感库最近 7 天新增 + 挑 3-5 条历史卡片复习提示（为什么值得回看、怎么用）。</div>
+      <div class="card-output">纯阅读型，无固定文件</div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./ObsidianVault/10-灵感库/index.html')">本周速览</button></div>
+    </div>
+
+    <div class="card" data-tags="km" data-status="active">
+      <div class="card-top">
+        <div class="card-name">周整理 outputs</div>
+        <span class="badge badge-weekly">每周日</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F5C2;&#xFE0F;</span> 每周日 21:00</div>
+      <div class="card-desc">扫描 outputs 目录：散乱文件 / 重复文件 / 超30天陈旧文件 → 给归类建议。<b>只读不删</b>。</div>
+      <div class="card-output">纯建议报告</div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./outputs/index.html')">查看建议</button></div>
+    </div>
+
+    <div class="card" data-tags="km" data-status="active">
+      <div class="card-top">
+        <div class="card-name">产出同步 Obsidian</div>
+        <span class="badge badge-hourly">每 6 小时</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F504;</span> 每 6 小时自动增量同步</div>
+      <div class="card-desc">outputs 下所有 md → 按主题归类进 Vault（追星网盘→50/ 申论→20/ 灵感→10/ 其他→00-Inbox）→ 补 YAML frontmatter。</div>
+      <div class="card-output">目标：<a class="output-link" href="./ObsidianVault/灵感库总面板.html">ObsidianVault 总面板</a></div>
+      <div class="card-actions"><button class="btn btn-sm" onclick="window.open('./ObsidianVault/灵感库总面板.html')">打开 Vault</button></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== 公益工具 ==================== -->
+<div class="category-section active" data-cat="tool">
+  <div class="section-header">
+    <div class="title">&#x2764;&#xFE0F; 公益工具</div>
+    <span class="section-count">1 个自动化 · 每日搜索最新寻人信息</span>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-tags="tool" data-status="active" style="border-left: 3px solid #ef4444;">
+      <div class="card-top">
+        <div class="card-name">走失儿童 · 每日搜索采集</div>
+        <span class="badge badge-active">每天 8:00</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x1F91D;</span> 全网搜紧急寻人 → 生成卡片</div>
+      <div class="card-desc">WebSearch 多源搜（宝贝回家/头条寻人/抖音/小红书）→ 筛选正在寻找中的真实案例 → 更新 real_data.py → 生成可分享卡片 PNG。<b>不自动分享任何平台</b>。</div>
+      <div class="card-output">产出：<a class="output-link" href="./走失儿童信息工具/output/cards/">卡片目录</a></div>
+      <div class="card-actions">
+        <button class="btn btn-primary btn-sm" onclick="window.open('./走失儿童信息工具/output/cards/index.html')">查看今日卡片</button>
+        <span class="tag tag-tool">公益</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== 系统闸 ==================== -->
+<div class="category-section active" data-cat="sys">
+  <div class="section-header">
+    <div class="title">&#x23F0; 系统闸</div>
+    <span class="section-count">1 个自动化 · 安全阀</span>
+  </div>
+  <div class="grid">
+
+    <div class="card" data-tags="sys" data-status="active">
+      <div class="card-top">
+        <div class="card-name">限免结束自动暂停全部</div>
+        <span class="badge badge-once">一次性</span>
+      </div>
+      <div class="card-freq"><span style="font-size:11px;">&#x23F0;</span> 2026-09-01 00:05 触发一次</div>
+      <div class="card-desc">hy3 免费期结束当天，自动把所有 ACTIVE 自动化全部 PAUSED，防止扣费。触发后自身失效。</div>
+      <div class="card-output">无需关注，自动执行</div>
+      <div class="card-actions">
+        <span class="tag tag-sys">安全阀</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="footer-note">
+  面板最后更新：2026-08-17 14:12 &middot; 所有路径基于 D:/workbuddy/ &middot; 点击「立即运行」需在 WorkBuddy 对话中操作
+</div>
+
+<script>
+// 当前过滤状态
+let currentFilter = 'all';
+
+function filterByStatus(status, cardEl) {
+  currentFilter = status;
+
+  // 更新统计卡片的激活样式
+  document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-filter'));
+  if (cardEl) cardEl.classList.add('active-filter');
+
+  // 过滤所有卡片
+  const hint = document.getElementById('filter-hint');
+  let visible = 0, hidden = 0;
+
+  document.querySelectorAll('.card[data-status]').forEach(card => {
+    const s = card.dataset.status;
+    // manual 包含 paused+手动触发的那些
+    const match =
+      status === 'all' ? true :
+      status === 'active' ? s === 'active' :
+      status === 'paused' ? (s === 'paused') :
+      status === 'manual' ? (s === 'manual') :
+      false;
+
+    if (match) {
+      card.classList.remove('filtered-out');
+      visible++;
+    } else {
+      card.classList.add('filtered-out');
+      hidden++;
+    }
+  });
+
+  // 显示提示文字
+  if (status === 'all') {
+    hint.textContent = '';
+  } else {
+    const labels = { active: '运行中', paused: '已暂停', manual: '手动触发' };
+    hint.textContent = '显示 ' + labels[status] + ' 的 ' + visible + ' 个（其余 ' + hidden + ' 个已淡化）· 点击「总自动化」恢复全部';
+  }
+}
+
+function showCat(cat, btnEl) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  document.querySelectorAll('.category-section').forEach(s => {
+    if (cat === 'all') { s.style.display = 'block'; }
+    else { s.style.display = s.dataset.cat === cat ? 'block' : 'none'; }
+  });
+}
+
+function showModal(title, content) {
+  var existing = document.getElementById('infoModal');
+  if (existing) existing.remove();
+  var modal = document.createElement('div');
+  modal.id = 'infoModal';
+  modal.innerHTML = '<div class="modal-overlay" onclick="this.parentElement.remove()"><div class="modal-box" onclick="event.stopPropagation()"><div class="modal-header"><h3>' + title + '</h3><button class="modal-close" onclick="document.getElementById(\'infoModal\').remove()">✕</button></div><div class="modal-body">' + content + '</div></div></div>';
+  document.body.appendChild(modal);
+}
+</script>
+</body>
+</html>

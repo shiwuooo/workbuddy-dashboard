@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赚钱面板 · 成品</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1f2937;--muted:#6b7280;--border:#e5e7eb;--accent:#2563eb;--accent2:#10b981;--radius:12px;--shadow:0 4px 6px -1px rgba(0,0,0,.07)}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+header{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);z-index:50}
+.nav{max-width:1180px;margin:0 auto;padding:12px 16px;display:flex;gap:8px;overflow-x:auto}
+.nav button{flex:0 0 auto;border:0;background:transparent;color:var(--muted);font-size:14px;font-weight:600;padding:8px 14px;border-radius:20px;cursor:pointer;white-space:nowrap}
+.nav button.active{background:var(--accent);color:#fff}
+main{max-width:1180px;margin:0 auto;padding:20px 16px 60px}
+.panel{display:none}
+.panel.active{display:block}
+h1{font-size:22px;margin:0 0 6px}
+h2{font-size:18px;margin:24px 0 12px;border-left:4px solid var(--accent);padding-left:10px}
+p{margin:0 0 12px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:14px}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.badge{font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;color:#fff}
+.badge.cn{background:#ef4444}
+.badge.os{background:#3b82f6}
+.tag{font-size:12px;color:var(--muted);background:var(--bg);padding:3px 8px;border-radius:999px}
+.gap-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#fef3c7;color:#92400e}
+.risk-tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;color:#fff}
+.risk-tag.risk-high{background:#dc2626}
+.risk-tag.risk-warn{background:#f59e0b}
+.risk-tag.risk-low{background:#6b7280}
+.card a.title{font-size:16px;font-weight:700;display:block;margin-bottom:6px;line-height:1.4}
+.desc{font-size:14px;color:#374151;margin-bottom:8px}
+.meta{font-size:12px;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:40px 0}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.filters select,.filters input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;background:#fff}
+.filters input{min-width:160px;flex:1 1 180px}
+.status-bar{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;font-size:13px;color:#1e40af;margin-bottom:16px}
+.status-bar.warn{background:#fffbeb;border-color:#fde68a;color:#92400e}
+.score-row{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:12px;color:var(--muted)}
+.score-num{font-weight:700;color:var(--accent);font-size:14px}
+.score-bar{flex:1;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;max-width:220px}
+.score-bar>span{display:block;height:100%;background:linear-gradient(90deg,#10b981,#2563eb)}
+.markdown h1{font-size:22px}
+.markdown h2{font-size:18px;margin-top:20px}
+.markdown h3{font-size:16px;margin-top:16px}
+.markdown table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;background:#fff;box-shadow:var(--shadow);border-radius:var(--radius);overflow:hidden}
+.markdown th,.markdown td{border:1px solid var(--border);padding:8px;text-align:left}
+.markdown th{background:#f3f4f6;font-weight:700}
+.markdown ul,.markdown ol{margin:8px 0;padding-left:22px}
+.markdown blockquote{border-left:4px solid var(--accent);margin:12px 0;padding:8px 14px;background:#eff6ff;color:#1e3a8a}
+.markdown code{background:#f3f4f6;padding:2px 6px;border-radius:4px;font-size:12px}
+.proj{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.proj .card{padding:14px}
+.proj h3{margin:0 0 6px;font-size:15px}
+.proj p{font-size:13px;color:#4b5563;margin:0 0 10px}
+.btn{display:inline-block;background:var(--accent);color:#fff;font-size:13px;font-weight:600;padding:6px 12px;border-radius:6px;border:0;cursor:pointer}
+.btn:hover{text-decoration:none;background:#1d4ed8}
+.btn.green{background:var(--accent2)}
+.btn.green:hover{background:#059669}
+.btn.red{background:#ef4444}
+.btn.red:hover{background:#dc2626}
+.btn.tiny{padding:4px 10px;font-size:12px}
+.about-step{display:flex;gap:12px;margin-bottom:14px}
+.about-step .num{flex:0 0 28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.about-step div{flex:1}
+.about-step h4{margin:0 0 4px;font-size:15px}
+.about-step p{margin:0;font-size:13px;color:#4b5563}
+.tip{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:8px;padding:12px 14px;font-size:13px;color:#065f46;margin:12px 0}
+.warning{background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 14px;font-size:13px;color:#991b1b;margin:12px 0}
+.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+.review-form label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
+.review-form input,.review-form select,.review-form textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;box-sizing:border-box}
+.review-form .row{display:flex;gap:10px;flex-wrap:wrap}
+.review-form .row>div{flex:1;min-width:120px}
+.review-stats{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}
+.stat{flex:1;min-width:130px;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;text-align:center}
+.stat .v{font-size:22px;font-weight:800}
+.stat .l{font-size:12px;color:var(--muted)}
+.rv{display:flex;gap:10px;align-items:flex-start;background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 14px;margin-bottom:10px}
+.rv .main{flex:1}
+.rv .main h4{margin:0 0 4px;font-size:15px}
+.rv .main .line{font-size:13px;color:#4b5563}
+.rv .money{font-weight:700}
+.rv .pos{color:#059669}
+.rv .neg{color:#dc2626}
+.rv .badge2{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-right:6px}
+.badge2.do{background:#dbeafe;color:#1e40af}
+.badge2.win{background:#d1fae5;color:#065f46}
+.badge2.give{background:#fee2e2;color:#991b1b}
+.radar-rank{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.radar-rank .rk{flex:0 0 26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.gap-card .dir{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#ede9fe;color:#6d28d9}
+.gap-card .type{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#e0f2fe;color:#0369a1}
+.think{margin-top:10px;border:1px solid var(--border);border-radius:8px;background:#fafafe;overflow:hidden}
+.think>summary{cursor:pointer;font-size:13px;font-weight:700;color:#7c3aed;padding:8px 12px;list-style:none}
+.think>summary::-webkit-details-marker{display:none}
+.think>summary::before{content:"\25B8 ";}
+.think[open]>summary::before{content:"\25BE ";}
+.think .body{padding:0 14px 12px;font-size:13px;color:#374151;line-height:1.7}
+.think .body p{margin:6px 0}
+.think .body b{color:#6d28d9}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <button class="active" onclick="show('feed')">📡 资讯流</button>
+    <button onclick="show('radar')">🔥 趋势雷达</button>
+    <button onclick="show('digest')">🤖 AI每日解读 · 2026-08-19</button>
+    <button onclick="show('projects')">📚 项目库</button>
+    <button onclick="show('gap')">🌐 中外信息差</button>
+    <button onclick="show('review')">📊 复盘看板</button>
+    <button onclick="show('about')">ℹ️ 关于</button>
+  </div>
+</header>
+<main>
+  <section id="feed" class="panel active">
+    <h1>📡 赚钱资讯流</h1>
+    <div class="status-bar">已内联 <b id="feed-count">0</b> 条资讯（含趋势评分 + 风险标注 M7）。更新时间：2026-08-11 15:17</div>
+    <div class="filters">
+      <select id="region" onchange="renderFeed()">
+        <option value="全部">全部地区</option>
+        <option value="国内">国内</option>
+        <option value="海外">海外</option>
+      </select>
+      <select id="cat" onchange="renderFeed()">
+        <option value="全部">全部分类</option>
+        <option value="平台接单">平台接单</option>
+        <option value="本地服务">本地服务</option>
+        <option value="AI副业">AI副业</option>
+        <option value="电商/带货">电商/带货</option>
+        <option value="内容创作">内容创作</option>
+        <option value="被动收入">被动收入</option>
+        <option value="创业">创业</option>
+        <option value="副业">副业</option>
+        <option value="思维">思维</option>
+        <option value="行业动向">行业动向</option>
+      </select>
+      <input id="q" type="search" placeholder="搜索标题/摘要…" oninput="renderFeed()">
+    </div>
+    <div id="feed-grid"></div>
+  </section>
+
+  <section id="radar" class="panel">
+    <h1>🔥 趋势雷达（自动评分）</h1>
+    <div class="status-bar">规则打分 = 来源权重 + 新鲜度 + 高潜力词命中 + 信息差标。<b>零积分、无需 AI</b>。每天刷新，越靠上越值得盯。</div>
+    <div id="radar-grid"></div>
+  </section>
+
+  <section id="digest" class="panel">
+    <h1>🤖 AI每日解读 · 2026-08-19</h1>
+    <div class="status-bar">由 WorkBuddy 自动生成，已同步到 Obsidian 仓库。</div>
+    <div class="markdown card" id="digest-md">
+      <p><h1>赚钱日报 · 2026-08-19（周三）</h1></p>
+<br>
+<p>&gt; 面向纯小白。今天从国内（政策下沉 + 信息差搬运）+ 海外（Reddit 实证收入 + TikTok 内容电商）两边检索，提炼对普通人低门槛、可落地的 3 个信号。所有数据均来自当天检索的真实来源，金额/政策标「参考」。</p>
+<br>
+<p><h2>导语</h2></p>
+<br>
+<p>今天两边信号有一个共同主线：<b>「信息差」正在变成普通人最稳的套利支点</b>。国内这边，AI 一人公司（OPC）政策继续往街道、社区下沉，真金白银给工位、算力券、创业贷；银发、低空、县域三大政策确定性方向也在持续放补贴。海外这边，Reddit 上 2026 年最被验证的副业依然是「垂直人群 × 包月订阅」，且 TikTok 内容电商正把跨境规则改写成「货跟内容走、0 粉丝也能爆」。把海外已跑通的模式搬回国内、或把国内供应链搬到海外内容平台——这道「桥」就是今天最大的机会窗口。</p>
+<br>
+<p>---</p>
+<br>
+<p><h2>一、今天最值得盯的 3 个信号</h2></p>
+<br>
+<p><h3>信号 1：信息差套利——把「海外已验证 / 国内信息孤岛」双向搬</h3></p>
+<ul>
+<li><b>白话解释</b>：很多人赚钱不是靠能力，是靠「谁先知道」。海外（Pinterest、Etsy、YouTube、Kickstarter）早就火过的模板、教程、产品创意，国内很多县城老板、中老年、宝妈根本没见过；反过来，国内成熟的小红书/抖音玩法搬到 TikTok/东南亚也还在红利期。你做「桥梁」就能赚差价。</li>
+<li><b>落地姿势</b>：</li>
+</ul>
+<p>  - 国内→国内搬运：海外 Notion 模板、欧美风尚素材库、手工教程翻译成中文版上架小红书/闲鱼（案例：Notion 人生管理模板 49.9 元首月 463 份；欧美风尚素材库 149 元月 5000+ 份）。</p>
+<p>  - 国内→海外：把国内供应链+内容玩法搬到 TikTok Shop / 东南亚精选联盟，0 备货 0 仓储，卖出再下单赚佣金。</p>
+<p>  - 单点切入：盯 Kickstarter 没量产的极简小工具 → 立刻 1688/义乌找代工开模 → 国内首发赚 4 倍溢价（案例：海外 $199 未发货，国内 ¥699 月销 5000 单）。</p>
+<ul>
+<li><b>💡思考（为什么能赚钱）</b>：核心逻辑是<b>供需的时间和空间错配</b>。同一件商品/内容，在 A 地是「烂大街的旧东西」，在 B 地是「第一次见的新奇货」，中间的差价就是纯利润。搬运的边际成本几乎为零（翻译+排版一次，反复卖），而国内 9 亿人没坐过飞机、大量县城商家不懂 AI——信息孤岛越大，桥梁越值钱。注意：只搬<b>公开可商用 / CC0 协议</b>素材，别碰付费内容倒卖和医疗金融敏感领域（合规红线）。</li>
+</ul>
+<br>
+<p><h3>信号 2：AI + 本地商家代运营 / 自动化——OPC 政策下沉 + 海外包月价差双确认</h3></p>
+<ul>
+<li><b>白话解释</b>：给楼下餐厅、诊所、美业店装个 AI 客服/自动回复/预约提醒，按「搭建费 + 每月服务费」收钱。这件事国内外都验证能赚，且国内还停在「一单一结」，海外早就是「包月订阅」。同时，国家正把「一人公司 + AI」的创业装备（免费工位、算力券、创业贷）一路下沉到街道。</li>
+<li><b>落地姿势</b>：</li>
+</ul>
+<p>  - 国内接单：从 1 家社区店起步，用无代码工具（n8n / 公众号自动回复 / 数字人直播）做代运营，客单 500–1500/店/月，1 人可管 15–20 家。</p>
+<p>  - 借政策：佛山桂城街道级 OPC 社区（单工位月补 180 元、3 年免租、算力券最高 20 万/年、1 亿基金 + 500 万股权）；重庆十二条（一次性补贴 8000、贷 600 万贴息 50%）；武汉 30 个 OPC 社区、1500+ 零租工位；济南 18 个社区、550 家入驻。</p>
+<p>  - 海外模板直接抄：Reddit 上 dental/medical bot 案例——n8n+Twilio 搭建 $500 一次性 + $250/月 retainer，8 个月做到 18 客户 $7000/月，零代码。</p>
+<ul>
+<li><b>💡思考（为什么能赚钱）</b>：小商家<b>痛点是真的、付费意愿是稳的、竞争是少的</b>。一家餐馆每天漏掉多少预约电话、一家诊所多少复诊没人提醒——这些都是「不花钱就在亏钱」的刚需。你卖的不是「AI」，是「帮老板少漏单、少雇人」。海外为什么收包月？因为系统撤掉老板就乱，所以粘性极高、几乎不取消——这就是<b> recurring revenue（复利现金流）</b>，比国内一单一结值钱得多，也是今天最大的价差窗口。</li>
+</ul>
+<br>
+<p><h3>信号 3：银发 / 低空 / 县域——政策托底、现金流稳的「重刚需」民生方向</h3></p>
+<ul>
+<li><b>白话解释</b>：这三个是国家「十五五」点名、补贴直达个人的确定性赛道。不追风口泡沫，靠人口结构和政策红利吃饭，适合不想拼互联网、愿意干实体的普通人。</li>
+<li><b>落地姿势</b>：</li>
+</ul>
+<p>  - <b>银发</b>：适老化改造（装扶手/防滑/智能报警，一单 1000–2000 元，补贴最高 2 万/户、毛利 40%+）；陪诊/陪护（月入 6000–9000）；助餐助浴社区便民站（政府补贴 + 长护险覆盖）。</p>
+<p>  - <b>低空</b>：持证飞手植保/巡检（日薪 500–1000，按次结算）；设备装调运维（稳定月薪 8000+）。2026–2028 是商用爆发期，培训可领补贴。</p>
+<p>  - <b>县域/返乡</b>：农产品代收+短途配送（面包车，旺季日入 500–800）；光伏清洁（一户 100–200，月过万）；返乡创业补贴 1–3 万、个体税费 3 年每年最高减 2.4 万（延续至 2027 底）。</p>
+<ul>
+<li><b>💡思考（为什么能赚钱）</b>：银发是<b>人口趋势确定</b>（60 岁以上破 3 亿、市场超 12 万亿、复购最强）；低空是<b>国家新赛道早期缺口大</b>（持证飞手严重缺人，日薪高）；县域是<b>政策红利直达基层</b>（补贴+培训+场地减免给到个人）。三者共同点是「需求刚性、政策托底、不需要你有多聪明，只要勤快+合规」——这是小白最不容易踩坑的基本盘。</li>
+</ul>
+<br>
+<p>---</p>
+<br>
+<p><h2>二、按普通人能不能做分类</h2></p>
+<br>
+<p><h3>国内已验证（低门槛、现金流快）</h3></p>
+<br>
+<table><tr><th>方向</th><th>启动成本</th><th>月增收预期（参考）</th><th>适合谁</th><th>坑与提醒</th></tr>
+<tr><td>信息差虚拟资料（翻译海外模板/素材上架）</td><td>0–几十元</td><td>数百–数千元</td><td>会搜会整理的人、宝妈、学生</td><td>只搬 CC0/公开可商用素材；别倒卖付费内容；医疗金融别碰</td></tr>
+<tr><td>本地商家 AI 代运营</td><td>0（用免费工具）</td><td>3000–15000/月</td><td>社恐但细致、愿意上门的人</td><td>别承诺「包涨粉」；先 demo 再收费；一单一结要转包月</td></tr>
+<tr><td>闲鱼 AI 轻服务（代画杯贴/Codex 皮肤/AI 技能）</td><td>0</td><td>数百–过万（头部）</td><td>审美在线、蹭热点快的人</td><td>闲鱼人均月成交约 897 元，别幻想暴富；窗口期 1–2 月</td></tr>
+<tr><td>银发陪诊/适老化改造</td><td>几百元工具</td><td>6000–9000/月（陪诊）</td><td>有耐心、懂点就医流程的人</td><td>需体检/无犯罪记录更稳；别收押金式「培训费」</td></tr>
+<tr><td>低空持证飞手/运维</td><td>培训费（可领补贴）</td><td>日薪 500–1000 / 月薪 8000+</td><td>能户外作业、考民航证的人</td><td>先确认本地飞手缺口；别信「包过+贷款买机」骗局</td></tr>
+<tr><td>县域返乡代收配送/光伏清洁</td><td>面包车/基础工具</td><td>日入 400–800 / 月过万</td><td>返乡、有车、肯跑的人</td><td>政府补贴记得申领；重体力，评估身体</td></tr></table>
+<br>
+<p><h3>海外可借鉴（国内还没卷透 / 可搬运）</h3></p>
+<br>
+<table><tr><th>方向</th><th>启动成本</th><th>月增收预期（参考）</th><th>适合谁</th><th>坑与提醒</th></tr>
+<tr><td>AI 本地 chatbot（包月 retainer）</td><td>0–$50 工具</td><td>$1K–$3K/月</td><td>愿意学 n8n/Voiceflow 的人</td><td>国内同行还停一单一结，先抄作业做包月</td></tr>
+<tr><td>AI 线索生成（Apollo+Clay+AI）</td><td>$0–小订阅</td><td>$2K–$8K/月</td><td>敢 cold email 的人</td><td>需合规发信，别 spam；门槛中高</td></tr>
+<tr><td>Etsy 数字产品（clip-art/模板）</td><td>$30–50/月</td><td>$500–$2100/月</td><td>有审美、愿每周上新的人</td><td>平台算法会变；需 Pinterest 引流配合</td></tr>
+<tr><td>TikTok 内容电商（0 备货）</td><td>0（手机）</td><td>案例月入 6.4 万–10 万+</td><td>会拍接地气短视频的人</td><td>70% 自然流量但需持续出片；账号封禁风险</td></tr>
+<tr><td>AI 配音/ dubbing（西语法语内容）</td><td>$5–29/月</td><td>$500–$3000/月</td><td>音频敏感、小语种加分</td><td>海外小众语种仍欠服务，国内少人做</td></tr></table>
+<br>
+<p>---</p>
+<br>
+<p><h2>三、跨边洞察</h2></p>
+<br>
+<p><b>海外已火、国内还没卷的方向（按确定性排序）：</b></p>
+<ol>
+<li><b>垂直数字产品复利</b>：Reddit 实证 AI 音乐 $5K/月、Etsy clip-art $1500–2100/月、语音克隆版税被动——国内还在追「AI 漫剧/无货源切片」同质化内卷，垂直小众数字模板（如 Notion 模板、行业素材库）国内刚起步、价差明显。</li>
+<li><b>Reddit 铁律「复制 + 垂直化」</b>：最好的想法是复制已验证的再细分（r/startups 共识）。国内副业圈还在原创焦虑，直接抄海外已跑通的小众模板 + 本土化，最快到第一个 $1000。</li>
+<li><b>TikTok / 东南亚「货跟内容走」</b>：传统跨境砸广告拼低价已「古典」，内容侧 0 备货 0 仓储、卖出再下单——给普通人非对称作战机会（案例：深圳饰品卖家 0 粉起步 3 个月月入 10 万+，是亚马逊 5 倍）。</li>
+</ol>
+<br>
+<p><h3>中外信息差套利机会（单列）</h3></p>
+<ul>
+<li><b>搬进来</b>：海外 Pinterest/Etsy/YouTube 已爆的模板、教程、家居收纳、老年健身操、宠物殡葬、减脂食谱——翻译+本土化上小红书/闲鱼，边际成本≈0，反复卖。</li>
+<li><b>搬出去</b>：国内供应链+抖音玩法换语言搬 TikTok/YouTube，很多国内验证过的形式海外还在红利期。</li>
+<li><b>本质</b>：国内 9 亿信息孤岛 + 海外每天产生新趋势 = 桥梁型创作者的黄金期。你先看到、再告诉别人，就是利润。</li>
+</ul>
+<br>
+<p>---</p>
+<br>
+<p><h2>四、给纯小白的「今天就能做」行动建议</h2></p>
+<br>
+<ol>
+<li><b>先选一个，别全做</b>：从「信息差虚拟资料」或「本地商家 AI 代运营」里挑一个，本周就开个闲鱼/小红书号或去一家社区店聊。</li>
+<li><b>零成本试水信息差</b>：今晚用 DeepL/翻译把 1 个海外 Notion 模板或手工教程改成中文版，挂 9.9–49.9 元，验证有没有人买（先卖后做，不囤货）。</li>
+<li><b>蹭 OPC 政策红利</b>：人在佛山/重庆/武汉/济南/济南等地，直接搜本地「OPC 社区 / 零租工位 / 算力券」报名，白拿工位+补贴再起步。</li>
+<li><b>学一个无代码工具</b>：周末花 2 小时看 n8n / Voiceflow 免费课，照着做一个「餐厅自动回消息 + 预约提醒」demo，下周拿去楼下店陌拜。</li>
+<li><b>守住底线</b>：凡让先交押金/培训费/买账号的一律拉黑；日入上千还卖课的默认割韭菜；survey/看广告只当零花（$30–60/月），别信「月入 2000」。</li>
+</ol>
+<br>
+<p>---</p>
+<br>
+<p><h2>五、主要信息来源</h2></p>
+<br>
+<ul>
+<li>国内政策/副业：澎湃新闻《桂城用顶级资源撑你（OPC）》、今日头条/腾讯新闻《重庆十二条 OPC 举措》《济南 18 个 OPC 社区 550 家》《武汉 OPC 资助 100 万》、人民网《低空经济发展新动向》、百度爱企查创业风口榜、今日头条《2026 五大挣钱方向》《男人失业别进厂 6 处机会》。</li>
+<li>信息差/跨境：今日头条《信息差 20 例》《TikTok 美国站彻底爆了》、微博《靠信息差抓普通人机会》、教育宝《东南亚跨境电商新趋势》、领淘教育《小红书虚拟项目信息差选品》。</li>
+<li>海外实证：incomelab《What Reddit Actually Says About AI Side Hustles in 2026》、aicap.in、aiearnerhub.com、boostup.org、adspower（Reddit 被动收入指南）。</li>
+<li>AI 日报补充：AIHOT 每日日报 2026-08-19（Mojo 开源、Claude 支持 Gmail/Drive、Sentence Transformers v6.0 多向量检索、ChatGPT for Teens）。</li>
+</ul>
+<br>
+<p><b>风险标注</b>：所有「入职收费 / 保证金 / 培训费 / 会员费 / 垫资返利 / 私下转账」的兼职一律骗局，直接拉黑；高佣刷单、日入上千卖课默认割韭菜；闲鱼人均月成交约 897 元、survey 仅零花，理性预期。</p>
+<br>
+    </div>
+  </section>
+
+  <section id="projects" class="panel">
+    <h1>📚 现成开源项目 / 工具库</h1>
+    <div class="status-bar">下面这些项目/工具已经帮你整理好赚钱思路、资讯源或自动化能力，可直接白嫖（点击跳官网/GitHub）。</div>
+    <div class="proj" id="proj-grid"></div>
+  </section>
+
+  <section id="gap" class="panel">
+    <h1>🌐 中外信息差 · 套利案例库（M9）</h1>
+    <div class="status-bar">看到「国内过时 = 海外潮流」的信息差，就是赚钱机会。每条都附 <b>💡思考/逻辑</b>：信息差在哪、为什么这产品、为什么赚钱、背后逻辑、普通人怎么复制。<b>点卡片展开看</b>。</div>
+    <div id="gap-grid"></div>
+  </section>
+
+  <section id="review" class="panel">
+    <h1>📊 我的赚钱复盘看板</h1>
+    <div class="status-bar">本地保存（localStorage），<b>不联网、不上传</b>。建议每周花 5 分钟复盘：哪个信号真赚到钱，哪个是坑。可导出备份防丢失。</div>
+    <div class="card review-form">
+      <div class="row">
+        <div><label>日期</label><input id="rv-date" type="date"></div>
+        <div><label>信号 / 尝试项目</label><input id="rv-name" type="text" placeholder="如：AI本地商家代运营"></div>
+      </div>
+      <div class="row">
+        <div><label>投入（元）</label><input id="rv-cost" type="number" min="0" placeholder="0"></div>
+        <div><label>回报（元）</label><input id="rv-gain" type="number" min="0" placeholder="0"></div>
+        <div><label>状态</label>
+          <select id="rv-status">
+            <option value="进行中">进行中</option>
+            <option value="已赚到">已赚到</option>
+            <option value="已放弃">已放弃</option>
+          </select>
+        </div>
+      </div>
+      <label>备注（做了什么、卡在哪）</label>
+      <textarea id="rv-note" rows="2" placeholder="如：发了3条闲鱼，成交1单49元"></textarea>
+      <div style="margin-top:10px"><button class="btn green" onclick="addReview()">+ 添加记录</button></div>
+    </div>
+    <div class="review-stats" id="rv-stats"></div>
+    <div id="review-grid"></div>
+    <div style="margin-top:10px">
+      <button class="btn tiny" onclick="exportReview()">⬇ 导出备份</button>
+      <button class="btn tiny" onclick="document.getElementById('rv-import').click()">⬆ 导入备份</button>
+      <input id="rv-import" type="file" accept="application/json" style="display:none" onchange="importReview(event)">
+    </div>
+  </section>
+
+  <section id="about" class="panel">
+    <h1>ℹ️ 使用说明</h1>
+    <div class="card">
+      <div class="about-step"><div class="num">1</div><div><h4>这是一个纯 HTML 成品页面</h4><p>双击即可打开，无需服务器、无需安装、不依赖任何 .bat/.py 文件。所有内容都已内联在页面里。</p></div></div>
+      <div class="about-step"><div class="num">2</div><div><h4>六个标签怎么用</h4><p><b>资讯流</b>：当天国内外赚钱/副业资讯，可按地区、分类筛选和搜索，每条带趋势分。<br><b>🔥 趋势雷达</b>：按评分排序的最该盯信号，自动标注信息差（海外已火/国内已验证）。<br><b>AI每日解读</b>：WorkBuddy 帮你消化成小白能懂的简报。<br><b>项目库</b>：现成开源项目、阅读器、知识库，点击跳 GitHub/官网。<br><b>🌐 中外信息差</b>：国内过时=海外潮流的套利案例，每条附💡思考/逻辑（信息差在哪、为什么赚钱、背后逻辑、怎么复制）。<br><b>📊 复盘看板</b>：你自己的赚钱试验记录与 ROI。<br><b>关于</b>：就是你正在看的。</p></div></div>
+      <div class="about-step"><div class="num">3</div><div><h4>为什么 .bat 被 Windows 安全中心拦截？</h4><p>从网上/其他位置复制来的 .bat 文件会被 Windows 标记为“来自 Internet 的文件”。解决很简单：在资源管理器里右键 .bat → 属性 → 勾选“解除锁定” → 确定，之后就能双击运行了。</p></div></div>
+      <div class="about-step"><div class="num">4</div><div><h4>如何更新数据</h4><p>本页面是“离线成品”。想每天自动更新，可让 WorkBuddy 每天生成新的成品页面；或者在本机解除 .bat 锁定后，双击 <code>立即采集.bat</code> + <code>start.bat</code> 查看动态面板。</p></div></div>
+    </div>
+      <div class="warning">
+        <b>避坑提醒</b>：任何要求"先交押金/培训费/买课才能接单"的项目，直接拉黑。靠谱的副业一定是低成本先开干。
+        <br><br><b>🛡️ 风险哨兵（M7 已上线）</b>：面板已自动给每条机会挂风险标签——<span style="color:#dc2626;font-weight:700">🚫红线·骗局</span>（先交钱/传销/博彩/灰产，直接拉黑）、<span style="color:#f59e0b;font-weight:700">⚠️警惕</span>（薅羊毛/刷单/夸大收益，封号或引流话术）、<span style="color:#6b7280;font-weight:700">📋留意</span>（医美/金融等高资质门槛）。带标签的，先别动手。
+      </div>
+  </section>
+
+  <div class="footer">赚钱面板 · D:\workbuddy\赚钱面板\ · 离线成品版（M1趋势雷达+M6复盘看板+M7风险哨兵+M9中外信息差） · 生成于 2026-08-19 08:54</div>
+</main>
+
+<script>
+const FEED_ITEMS=[{"title": "走通上架流程，拥抱新兴生态：《鸿蒙应用上架指南》上线", "link": "https://sspai.com/post/112887", "desc": "随着HarmonyOSNEXT的日渐成熟，越来越多的独立开发者和小团队开始将目光投向这片新的生态。借助日益强大的AI辅助编程工具，写出能跑通的代码、画出漂亮的UI界面，门槛已经变得前所未有地低。但当你 ...查看全文", "pub": "Tue, 11 Aug 2026 13:59:27 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 11, "gap": "国内已验证", "pct": 36, "risk": {"level": "", "reason": ""}}, {"title": "科技爱好者周刊（第 407 期）：国家为什么需要开源软件？", "link": "http://www.ruanyifeng.com/blog/2026/08/weekly-issue-407.html", "desc": "这里记录每周值得分享的科技内容，周五发布。...", "pub": "2026-08-11T05:47:36Z", "source": "阮一峰周刊", "region": "国内", "category": "思维", "score": 8, "gap": "国内已验证", "pct": 26, "risk": {"level": "", "reason": ""}}, {"title": "Show HN: Mcptoon – Token-efficient MCP CLI client", "link": "https://github.com/activeing123/mcptoon", "desc": "Comments", "pub": "Tue, 11 Aug 2026 05:26:58 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "从内容工坊到 Dot Skill，Quote/0 开始把屏幕交还给你", "link": "https://sspai.com/post/113288", "desc": "从最初的测试与共创算起，Quote/0（摘录）已经陪伴大家近一年半的时间。最初我们只想做一块安静的墨水屏：不推送、不闪烁，只把真正重要的信息留在抬眼可见的地方。后来Quote/0进入了许多我们没有预设 ...查看全文", "pub": "Tue, 11 Aug 2026 12:00:00 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 9, "gap": "国内已验证", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "不喜欢对照式译文的阅读体验？Ovid 让你「按需」查看原版书籍", "link": "https://sspai.com/post/113263", "desc": "因为不太喜欢传统的那种原文、译文按段落或按分页对照的那种双语书形式，我做了一款可以让你按需查看译文的 ovid。查看全文", "pub": "Tue, 11 Aug 2026 10:17:21 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 9, "gap": "国内已验证", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "Recycle – Floppydisks", "link": "https://www.floppydisk.com/recycle", "desc": "Comments", "pub": "Tue, 11 Aug 2026 02:01:01 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "H3-metal – Native MiniMax-H3 inference for Apple Silicon", "link": "https://github.com/antirez/h3.c", "desc": "Comments", "pub": "Tue, 11 Aug 2026 01:22:09 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "Chicken Scheme 6.0", "link": "https://code.call-cc.org/releases/6.0.0/NEWS", "desc": "Comments", "pub": "Tue, 11 Aug 2026 00:24:15 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "派早报：Meta 发布开源本地 AI 智能体大模型 Muse Glimmer、阿里千问开放平台上线等", "link": "https://sspai.com/post/113301", "desc": "少数派的近期动态新一季少数派会员启航，更新权益，更多惊喜，还有实体纪念卡。点击了解能让AI助手通过自然语言指令直接与您的Quote/0摘录墨水屏交互的DotSkill已上线。点击了解Quote/0摘录 ...查看全文", "pub": "Tue, 11 Aug 2026 08:09:35 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 11, "gap": "国内已验证", "pct": 36, "risk": {"level": "", "reason": ""}}, {"title": "Show HN: Scroll through all 43252003274489856000 Rubik's Cube states", "link": "https://everycube.alen.is/", "desc": "Comments", "pub": "Mon, 10 Aug 2026 23:16:25 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "As AI eats the web, the internet’s collective memory is disappearing", "link": "https://thewalrus.ca/google-search-is-dying/", "desc": "Comments", "pub": "Mon, 10 Aug 2026 22:36:30 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 12, "gap": "", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "New dad here — how do you find time for a side hustle?", "link": "https://www.reddit.com/r/sidehustle/comments/1vkxjs1/new_dad_here_how_do_you_find_time_for_a_side/", "desc": "How do you guys manage to work, commute, eat healthy, exercise, walk the dog, spend time with your kids and wife, do stuff around the house and still get 7–8 hours of sleep? I genuinely feel like there aren’t enough hours in the day 😂 For those of you with kids and a side hustle:", "pub": "2026-08-10T21:12:59+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 9, "gap": "海外已火·国内可做", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "From 500 euro to 3000 euro in 3 months", "link": "https://www.reddit.com/r/sidehustle/comments/1vkrdrh/from_500_euro_to_3000_euro_in_3_months/", "desc": "Hi guys, I want to make a special trip in november and need 4000 euro tot participate. I live in the Netherlands and father of 2. Have a job, but currently I have no spare money, just 500 euro in savings. Any great ideas to go from 500 euro to 3000 euro in 3 months?     submitted", "pub": "2026-08-10T17:28:05+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 9, "gap": "海外已火·国内可做", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "Show HN: Needle2: 14MB agentic LLM for phones, wearables, smart home and robots", "link": "https://cactuscompute.com/needle", "desc": "Comments", "pub": "Mon, 10 Aug 2026 17:22:07 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 12, "gap": "", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "Mark Zuckerberg attacks 'closed' AI rivals as Meta returns to open models", "link": "https://www.ft.com/content/4e3957f8-ea7c-4c46-a3de-cdce8e526878", "desc": "Comments", "pub": "Mon, 10 Aug 2026 14:06:22 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 12, "gap": "", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "不再拆机飞线：借助 ACC 实现旧手机直供电「改造」", "link": "https://sspai.com/prime/story/direct-power-supply-mod", "desc": "去年4月，我在某视频的影响下，萌生了将家里的旧安卓手机利用起来的想法。后续虽然跑起来了，但因为设备需要长期充电，电池安全又成了一个让我困扰的难题。为了解决这个问题，我在《彻底告别电池焦虑：旧手机再利用 ...查看全文本文为会员文章，出自《单篇文章》，订阅后可阅读全文。", "pub": "Mon, 10 Aug 2026 21:50:02 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 9, "gap": "国内已验证", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "I Wrote a Kids Book", "link": "https://www.sidehustlenation.com/i-wrote-a-kids-book/", "desc": "Turns out, the writing was the easy part.\n\nWhat came next was a 3-year stop-and-start journey.", "pub": "Mon, 10 Aug 2026 11:00:11 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 10, "gap": "海外已火·国内可做", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "派评 | 近期值得关注的 App", "link": "https://sspai.com/post/113283", "desc": ">下载少数派2.0客户端、关注少数派公众号，解锁全新阅读体验📰>实用、好用的正版软件，少数派为你呈现🚀查看全文", "pub": "Mon, 10 Aug 2026 18:00:00 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 9, "gap": "国内已验证", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "写给「跑两步就喘」的你：调整跑步姿势，舒适开跑", "link": "https://sspai.com/post/113115", "desc": "从跑步姿势、呼吸节奏、运动强度入手，让跑步更舒服。查看全文", "pub": "Mon, 10 Aug 2026 15:00:00 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 9, "gap": "国内已验证", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "我与Pixel 10 Pro的生活：写在Pixel 11系列手机发布前夕", "link": "https://sspai.com/post/113202", "desc": "喜欢，从来没有一个明确的定义。查看全文", "pub": "Mon, 10 Aug 2026 11:00:56 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 9, "gap": "国内已验证", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "Is selling my crafts a decent side hustle?", "link": "https://www.reddit.com/r/sidehustle/comments/1vk7m6g/is_selling_my_crafts_a_decent_side_hustle/", "desc": "I used to make scrunchies back when I sewed. I’m getting back into crafting and think I could sell scrunchies. I also crochet, but I’m nowhere good enough to sell my crochet.  I recently visited my auntie for the first time in years and have been getting closer with her since, an", "pub": "2026-08-10T01:46:04+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 9, "gap": "海外已火·国内可做", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "Need something I can do without a car for college savings", "link": "https://www.reddit.com/r/sidehustle/comments/1vjy6zg/need_something_i_can_do_without_a_car_for_college/", "desc": "I have a plan for saving money towards college that has steady employment at the moment (32/hrs a week at 19/hr), but I still am looking for a way to supplement that with something that can at least guarantee me and extra few dollars a week. I’ve got a background in writing, some", "pub": "2026-08-09T19:01:21+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 9, "gap": "海外已火·国内可做", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "Any side hustles that make $50-100?", "link": "https://www.reddit.com/r/sidehustle/comments/1vjt5wy/any_side_hustles_that_make_50100/", "desc": "I am already doing freelance AI training and as I can speak fluent in English, German and French it's a nice earner - I can also code at a very high level. Any other ways to make money please comment down below as I'm trying to make as much money as possible as fast as possible a", "pub": "2026-08-09T15:44:25+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 11, "gap": "海外已火·国内可做", "pct": 36, "risk": {"level": "", "reason": ""}}, {"title": "Side hustle ideas for someone stuck at home", "link": "https://www.reddit.com/r/sidehustle/comments/1viztne/side_hustle_ideas_for_someone_stuck_at_home/", "desc": "So, I will add some backstory here. I have chronic health issues. My rent is going up. I live in a small studio apartment and I don't have the means to move somewhere cheaper. If I were to go on disability, which no doubt I could, it would cut my income even with a voucher. That'", "pub": "2026-08-08T16:07:40+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 9, "gap": "海外已火·国内可做", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "How do I expand my customer range?", "link": "https://www.reddit.com/r/sidehustle/comments/1vijb1m/how_do_i_expand_my_customer_range/", "desc": "Hi! Last school year I was selling cookies almost every week for about 5 months. I was making pretty consistently 150-200 a week. The only problem is that my school is really small so eventually I ran out of people to sell them to.  How do I branch out more? Can I sell online som", "pub": "2026-08-08T01:56:36+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 9, "gap": "海外已火·国内可做", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "科技爱好者周刊（第 406 期）：道可，道非，常道", "link": "http://www.ruanyifeng.com/blog/2026/07/weekly-issue-406.html", "desc": "这里记录每周值得分享的科技内容，周五发布。...", "pub": "2026-08-07T00:10:46Z", "source": "阮一峰周刊", "region": "国内", "category": "思维", "score": 8, "gap": "国内已验证", "pct": 26, "risk": {"level": "", "reason": ""}}, {"title": "The $2k/Month Mushroom Side Hustle That Bought a 70-Acre Farm", "link": "https://www.sidehustlenation.com/growing-mushrooms/", "desc": "What if a spare closet could turn into a farm, a warehouse, and 70 acres of land?\n\nThat's roughly the path Kyle Beaver took. Kyle runs Ten Mile Mushrooms in rural Pennsylvania, along with Pro Grow Club, and he grows gourmet and medicinal mushrooms like oyster, lion's mane, and re", "pub": "Thu, 06 Aug 2026 09:00:40 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 10, "gap": "海外已火·国内可做", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "The “mechanical miracle” that ruined Mark Twain’s life", "link": "https://resobscura.substack.com/p/the-mechanical-miracle-that-ruined", "desc": "Comments", "pub": "Wed, 05 Aug 2026 15:22:23 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 12, "gap": "", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "Need a side hustle I can do with my mostly creative background", "link": "https://www.reddit.com/r/sidehustle/comments/1vg47tm/need_a_side_hustle_i_can_do_with_my_mostly/", "desc": "Anything consisting of: - Video Editing - Photoshop - Graphic Design - Web Development  All out of ideas as to what I can do with this skillset.    submitted by    /u/ShinyRedRaider   [link]   [comments]", "pub": "2026-08-05T11:03:41+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 11, "gap": "海外已火·国内可做", "pct": 36, "risk": {"level": "", "reason": ""}}, {"title": "Ideas for hustles while on deployment?", "link": "https://www.reddit.com/r/sidehustle/comments/1vflq48/ideas_for_hustles_while_on_deployment/", "desc": "I’m going to be deploying with the navy for 9ish months. Just going through my options of what hustles I could do when out at sea. We have reliable access to starlink so we will almost always have internet. Here are my ideas so far: -Amazon KDP: I’ve written a couple of self help", "pub": "2026-08-04T20:17:10+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 9, "gap": "海外已火·国内可做", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "LFM2.5 2.6B model competitive with 4x larger models", "link": "https://huggingface.co/LiquidAI/LFM2.5-2.6B", "desc": "Comments", "pub": "Tue, 04 Aug 2026 18:47:25 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "Easy ways to make money as a teen?", "link": "https://www.reddit.com/r/sidehustle/comments/1vfd74t/easy_ways_to_make_money_as_a_teen/", "desc": "Looking for something I can do easily, preferably online. I love creative projects and wanted to start an etsy shop but don't have the time.    submitted by    /u/ArtsyBunny3   [link]   [comments]", "pub": "2026-08-04T15:13:49+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 9, "gap": "海外已火·国内可做", "pct": 30, "risk": {"level": "", "reason": ""}}, {"title": "科技爱好者周刊（第 405 期）：资源，社会公平与算力", "link": "http://www.ruanyifeng.com/blog/2026/07/weekly-issue-405.html", "desc": "这里记录每周值得分享的科技内容，周五发布。...", "pub": "2026-07-31T07:26:38Z", "source": "阮一峰周刊", "region": "国内", "category": "思维", "score": 8, "gap": "国内已验证", "pct": 26, "risk": {"level": "", "reason": ""}}, {"title": "$500/Week as a Mystery Shopper: Getting Paid to Shop, Eat, and Snoop", "link": "https://www.sidehustlenation.com/mystery-shopper/", "desc": "Getting paid to eat at restaurants, tour apartments, and run your car through the wash 20 times in an afternoon? That's mystery shopping — a $2 billion industry most people have never heard of.\n\nMercedes Eckert has been doing it for 13 years and has helped over 25,000 shoppers ge", "pub": "Thu, 30 Jul 2026 09:00:06 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 12, "gap": "海外已火·国内可做", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "I Asked Listeners for the Most Random Ways They’ve Made Extra Money", "link": "https://www.sidehustlenation.com/random-ways-to-made-extra-money/", "desc": "Last month I put out a call for listeners to share the most random ways they've made extra money, and the responses did not disappoint!\n\nSome side hustles start with a business plan. Others start with a stranger in a parking garage asking if you want to get paid to drink beer.\n\nT", "pub": "Mon, 27 Jul 2026 09:00:54 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 12, "gap": "海外已火·国内可做", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "We Bought a “Boring” Business. Running it Was Another Story.", "link": "https://www.sidehustlenation.com/we-bought-a-boring-business-running-it-was-another-story/", "desc": "Buy a boring business, they said. It’ll be easy. It’ll be fun.\n\nThat’s the dream Andrea Palacio and her husband chased when they bought a landscaping company.\n\nThe road got bumpy fast, but they still added around $300,000 in equity value in just a couple of years.\n\nAndrea Palacio", "pub": "Thu, 23 Jul 2026 09:00:22 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 12, "gap": "海外已火·国内可做", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "27 Best Ways to Get Free Money: Legit $500+ Inside!", "link": "https://www.sidehustlenation.com/free-money/", "desc": "Is there really such thing as free money? Well, it depends on what you consider \"free.\"\n\nMoney is almost always an exchange for value. But over the past few years, I’ve discovered a bunch of ways to make extra money with very little effort.\n\nWe'll call it \"almost free\" money.", "pub": "Sat, 18 Jul 2026 09:00:02 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 8, "gap": "海外已火·国内可做", "pct": 26, "risk": {"level": "", "reason": ""}}, {"title": "Upskill and Earn: The Proven Path to $150/hr From Home", "link": "https://www.sidehustlenation.com/upskill-and-earn/", "desc": "Here’s a proven path to $150 an hour, right from home. Maybe you’ve got a good job you like. But when you look ahead, the salary ceiling feels capped, the red tape runs deep, and the chances to move up are slim. At some point it hits you: this path won’t get me where I want ... R", "pub": "Mon, 13 Jul 2026 09:00:24 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 8, "gap": "海外已火·国内可做", "pct": 26, "risk": {"level": "", "reason": ""}}, {"title": "Online Focus Groups: 27 Paid Research Companies that Pay Up to $250 an Hour for Your Opinion", "link": "https://www.sidehustlenation.com/consumer-research-companies-online-focus-groups/", "desc": "I recently participated in a paid focus group in San Francisco. You know, the kind with the one-way mirror on the wall.\n\nWe talked about travel habits and preferences for an hour and half, and I got paid $150 for my time and opinions. Not bad!", "pub": "Fri, 10 Jul 2026 09:00:57 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 10, "gap": "海外已火·国内可做", "pct": 33, "risk": {"level": "", "reason": ""}}];
+const RADAR_ITEMS=[{"title": "As AI eats the web, the internet’s collective memory is disappearing", "link": "https://thewalrus.ca/google-search-is-dying/", "desc": "Comments", "pub": "Mon, 10 Aug 2026 22:36:30 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 12, "gap": "", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "Show HN: Needle2: 14MB agentic LLM for phones, wearables, smart home and robots", "link": "https://cactuscompute.com/needle", "desc": "Comments", "pub": "Mon, 10 Aug 2026 17:22:07 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 12, "gap": "", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "Mark Zuckerberg attacks 'closed' AI rivals as Meta returns to open models", "link": "https://www.ft.com/content/4e3957f8-ea7c-4c46-a3de-cdce8e526878", "desc": "Comments", "pub": "Mon, 10 Aug 2026 14:06:22 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 12, "gap": "", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "The “mechanical miracle” that ruined Mark Twain’s life", "link": "https://resobscura.substack.com/p/the-mechanical-miracle-that-ruined", "desc": "Comments", "pub": "Wed, 05 Aug 2026 15:22:23 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 12, "gap": "", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "$500/Week as a Mystery Shopper: Getting Paid to Shop, Eat, and Snoop", "link": "https://www.sidehustlenation.com/mystery-shopper/", "desc": "Getting paid to eat at restaurants, tour apartments, and run your car through the wash 20 times in an afternoon? That's mystery shopping — a $2 billion industry most people have never heard of.\n\nMercedes Eckert has been doing it for 13 years and has helped over 25,000 shoppers ge", "pub": "Thu, 30 Jul 2026 09:00:06 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 12, "gap": "海外已火·国内可做", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "I Asked Listeners for the Most Random Ways They’ve Made Extra Money", "link": "https://www.sidehustlenation.com/random-ways-to-made-extra-money/", "desc": "Last month I put out a call for listeners to share the most random ways they've made extra money, and the responses did not disappoint!\n\nSome side hustles start with a business plan. Others start with a stranger in a parking garage asking if you want to get paid to drink beer.\n\nT", "pub": "Mon, 27 Jul 2026 09:00:54 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 12, "gap": "海外已火·国内可做", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "We Bought a “Boring” Business. Running it Was Another Story.", "link": "https://www.sidehustlenation.com/we-bought-a-boring-business-running-it-was-another-story/", "desc": "Buy a boring business, they said. It’ll be easy. It’ll be fun.\n\nThat’s the dream Andrea Palacio and her husband chased when they bought a landscaping company.\n\nThe road got bumpy fast, but they still added around $300,000 in equity value in just a couple of years.\n\nAndrea Palacio", "pub": "Thu, 23 Jul 2026 09:00:22 +0000", "source": "Side Hustle Nation", "region": "海外", "category": "副业", "score": 12, "gap": "海外已火·国内可做", "pct": 40, "risk": {"level": "", "reason": ""}}, {"title": "走通上架流程，拥抱新兴生态：《鸿蒙应用上架指南》上线", "link": "https://sspai.com/post/112887", "desc": "随着HarmonyOSNEXT的日渐成熟，越来越多的独立开发者和小团队开始将目光投向这片新的生态。借助日益强大的AI辅助编程工具，写出能跑通的代码、画出漂亮的UI界面，门槛已经变得前所未有地低。但当你 ...查看全文", "pub": "Tue, 11 Aug 2026 13:59:27 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 11, "gap": "国内已验证", "pct": 36, "risk": {"level": "", "reason": ""}}, {"title": "派早报：Meta 发布开源本地 AI 智能体大模型 Muse Glimmer、阿里千问开放平台上线等", "link": "https://sspai.com/post/113301", "desc": "少数派的近期动态新一季少数派会员启航，更新权益，更多惊喜，还有实体纪念卡。点击了解能让AI助手通过自然语言指令直接与您的Quote/0摘录墨水屏交互的DotSkill已上线。点击了解Quote/0摘录 ...查看全文", "pub": "Tue, 11 Aug 2026 08:09:35 +0800", "source": "少数派", "region": "国内", "category": "效率/副业", "score": 11, "gap": "国内已验证", "pct": 36, "risk": {"level": "", "reason": ""}}, {"title": "Any side hustles that make $50-100?", "link": "https://www.reddit.com/r/sidehustle/comments/1vjt5wy/any_side_hustles_that_make_50100/", "desc": "I am already doing freelance AI training and as I can speak fluent in English, German and French it's a nice earner - I can also code at a very high level. Any other ways to make money please comment down below as I'm trying to make as much money as possible as fast as possible a", "pub": "2026-08-09T15:44:25+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 11, "gap": "海外已火·国内可做", "pct": 36, "risk": {"level": "", "reason": ""}}, {"title": "Need a side hustle I can do with my mostly creative background", "link": "https://www.reddit.com/r/sidehustle/comments/1vg47tm/need_a_side_hustle_i_can_do_with_my_mostly/", "desc": "Anything consisting of: - Video Editing - Photoshop - Graphic Design - Web Development  All out of ideas as to what I can do with this skillset.    submitted by    /u/ShinyRedRaider   [link]   [comments]", "pub": "2026-08-05T11:03:41+00:00", "source": "Reddit r/SideHustle", "region": "海外", "category": "副业", "score": 11, "gap": "海外已火·国内可做", "pct": 36, "risk": {"level": "", "reason": ""}}, {"title": "Show HN: Mcptoon – Token-efficient MCP CLI client", "link": "https://github.com/activeing123/mcptoon", "desc": "Comments", "pub": "Tue, 11 Aug 2026 05:26:58 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "Recycle – Floppydisks", "link": "https://www.floppydisk.com/recycle", "desc": "Comments", "pub": "Tue, 11 Aug 2026 02:01:01 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "H3-metal – Native MiniMax-H3 inference for Apple Silicon", "link": "https://github.com/antirez/h3.c", "desc": "Comments", "pub": "Tue, 11 Aug 2026 01:22:09 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}, {"title": "Chicken Scheme 6.0", "link": "https://code.call-cc.org/releases/6.0.0/NEWS", "desc": "Comments", "pub": "Tue, 11 Aug 2026 00:24:15 +0000", "source": "Hacker News 创业", "region": "海外", "category": "创业", "score": 10, "gap": "", "pct": 33, "risk": {"level": "", "reason": ""}}];
+const PROJECTS=[{"name": "Folo（原 Follow）", "desc": "国人团队开发的现代 RSS 阅读器，内置 RSSHub，可订国内外资讯源，有手机 App。", "link": "https://github.com/RSSNext/Folo"}, {"name": "RSSHub", "desc": "给知乎、微博、B站、公众号等没有 RSS 的网站生成 RSS 订阅源。可自搭，更稳定。", "link": "https://github.com/DIYgod/RSSHub"}, {"name": "FreshRSS", "desc": "自托管 RSS 阅读器，无限订阅源、隐私好、速度快。", "link": "https://github.com/FreshRSS/FreshRSS"}, {"name": "Miniflux", "desc": "极简自托管 RSS 阅读器，适合喜欢干净界面的人。", "link": "https://github.com/miniflux/v2"}, {"name": "NewsNow", "desc": "实时热榜面板，国内热点一览，适合追热点选题。", "link": "https://github.com/ourongxing/newsnow"}, {"name": "awesome-indie", "desc": "独立开发者赚钱资源总集，11k+ Star，项目/工具/思路很全。", "link": "https://github.com/mezod/awesome-indie"}, {"name": "awesome-indie-cn", "desc": "awesome-indie 的中文版/补充，国内独立开发者方向。", "link": "https://github.com/timqian/awesome-indie-cn"}, {"name": "chinese-independent-developer", "desc": "国内独立开发者项目汇总，看别人在做什么、怎么赚钱。", "link": "https://github.com/1c7/chinese-independent-developer"}, {"name": "howto-make-more-money", "desc": "程序员/技术人副业实操指南（easychen），很多可迁移思路。", "link": "https://github.com/easychen/howto-make-more-money"}, {"name": "ai-money-maker-handbook", "desc": "AI 副业思路手册，整理各种用 AI 赚钱的方向。", "link": "https://github.com/typusm/ai-money-maker-handbook"}, {"name": "MoneyPrinterV2", "desc": "海外自动化变现相关工具/思路，可当参考。", "link": "https://github.com/FullStackMarto/MoneyPrinterV2"}, {"name": "Huginn", "desc": "自动化监控全网信息，可自建“赚钱情报机器人”。", "link": "https://github.com/huginn/huginn"}];
+const GAP_CASES=[{"id": "gap-jp-sticker", "product": "中国卡通/果冻/水晶贴纸（义乌 2 元货）", "direction": "国内→海外", "type": "怀旧套利", "source": "腾讯新闻《小小贴纸，樱花妹爆买上千万》", "link": "https://so.html5.qq.com/page/real/search_news?docid=70000021_26469806f5612252", "phenomenon": "日本「平成女孩」（1989-2019 成长期、小学流行交换贴纸的一代）如今 20-30 岁，把童年贴纸捧成现代潮流，樱花妹爆买上千万日元；而义乌早已大面积上架这类果冻贴、水晶贴、PP 捏捏贴。", "gap": "国内视为「地摊 2 元货、小朋友玩意」，日本被重新定价到数百日元——这是认知差 + 怀旧溢价的典型信息差。", "why_product": "贴纸本质是「社交货币」：交换贴纸=谈判与交心，是低成本的圈层沟通工具；平成女孩自带童年滤镜，怀旧是刚需。", "why_money": "义乌成本几分钱到 2 元，日本零售数百日元，差价数十倍；且贴纸几乎零边际成本，靠情怀 + 社群传播自增长。", "logic": "怀旧经济 + 社交货币 + 文化套利。中国供应链成本碾压，海外「可爱/怀旧」文化愿为情绪付溢价；你眼里的过时，可能是别人的潮流。", "how_to": "1688/义乌进货卡通、果冻、水晶贴 → 日本 Mercari/雅虎拍卖/闲鱼日代群/小红书日文号分销；或做「中国怀旧贴纸」主题合集、手账素材包。", "evidence": "日媒报道樱花妹爆买上千万日元；义乌已大面积上架该品类贴纸。", "risk": {"level": "high", "reason": "若使用迪士尼/三丽鸥等受版权保护的卡通形象，属侵权红线；务必用原创或公有领域形象，否则平台下架+法律风险。"}, "note": "正是你直播间看到的「日本街头卖中国九十年代卡通贴」案例，已落地为可研究样本。"}, {"id": "gap-white-rabbit", "product": "大白兔奶糖糖纸（1959 设计，红蓝白）", "direction": "国内→海外", "type": "设计套利 / 文化输出", "source": "浙江宣传《一张糖纸怎么就火了》；今日头条", "link": "https://m.toutiao.com/article/7671320437100200511", "phenomenon": "海外博主发两张糖纸照片，几天内 600 万次围观，海外网友当「平面设计神作」；国内网友错愕「这不我小时候攒的糖纸吗」。", "gap": "国内视为剥开就丢的包装，海外视为美学宝藏——认知差 + 审美趋势差（海外复古极简正流行）。", "why_product": "朴素克制的中国风设计，无童年滤镜的外国人当成纯设计欣赏；红蓝白三色 + 灵动白兔辨识度极高。", "why_money": "流量带动二创（手账、拼贴、服饰、手机壳），绝版老糖纸价格翻倍；文化符号可授权、可衍生。", "logic": "文化输出不必堆砌符号，老物件自带时代温度自然打动人；所谓「翻红」不过是一次久别重逢。", "how_to": "提取中国复古包装/老国货视觉元素做文创、贴纸、服饰；或做「中国复古美学」内容账号，用审美差带货。", "evidence": "浙江宣传专门发文；单帖 600 万播放；海外网友二创纹身、手机壳、服饰。", "risk": {"level": "low", "reason": "大白兔是注册商标，二创商用需官方授权；做「复古美学」内容可用风格借鉴而非直接盗用 logo。"}}, {"id": "gap-cleaver", "product": "中式手工锻打菜刀", "direction": "国内→海外", "type": "供应链溢价 / 价值重述", "source": "AMZ123；10100.com；TikTok 美区数据", "link": "https://www.amz123.com/kx/3kCwfhQI", "phenomenon": "TikTok 美区 28 天卖出 5000+ 单，销售额 7.86 万美元；国内同款约 10 元，美区售价 16.54 美元（约 112 元），差价 11 倍。", "gap": "国内 10 元日用品 → 海外「东方工艺收藏品」重新定价。", "why_product": "一刀多用（切剁拍碾）解决美式户外烧烤大块肉切割痛点；锻打纹理防粘；文化附加值（中式多功能 vs 西式分刀专用）。", "why_money": "是「价值重塑」而非单纯加价：定位升级（日用品→工艺藏品）+ 场景痛点 + 文化溢价；TikTok 达人 + AI 视频病毒传播。", "logic": "「需求重定价」——卖的不是刀，是场景与故事；场景化内容 > 硬广。", "how_to": "选国内有供应链溢价的工艺/工具类 → TikTok Shop/独立站；关键是内容场景化 + 微创新，而非铺货撞大运。", "evidence": "Gifted Grace 跨境店；单价 16.54 美元 vs 成本约 10 元；一条视频 240 万播放带千单。", "risk": {"level": "warn", "reason": "TikTok Shop 需资质与合规；刀具类目涉及材质安全声明、平台限售规则，新手需先搞清入驻门槛。"}}, {"id": "gap-eyeliner", "product": "印章式眼线笔（义乌微创新小工具）", "direction": "国内→海外", "type": "供应链溢价 / 功能降维", "source": "出海网；FastMoss 数据", "link": "https://m.chwang.com/article/201389251313", "phenomenon": "TikTok 美国站 4 个月卖出 19.54 万件、176 万美元（约 1226 万人民币）；国内出厂价仅 3 元，海外售价 8.98 美元，溢价 20 倍以上。", "gap": "国内 3 元出厂 → 海外 8.98 美元；靠「去专业化」设计把复杂技能降维成「一按成型」。", "why_product": "精准解决新手画眼线痛点（手抖、不对称、晕染），把高失败率动作变成一键操作。", "why_money": "功能降维 + 社交传播：4800 名中腰部达人矩阵自然种草，话题 #eyelinerstamp 曝光超 6.4 亿次。", "logic": "「懒人美妆」全球化趋势下，中国供应链用「功能降维 + 社交传播」在细分需求里挖高溢价。", "how_to": "在 1688/义乌找「解决一个具体痛点」的微创新小工具 → 海外社媒种草；核心是解决痛点而非拼低价。", "evidence": "义乌吉奥维化妆品；4 个月 19.54 万件；单条达人视频 1540 万播放转化 5455 单。", "risk": {"level": "warn", "reason": "美妆类目成分/质检合规要求高，出口需 CPNP/FDA 等备案；达人矩阵投放有资金门槛。"}}, {"id": "gap-lawn", "product": "草坪打孔器（RIFPOD，加长把手/脚踩/弹簧）", "direction": "国内→海外", "type": "供应链溢价 / 微创新", "source": "今日头条；TikTok 美区数据", "link": "https://www.toutiao.com/article/7639720418110210603", "phenomenon": "TikTok 美区单月卖出 4600+ 把、21 万美金；累计 2.55 万把、104 万美金（约 700 万人民币）；国内拿货 53 元，海外 313 元，5 倍差价。", "gap": "国内 53 元「土味铁疙瘩」 → 欧美中产抢购的「爆款印钞机」。", "why_product": "解决老美草坪打孔「请人贵、自己干费腰」的痛点；微创新（不用弯腰、脚踩、弹簧防堵）。", "why_money": "极致性价比 + 微创新走量；一条「脚踩出泥洞」的原生短视频比广告好使，免费流量灌店。", "logic": "中国卖家「分层组合拳」——性价比走量 + 技术降维高端（如割草机器人）；「场景撩拨」> 硬广。", "how_to": "选欧美刚需小工具（庭院/汽配/宠物）→ 微创新 → TikTok 场景视频；关键是踩中本地生活痛点。", "evidence": "RIFPOD 品牌；累计 104 万美金；TikTok Shop 季度猛冲。", "risk": {"level": "warn", "reason": "机械类产品涉及安全认证（如 UL/CE）、专利规避；踩中别人专利会被诉。"}}, {"id": "gap-flag", "product": "各国国旗贴纸（事件驱动套利）", "direction": "国内→海外", "type": "事件套利", "source": "搜狐体育（2006 世界杯）", "link": "https://sports.sohu.com/20060702/n244045694.shtml", "phenomenon": "2006 世界杯，留德中国留学生订 10 万张国旗贴纸（成本不到 1 万元、0.1 元/张），德国现场售价 0.5 欧元/张，升值到约 50 万元。", "gap": "国内 0.1 元/张 → 德国 0.5 欧元/张（约 5 元）；信息差 = 全球赛事热点 + 本地现场场景。", "why_product": "现场球迷贴国旗是刚需；东道主德国需求爆发，短期供不应求。", "why_money": "热点短期爆发推高价格，极低成本 × 海量需求 = 暴利；时效性极强。", "logic": "事件驱动套利——蹭全球热点 + 本地场景 + 中国供应链，是门槛最低的信息差玩法之一。", "how_to": "跟全球赛事/节日热点（世界杯、奥运、万圣节、圣诞节），提前 1-2 月备货相关小商品，本地化销售或代购。", "evidence": "搜狐体育报道；10 万张成本 <1 万，德国售价约 50 万元。", "risk": {"level": "warn", "reason": "热点时效极短（赛事结束即滞销），库存积压风险高；需精准预判并控制备货量。"}}];
+const DIGEST_HTML=`<p><h1>赚钱日报 · 2026-08-19（周三）</h1></p>
+<br>
+<p>&gt; 面向纯小白。今天从国内（政策下沉 + 信息差搬运）+ 海外（Reddit 实证收入 + TikTok 内容电商）两边检索，提炼对普通人低门槛、可落地的 3 个信号。所有数据均来自当天检索的真实来源，金额/政策标「参考」。</p>
+<br>
+<p><h2>导语</h2></p>
+<br>
+<p>今天两边信号有一个共同主线：<b>「信息差」正在变成普通人最稳的套利支点</b>。国内这边，AI 一人公司（OPC）政策继续往街道、社区下沉，真金白银给工位、算力券、创业贷；银发、低空、县域三大政策确定性方向也在持续放补贴。海外这边，Reddit 上 2026 年最被验证的副业依然是「垂直人群 × 包月订阅」，且 TikTok 内容电商正把跨境规则改写成「货跟内容走、0 粉丝也能爆」。把海外已跑通的模式搬回国内、或把国内供应链搬到海外内容平台——这道「桥」就是今天最大的机会窗口。</p>
+<br>
+<p>---</p>
+<br>
+<p><h2>一、今天最值得盯的 3 个信号</h2></p>
+<br>
+<p><h3>信号 1：信息差套利——把「海外已验证 / 国内信息孤岛」双向搬</h3></p>
+<ul>
+<li><b>白话解释</b>：很多人赚钱不是靠能力，是靠「谁先知道」。海外（Pinterest、Etsy、YouTube、Kickstarter）早就火过的模板、教程、产品创意，国内很多县城老板、中老年、宝妈根本没见过；反过来，国内成熟的小红书/抖音玩法搬到 TikTok/东南亚也还在红利期。你做「桥梁」就能赚差价。</li>
+<li><b>落地姿势</b>：</li>
+</ul>
+<p>  - 国内→国内搬运：海外 Notion 模板、欧美风尚素材库、手工教程翻译成中文版上架小红书/闲鱼（案例：Notion 人生管理模板 49.9 元首月 463 份；欧美风尚素材库 149 元月 5000+ 份）。</p>
+<p>  - 国内→海外：把国内供应链+内容玩法搬到 TikTok Shop / 东南亚精选联盟，0 备货 0 仓储，卖出再下单赚佣金。</p>
+<p>  - 单点切入：盯 Kickstarter 没量产的极简小工具 → 立刻 1688/义乌找代工开模 → 国内首发赚 4 倍溢价（案例：海外 $199 未发货，国内 ¥699 月销 5000 单）。</p>
+<ul>
+<li><b>💡思考（为什么能赚钱）</b>：核心逻辑是<b>供需的时间和空间错配</b>。同一件商品/内容，在 A 地是「烂大街的旧东西」，在 B 地是「第一次见的新奇货」，中间的差价就是纯利润。搬运的边际成本几乎为零（翻译+排版一次，反复卖），而国内 9 亿人没坐过飞机、大量县城商家不懂 AI——信息孤岛越大，桥梁越值钱。注意：只搬<b>公开可商用 / CC0 协议</b>素材，别碰付费内容倒卖和医疗金融敏感领域（合规红线）。</li>
+</ul>
+<br>
+<p><h3>信号 2：AI + 本地商家代运营 / 自动化——OPC 政策下沉 + 海外包月价差双确认</h3></p>
+<ul>
+<li><b>白话解释</b>：给楼下餐厅、诊所、美业店装个 AI 客服/自动回复/预约提醒，按「搭建费 + 每月服务费」收钱。这件事国内外都验证能赚，且国内还停在「一单一结」，海外早就是「包月订阅」。同时，国家正把「一人公司 + AI」的创业装备（免费工位、算力券、创业贷）一路下沉到街道。</li>
+<li><b>落地姿势</b>：</li>
+</ul>
+<p>  - 国内接单：从 1 家社区店起步，用无代码工具（n8n / 公众号自动回复 / 数字人直播）做代运营，客单 500–1500/店/月，1 人可管 15–20 家。</p>
+<p>  - 借政策：佛山桂城街道级 OPC 社区（单工位月补 180 元、3 年免租、算力券最高 20 万/年、1 亿基金 + 500 万股权）；重庆十二条（一次性补贴 8000、贷 600 万贴息 50%）；武汉 30 个 OPC 社区、1500+ 零租工位；济南 18 个社区、550 家入驻。</p>
+<p>  - 海外模板直接抄：Reddit 上 dental/medical bot 案例——n8n+Twilio 搭建 $500 一次性 + $250/月 retainer，8 个月做到 18 客户 $7000/月，零代码。</p>
+<ul>
+<li><b>💡思考（为什么能赚钱）</b>：小商家<b>痛点是真的、付费意愿是稳的、竞争是少的</b>。一家餐馆每天漏掉多少预约电话、一家诊所多少复诊没人提醒——这些都是「不花钱就在亏钱」的刚需。你卖的不是「AI」，是「帮老板少漏单、少雇人」。海外为什么收包月？因为系统撤掉老板就乱，所以粘性极高、几乎不取消——这就是<b> recurring revenue（复利现金流）</b>，比国内一单一结值钱得多，也是今天最大的价差窗口。</li>
+</ul>
+<br>
+<p><h3>信号 3：银发 / 低空 / 县域——政策托底、现金流稳的「重刚需」民生方向</h3></p>
+<ul>
+<li><b>白话解释</b>：这三个是国家「十五五」点名、补贴直达个人的确定性赛道。不追风口泡沫，靠人口结构和政策红利吃饭，适合不想拼互联网、愿意干实体的普通人。</li>
+<li><b>落地姿势</b>：</li>
+</ul>
+<p>  - <b>银发</b>：适老化改造（装扶手/防滑/智能报警，一单 1000–2000 元，补贴最高 2 万/户、毛利 40%+）；陪诊/陪护（月入 6000–9000）；助餐助浴社区便民站（政府补贴 + 长护险覆盖）。</p>
+<p>  - <b>低空</b>：持证飞手植保/巡检（日薪 500–1000，按次结算）；设备装调运维（稳定月薪 8000+）。2026–2028 是商用爆发期，培训可领补贴。</p>
+<p>  - <b>县域/返乡</b>：农产品代收+短途配送（面包车，旺季日入 500–800）；光伏清洁（一户 100–200，月过万）；返乡创业补贴 1–3 万、个体税费 3 年每年最高减 2.4 万（延续至 2027 底）。</p>
+<ul>
+<li><b>💡思考（为什么能赚钱）</b>：银发是<b>人口趋势确定</b>（60 岁以上破 3 亿、市场超 12 万亿、复购最强）；低空是<b>国家新赛道早期缺口大</b>（持证飞手严重缺人，日薪高）；县域是<b>政策红利直达基层</b>（补贴+培训+场地减免给到个人）。三者共同点是「需求刚性、政策托底、不需要你有多聪明，只要勤快+合规」——这是小白最不容易踩坑的基本盘。</li>
+</ul>
+<br>
+<p>---</p>
+<br>
+<p><h2>二、按普通人能不能做分类</h2></p>
+<br>
+<p><h3>国内已验证（低门槛、现金流快）</h3></p>
+<br>
+<table><tr><th>方向</th><th>启动成本</th><th>月增收预期（参考）</th><th>适合谁</th><th>坑与提醒</th></tr>
+<tr><td>信息差虚拟资料（翻译海外模板/素材上架）</td><td>0–几十元</td><td>数百–数千元</td><td>会搜会整理的人、宝妈、学生</td><td>只搬 CC0/公开可商用素材；别倒卖付费内容；医疗金融别碰</td></tr>
+<tr><td>本地商家 AI 代运营</td><td>0（用免费工具）</td><td>3000–15000/月</td><td>社恐但细致、愿意上门的人</td><td>别承诺「包涨粉」；先 demo 再收费；一单一结要转包月</td></tr>
+<tr><td>闲鱼 AI 轻服务（代画杯贴/Codex 皮肤/AI 技能）</td><td>0</td><td>数百–过万（头部）</td><td>审美在线、蹭热点快的人</td><td>闲鱼人均月成交约 897 元，别幻想暴富；窗口期 1–2 月</td></tr>
+<tr><td>银发陪诊/适老化改造</td><td>几百元工具</td><td>6000–9000/月（陪诊）</td><td>有耐心、懂点就医流程的人</td><td>需体检/无犯罪记录更稳；别收押金式「培训费」</td></tr>
+<tr><td>低空持证飞手/运维</td><td>培训费（可领补贴）</td><td>日薪 500–1000 / 月薪 8000+</td><td>能户外作业、考民航证的人</td><td>先确认本地飞手缺口；别信「包过+贷款买机」骗局</td></tr>
+<tr><td>县域返乡代收配送/光伏清洁</td><td>面包车/基础工具</td><td>日入 400–800 / 月过万</td><td>返乡、有车、肯跑的人</td><td>政府补贴记得申领；重体力，评估身体</td></tr></table>
+<br>
+<p><h3>海外可借鉴（国内还没卷透 / 可搬运）</h3></p>
+<br>
+<table><tr><th>方向</th><th>启动成本</th><th>月增收预期（参考）</th><th>适合谁</th><th>坑与提醒</th></tr>
+<tr><td>AI 本地 chatbot（包月 retainer）</td><td>0–$50 工具</td><td>$1K–$3K/月</td><td>愿意学 n8n/Voiceflow 的人</td><td>国内同行还停一单一结，先抄作业做包月</td></tr>
+<tr><td>AI 线索生成（Apollo+Clay+AI）</td><td>$0–小订阅</td><td>$2K–$8K/月</td><td>敢 cold email 的人</td><td>需合规发信，别 spam；门槛中高</td></tr>
+<tr><td>Etsy 数字产品（clip-art/模板）</td><td>$30–50/月</td><td>$500–$2100/月</td><td>有审美、愿每周上新的人</td><td>平台算法会变；需 Pinterest 引流配合</td></tr>
+<tr><td>TikTok 内容电商（0 备货）</td><td>0（手机）</td><td>案例月入 6.4 万–10 万+</td><td>会拍接地气短视频的人</td><td>70% 自然流量但需持续出片；账号封禁风险</td></tr>
+<tr><td>AI 配音/ dubbing（西语法语内容）</td><td>$5–29/月</td><td>$500–$3000/月</td><td>音频敏感、小语种加分</td><td>海外小众语种仍欠服务，国内少人做</td></tr></table>
+<br>
+<p>---</p>
+<br>
+<p><h2>三、跨边洞察</h2></p>
+<br>
+<p><b>海外已火、国内还没卷的方向（按确定性排序）：</b></p>
+<ol>
+<li><b>垂直数字产品复利</b>：Reddit 实证 AI 音乐 $5K/月、Etsy clip-art $1500–2100/月、语音克隆版税被动——国内还在追「AI 漫剧/无货源切片」同质化内卷，垂直小众数字模板（如 Notion 模板、行业素材库）国内刚起步、价差明显。</li>
+<li><b>Reddit 铁律「复制 + 垂直化」</b>：最好的想法是复制已验证的再细分（r/startups 共识）。国内副业圈还在原创焦虑，直接抄海外已跑通的小众模板 + 本土化，最快到第一个 $1000。</li>
+<li><b>TikTok / 东南亚「货跟内容走」</b>：传统跨境砸广告拼低价已「古典」，内容侧 0 备货 0 仓储、卖出再下单——给普通人非对称作战机会（案例：深圳饰品卖家 0 粉起步 3 个月月入 10 万+，是亚马逊 5 倍）。</li>
+</ol>
+<br>
+<p><h3>中外信息差套利机会（单列）</h3></p>
+<ul>
+<li><b>搬进来</b>：海外 Pinterest/Etsy/YouTube 已爆的模板、教程、家居收纳、老年健身操、宠物殡葬、减脂食谱——翻译+本土化上小红书/闲鱼，边际成本≈0，反复卖。</li>
+<li><b>搬出去</b>：国内供应链+抖音玩法换语言搬 TikTok/YouTube，很多国内验证过的形式海外还在红利期。</li>
+<li><b>本质</b>：国内 9 亿信息孤岛 + 海外每天产生新趋势 = 桥梁型创作者的黄金期。你先看到、再告诉别人，就是利润。</li>
+</ul>
+<br>
+<p>---</p>
+<br>
+<p><h2>四、给纯小白的「今天就能做」行动建议</h2></p>
+<br>
+<ol>
+<li><b>先选一个，别全做</b>：从「信息差虚拟资料」或「本地商家 AI 代运营」里挑一个，本周就开个闲鱼/小红书号或去一家社区店聊。</li>
+<li><b>零成本试水信息差</b>：今晚用 DeepL/翻译把 1 个海外 Notion 模板或手工教程改成中文版，挂 9.9–49.9 元，验证有没有人买（先卖后做，不囤货）。</li>
+<li><b>蹭 OPC 政策红利</b>：人在佛山/重庆/武汉/济南/济南等地，直接搜本地「OPC 社区 / 零租工位 / 算力券」报名，白拿工位+补贴再起步。</li>
+<li><b>学一个无代码工具</b>：周末花 2 小时看 n8n / Voiceflow 免费课，照着做一个「餐厅自动回消息 + 预约提醒」demo，下周拿去楼下店陌拜。</li>
+<li><b>守住底线</b>：凡让先交押金/培训费/买账号的一律拉黑；日入上千还卖课的默认割韭菜；survey/看广告只当零花（$30–60/月），别信「月入 2000」。</li>
+</ol>
+<br>
+<p>---</p>
+<br>
+<p><h2>五、主要信息来源</h2></p>
+<br>
+<ul>
+<li>国内政策/副业：澎湃新闻《桂城用顶级资源撑你（OPC）》、今日头条/腾讯新闻《重庆十二条 OPC 举措》《济南 18 个 OPC 社区 550 家》《武汉 OPC 资助 100 万》、人民网《低空经济发展新动向》、百度爱企查创业风口榜、今日头条《2026 五大挣钱方向》《男人失业别进厂 6 处机会》。</li>
+<li>信息差/跨境：今日头条《信息差 20 例》《TikTok 美国站彻底爆了》、微博《靠信息差抓普通人机会》、教育宝《东南亚跨境电商新趋势》、领淘教育《小红书虚拟项目信息差选品》。</li>
+<li>海外实证：incomelab《What Reddit Actually Says About AI Side Hustles in 2026》、aicap.in、aiearnerhub.com、boostup.org、adspower（Reddit 被动收入指南）。</li>
+<li>AI 日报补充：AIHOT 每日日报 2026-08-19（Mojo 开源、Claude 支持 Gmail/Drive、Sentence Transformers v6.0 多向量检索、ChatGPT for Teens）。</li>
+</ul>
+<br>
+<p><b>风险标注</b>：所有「入职收费 / 保证金 / 培训费 / 会员费 / 垫资返利 / 私下转账」的兼职一律骗局，直接拉黑；高佣刷单、日入上千卖课默认割韭菜；闲鱼人均月成交约 897 元、survey 仅零花，理性预期。</p>
+<br>`;
+
+function show(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function gapTag(gap){
+  if(!gap) return '';
+  return `<span class="gap-tag">${gap}</span>`;
+}
+
+function riskTag(risk){
+  if(!risk || !risk.level) return '';
+  const map={high:['risk-high','🚫 红线·骗局'],warn:['risk-warn','⚠️ 警惕'],low:['risk-low','📋 留意']};
+  const m=map[risk.level]||map.low;
+  return `<span class="risk-tag ${m[0]}" title="${esc(risk.reason)}">${m[1]}</span>`;
+}
+
+function scoreBlock(it){
+  const pct=it.pct||0, sc=it.score||0;
+  return `<div class="score-row"><span class="score-num">${sc}/30</span>
+    <span class="score-bar"><span style="width:${pct}%"></span></span>
+    ${gapTag(it.gap)}
+    ${riskTag(it.risk)}</div>`;
+}
+
+function renderFeed(){
+  const region=document.getElementById('region').value;
+  const cat=document.getElementById('cat').value;
+  const q=(document.getElementById('q').value||'').toLowerCase();
+  const grid=document.getElementById('feed-grid');
+  const items=FEED_ITEMS.filter(i=>{
+    if(region!=='全部'&&i.region!==region)return false;
+    if(cat!=='全部'&&i.category!==cat)return false;
+    if(q&&!(i.title+i.desc+i.source).toLowerCase().includes(q))return false;
+    return true;
+  });
+  document.getElementById('feed-count').textContent=items.length;
+  grid.innerHTML=items.length?items.map(i=>`
+    <div class="card">
+      <div class="top">
+        <span class="badge ${i.region==='国内'?'cn':'os'}">${i.region}</span>
+        <span class="tag">${i.category}</span>
+        <span class="tag">${i.source}</span>
+      </div>
+      <a class="title" href="${i.link}" target="_blank" rel="noopener">${esc(i.title)}</a>
+      <div class="desc">${esc(i.desc)}</div>
+      ${scoreBlock(i)}
+      ${ i.思考 ? `<details class="think"><summary>💡 思考/逻辑</summary><div class="body"><p>${esc(i.思考)}</p></div></details>`:'' }
+      <div class="meta">来源：${i.source} · <a href="${i.link}" target="_blank" rel="noopener">查看原文 →</a></div>
+    </div>
+  `).join(''):'<div class="empty">没有匹配的资讯，换个筛选条件试试。</div>';
+}
+
+function renderRadar(){
+  const grid=document.getElementById('radar-grid');
+  grid.innerHTML=RADAR_ITEMS.length?RADAR_ITEMS.map((i,idx)=>`
+    <div class="card">
+      <div class="radar-rank">
+        <span class="rk">${idx+1}</span>
+        <span class="badge ${i.region==='国内'?'cn':'os'}">${i.region}</span>
+        <span class="tag">${i.score||0}/30</span>
+        ${gapTag(i.gap)}
+        ${riskTag(i.risk)}
+      </div>
+      <a class="title" href="${i.link}" target="_blank" rel="noopener">${esc(i.title)}</a>
+      <div class="desc">${esc(i.desc)}</div>
+      <div class="score-row"><span class="score-bar"><span style="width:${i.pct||0}%"></span></span></div>
+    </div>
+  `).join(''):'<div class="empty">暂无评分数据。</div>';
+}
+
+function renderProjects(){
+  document.getElementById('proj-grid').innerHTML=PROJECTS.map(p=>`
+    <div class="card">
+      <h3>${esc(p.name)}</h3>
+      <p>${esc(p.desc)}</p>
+      <a class="btn" href="${p.link}" target="_blank" rel="noopener">去 GitHub / 官网</a>
+    </div>
+  `).join('');
+}
+
+function renderGap(){
+  const grid=document.getElementById('gap-grid');
+  grid.innerHTML=GAP_CASES.length?GAP_CASES.map(c=>`
+    <div class="card gap-card">
+      <div class="top">
+        <span class="dir">${esc(c.direction)}</span>
+        <span class="type">${esc(c.type)}</span>
+        ${riskTag(c.risk)}
+      </div>
+      <a class="title" href="${esc(c.link)}" target="_blank" rel="noopener">${esc(c.product)}</a>
+      <div class="desc">${esc(c.phenomenon)}</div>
+      <details class="think">
+        <summary>💡 思考 / 逻辑（点开看）</summary>
+        <div class="body">
+          <p><b>📌 信息差在哪：</b>${esc(c.gap)}</p>
+          <p><b>🎯 为什么是这个产品：</b>${esc(c.why_product)}</p>
+          <p><b>💰 为什么赚钱：</b>${esc(c.why_money)}</p>
+          <p><b>🧠 背后逻辑：</b>${esc(c.logic)}</p>
+          <p><b>🛠️ 普通人可复制：</b>${esc(c.how_to)}</p>
+          <p><b>📊 事实支撑：</b>${esc(c.evidence)}</p>
+        </div>
+      </details>
+      <div class="meta">来源：${esc(c.source)} · <a href="${esc(c.link)}" target="_blank" rel="noopener">查看原文 →</a></div>
+    </div>
+  `).join(''):'<div class="empty">暂无案例。</div>';
+}
+
+/* ---------- M6 复盘看板（localStorage） ---------- */
+const RK="mm_review_v1";
+function loadReview(){try{return JSON.parse(localStorage.getItem(RK))||[]}catch(e){return[]}}
+function saveReview(a){localStorage.setItem(RK,JSON.stringify(a));}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function statusBadge(s){
+  if(s==='已赚到')return '<span class="badge2 win">已赚到</span>';
+  if(s==='已放弃')return '<span class="badge2 give">已放弃</span>';
+  return '<span class="badge2 do">进行中</span>';
+}
+function addReview(){
+  const name=document.getElementById('rv-name').value.trim();
+  if(!name){alert('请填写信号/尝试项目名');return;}
+  const rec={
+    id:Date.now(),
+    date:document.getElementById('rv-date').value||todayStr(),
+    name:name,
+    cost:parseFloat(document.getElementById('rv-cost').value)||0,
+    gain:parseFloat(document.getElementById('rv-gain').value)||0,
+    status:document.getElementById('rv-status').value,
+    note:document.getElementById('rv-note').value.trim()
+  };
+  const a=loadReview();a.push(rec);saveReview(a);
+  document.getElementById('rv-name').value='';document.getElementById('rv-cost').value='';
+  document.getElementById('rv-gain').value='';document.getElementById('rv-note').value='';
+  renderReview();
+}
+function delReview(id){
+  const a=loadReview().filter(r=>r.id!==id);saveReview(a);renderReview();
+}
+function renderReview(){
+  const a=loadReview();
+  let tc=0,tg=0,win=0;
+  a.forEach(r=>{tc+=r.cost||0;tg+=r.gain||0;if(r.status==='已赚到')win++;});
+  const net=tg-tc;const roi=tc>0?((net/tc)*100):0;
+  document.getElementById('rv-stats').innerHTML=`
+    <div class="stat"><div class="v">${a.length}</div><div class="l">记录数</div></div>
+    <div class="stat"><div class="v">¥${tc.toFixed(0)}</div><div class="l">总投入</div></div>
+    <div class="stat"><div class="v">¥${tg.toFixed(0)}</div><div class="l">总回报</div></div>
+    <div class="stat"><div class="v ${net>=0?'pos':'neg'}">¥${net.toFixed(0)}</div><div class="l">净收益</div></div>
+    <div class="stat"><div class="v ${roi>=0?'pos':'neg'}">${roi.toFixed(0)}%</div><div class="l">ROI</div></div>
+    <div class="stat"><div class="v">${win}</div><div class="l">已赚到</div></div>`;
+  document.getElementById('review-grid').innerHTML=a.length?a.slice().reverse().map(r=>{
+    const net=r.gain-r.cost;const nc=net>=0?'pos':'neg';
+    return `<div class="rv">
+      <div class="main">
+        <h4>${statusBadge(r.status)}${esc(r.name)}</h4>
+        <div class="line">日期：${r.date} · 投入 <span class="money">¥${r.cost}</span> · 回报 <span class="money ${r.gain>=r.cost?'pos':'neg'}">¥${r.gain}</span> · 净 <span class="money ${nc}">¥${net}</span></div>
+        ${r.note?`<div class="line">备注：${esc(r.note)}</div>`:''}
+      </div>
+      <button class="btn red tiny" onclick="delReview(${r.id})">删除</button>
+    </div>`;
+  }).join(''):'<div class="empty">还没有记录。从今天起，每试一个信号就记一笔。</div>';
+}
+function exportReview(){
+  const a=loadReview();if(!a.length){alert('暂无记录可导出');return;}
+  const blob=new Blob([JSON.stringify(a,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const x=document.createElement('a');x.href=url;x.download='赚钱复盘-'+todayStr()+'.json';x.click();
+  URL.revokeObjectURL(url);
+}
+function importReview(e){
+  const f=e.target.files[0];if(!f)return;
+  const rd=new FileReader();
+  rd.onload=function(){
+    try{const a=JSON.parse(rd.result);if(Array.isArray(a)){saveReview(a);renderReview();alert('导入成功：'+a.length+' 条');}else{alert('格式不对');}
+    }catch(err){alert('解析失败');}
+  };
+  rd.readAsText(f);
+}
+document.getElementById('rv-date').value=todayStr();
+
+renderFeed();
+renderRadar();
+renderProjects();
+renderGap();
+renderReview();
+</script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 副业赛道对照看板</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1f2329; --muted:#6b7280;
+    --line:#e5e7eb; --accent:#2563eb; --accent-soft:#eff6ff;
+    --low:#16a34a; --mid:#d97706; --tag:#eef2ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+  header{padding:22px 24px 10px}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13px;margin:0}
+  .wrap{padding:0 24px 40px}
+  .bar{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 12px;align-items:center}
+  .chip{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:999px;font-size:13px;cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--accent)}
+  .chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .search{flex:1;min-width:200px;border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:14px;background:var(--card)}
+  .count{color:var(--muted);font-size:12px;margin-left:4px}
+  .scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+  table{border-collapse:collapse;width:100%;min-width:1080px;font-size:13px}
+  th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+  th{background:var(--accent-soft);position:sticky;top:0;font-weight:600;white-space:nowrap}
+  tr:hover td{background:#fafbff}
+  td:last-child,border-right:0{}
+  .cat{white-space:nowrap;color:var(--accent);font-weight:600}
+  .track{font-weight:600;white-space:nowrap}
+  .barrier{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+  .b-low{background:#dcfce7;color:var(--low)}
+  .b-mid{background:#fef3c7;color:var(--mid)}
+  .oss{color:#7c3aed;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+  .num{color:var(--muted);text-align:center;width:34px}
+  footer{color:var(--muted);font-size:12px;padding:0 24px 30px}
+  a{color:var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <h1>2026 可执行副业赛道对照看板</h1>
+  <p class="sub">基于《人性弱点商业地图·8 个怕》筛选 30 个低门槛·可单干·AI 可加持赛道 · 海外信息优先</p>
+</header>
+<div class="wrap">
+  <div class="bar">
+    <span class="chip active" data-cat="全部">全部</span>
+    <span class="chip" data-cat="怕老怕病怕死">怕老怕病怕死</span>
+    <span class="chip" data-cat="怕丑怕胖怕不体面">怕丑怕胖怕不体面</span>
+    <span class="chip" data-cat="怕穷">怕穷</span>
+    <span class="chip" data-cat="怕麻烦">怕麻烦</span>
+    <span class="chip" data-cat="怕孤独">怕孤独</span>
+    <span class="chip" data-cat="怕孩子不成才">怕孩子不成才</span>
+    <span class="chip" data-cat="怕落后">怕落后</span>
+    <span class="chip" data-cat="怕没机会">怕没机会</span>
+    <input class="search" id="q" placeholder="搜索赛道 / 国内 / 海外 / AI 切入点…">
+    <span class="count" id="cnt"></span>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr>
+          <th class="num">#</th><th>赛道</th><th>国内成熟产品</th><th>海外成熟产品</th>
+          <th>开源 / GitHub 参考</th><th>门槛</th><th>AI 切入点</th><th>第一步</th>
+        </tr>
+      </thead>
+      <tbody id="body"></tbody>
+    </table>
+  </div>
+</div>
+<footer>
+  原图已归档：<code>赛道图谱-人性弱点商业地图.png</code> · 配套详解：<code>2026副业赛道对照表.md</code> ·
+  海外信号来源：Indie Hackers / Reddit r/sidehustle / YouTube / X 公开讨论 + 2026 实测案例。
+</footer>
+
+<script>
+const DATA = [
+ {cat:"怕老怕病怕死",t:"慢病/健康管理",dom:"丁香医生、平安好医生、Keep",ovs:"MyFitnessPal、Noom",oss:"LangChain 健康问答",bar:"中",ai:"AI 饮食/运动教练（私域陪跑）",f:"开号分享一种慢病饮食法，攒 100 个同频用户"},
+ {cat:"怕老怕病怕死",t:"陪诊 / 上门照护",dom:"金牌护士、e 陪诊",ovs:"多为本地服务",oss:"cal.com 预约调度",bar:"低",ai:"AI 写陪诊 SOP + 短视频获客",f:"所在城市跑通一次陪诊，发笔记记录"},
+ {cat:"怕老怕病怕死",t:"保险科普 / 经纪",dom:"蚂蚁保、水滴保",ovs:"Policygenius、Ethos",oss:"docling 文档生成",bar:"中",ai:"AI 把条款翻译成人话 + 对比表",f:"选 1 款惠民保做「30 秒看懂」图解"},
+ {cat:"怕老怕病怕死",t:"中式养生 / 保健品私域",dom:"小红书博主、抖音养生号",ovs:"—",oss:"ComfyUI 做图",bar:"低",ai:"AI 生成养生内容 + 私域成交",f:"定细分（熬夜修复/湿气）日更 30 天"},
+ {cat:"怕老怕病怕死",t:"宠物殡葬 / 临终关怀",dom:"新兴蓝海、区域化",ovs:"海外已有成熟宠物临终服务",oss:"—",bar:"中",ai:"情感文案 + 纪念册自动生成",f:"调研本地 3 家竞品写需求笔记"},
+
+ {cat:"怕丑怕胖怕不体面",t:"轻医美咨询 / 转介",dom:"新氧、更美",ovs:"RealSelf、Zocdoc",oss:"—",bar:"中",ai:"AI 面诊答疑 + 机构对比",f:"做「医美避坑」科普号建信任"},
+ {cat:"怕丑怕胖怕不体面",t:"体重管理 / 减肥陪伴",dom:"薄荷健康、Keep",ovs:"Noom、MyFitnessPal",oss:"habitica 打卡",bar:"低",ai:"AI 减重教练（订阅制陪跑）",f:"自己减 10 斤全程记录成内容"},
+ {cat:"怕丑怕胖怕不体面",t:"形象顾问 / 穿搭",dom:"小红书穿搭号",ovs:"Stitch Fix 订阅盒",oss:"clip 向量检索",bar:"中",ai:"AI 虚拟试衣 + 风格诊断",f:"用 AI 给 10 个素人改造发前后对比"},
+ {cat:"怕丑怕胖怕不体面",t:"美妆护肤内容",dom:"小红书、抖音",ovs:"YouTube、Instagram",oss:"ComfyUI",bar:"低",ai:"AI 脚本 + 数字人短视频",f:"选定肤质人群周更测评"},
+
+ {cat:"怕穷",t:"理财科普 / 基金定投",dom:"雪球、且慢、蚂蚁财富",ovs:"Robinhood、Acorns、YNAB",oss:"pandas 回测",bar:"中",ai:"AI 把财报/基金拆成小白语言",f:"模拟定投组合月更实盘"},
+ {cat:"怕穷",t:"AI 工具培训 / 代练",dom:"知识星球、小报童",ovs:"Udemy、Coursera、YouTube",oss:"Dify 搭实操课",bar:"低",ai:"你已装 100+ skill，直接出 AI 实操课",f:"录「用 AI 10 分钟做 X」短视频"},
+ {cat:"怕穷",t:"知识付费课程",dom:"得到、小鹅通、知识星球",ovs:"Gumroad、Teachable、Podia",oss:"CourseLit、Moodle",bar:"低",ai:"AI 压缩制作周期（周→天）",f:"最擅长的事做成 $9–49 小课"},
+ {cat:"怕穷",t:"副业信息差社群",dom:"生财有术、知识星球",ovs:"Indie Hackers、Reddit",oss:"Discourse",bar:"低",ai:"AI 每日筛海外副业案例喂社群",f:"先日更「海外副业观察」30 天"},
+
+ {cat:"怕麻烦",t:"上门家政 / 收纳整理",dom:"天鹅到家、58 到家",ovs:"TaskRabbit",oss:"cal.com",bar:"低",ai:"AI 写标准化 SOP + 获客文案",f:"先接 5 单收纳拍改造前后"},
+ {cat:"怕麻烦",t:"跑腿代买 / 同城",dom:"闪送、美团跑腿",ovs:"TaskRabbit、Postmates",oss:"—",bar:"低",ai:"本地生活号 + 接单话术模板",f:"城市内做代排队/代买试点"},
+ {cat:"怕麻烦",t:"私域代运营 / 小程序搭建",dom:"有赞、微盟",ovs:"Shopify、Kajabi",oss:"Saleor、Medusa",bar:"中",ai:"AI 帮小店做内容+客服自动化",f:"免费帮 1 家小店搭号换案例"},
+
+ {cat:"怕孤独",t:"宠物服务（寄养/上门喂）",dom:"宠物家、波奇",ovs:"Rover、Wag",oss:"cal.com",bar:"低",ai:"AI 写服务介绍 + 客户跟进",f:"小区群接第一单上门喂猫"},
+ {cat:"怕孤独",t:"情感咨询 / 树洞",dom:"壹心理、松果倾诉",ovs:"BetterHelp、7 Cups",oss:"Dify、Flowise",bar:"中",ai:"AI 树洞陪聊（人工兜底）",f:"做「情感复盘」内容号引流"},
+ {cat:"怕孤独",t:"婚恋交友",dom:"世纪佳缘、Soul",ovs:"Tinder、Bumble、Hinge",oss:"—",bar:"中",ai:"AI 帮写资料/聊天话术",f:"做「脱单方法论」内容"},
+ {cat:"怕孤独",t:"AI 陪伴 / 聊天机器人",dom:"豆包、星野",ovs:"Character.AI、Replika",oss:"Dify、Flowise、Open WebUI、Chatbot UI",bar:"低",ai:"套开源搭专属陪伴 Bot 卖订阅",f:"用 Dify 搭一个垂直陪伴 Bot 试水"},
+
+ {cat:"怕孩子不成才",t:"早教 / 托育",dom:"美吉姆、金宝贝",ovs:"本地化为主",oss:"—",bar:"中",ai:"AI 生成早教游戏/儿歌",f:"做「在家早教」内容号"},
+ {cat:"怕孩子不成才",t:"学科辅导 / 志愿填报",dom:"学而思、掌门 1 对 1",ovs:"Wyzant、Tutor.com",oss:"LangChain + 题库",bar:"中",ai:"AI 错题本 + 志愿测算",f:"聚焦一学科做提分内容"},
+ {cat:"怕孩子不成才",t:"兴趣培训（编程/绘画）",dom:"编程猫、美术宝",ovs:"Outschool、Skillshare",oss:"CourseLit",bar:"低",ai:"AI 陪练 + 自动批改",f:"开「零基础 AI 绘画」体验课"},
+ {cat:"怕孩子不成才",t:"留学中介 / 背景提升",dom:"新东方前途、启德",ovs:"顾问制为主",oss:"—",bar:"中",ai:"AI 写文书 + 选校匹配",f:"做「DIY 留学」干货号"},
+
+ {cat:"怕落后",t:"个人成长社群 / 共读",dom:"小报童、知识星球",ovs:"Substack、Patreon",oss:"Discourse",bar:"低",ai:"AI 每日共读摘要推送",f:"开「每月共读 1 本书」小报童"},
+ {cat:"怕落后",t:"读书会 / 共读营",dom:"微信读书圈子",ovs:"BookClubz、Goodreads",oss:"Discourse",bar:"低",ai:"AI 生成讨论提纲",f:"拉 10 人微信共读群试跑"},
+ {cat:"怕落后",t:"公考 / 考证培训",dom:"华图、粉笔、申论素材库",ovs:"—",oss:"LangChain 检索",bar:"中",ai:"AI 申论批改 + 真题拆解（你素材库可用）",f:"把申论素材库做成带 AI 批改小课"},
+
+ {cat:"怕没机会",t:"跨境电商 / 独立站",dom:"店匠、SHOPLINE、抖音小店",ovs:"Shopify、Etsy、Amazon FBA",oss:"Saleor、Medusa、WooCommerce",bar:"中",ai:"AI 选品 + 详情页 + 客服全链路",f:"用开源站搭利基店上 10 个品"},
+ {cat:"怕没机会",t:"自媒体代运营 / MCN",dom:"抖音、小红书机构",ovs:"各平台创作者服务",oss:"ComfyUI 批量生图",bar:"中",ai:"AI 帮商家做内容矩阵",f:"免费帮 1 商家做 1 周内容换案例"},
+ {cat:"怕没机会",t:"AI 出海 SaaS / micro-SaaS",dom:"—",ovs:"Indie Hackers 生态（Supabase、Vercel、Lemon Squeezy、Lovable、Cursor）",oss:"Supabase、PostHog、Flowise",bar:"中",ai:"一人公司：AI 做 80% 执行你做 20% 策略",f:"用 Lovable 周末搭垂直小工具付费上线"},
+];
+
+const body=document.getElementById('body');
+const cnt=document.getElementById('cnt');
+const q=document.getElementById('q');
+let curCat='全部';
+
+function render(){
+  const kw=q.value.trim().toLowerCase();
+  const rows=DATA.filter(d=>{
+    if(curCat!=='全部' && d.cat!==curCat) return false;
+    if(!kw) return true;
+    return [d.t,d.dom,d.ovs,d.ai,d.oss].join(' ').toLowerCase().includes(kw);
+  });
+  body.innerHTML=rows.map((d,i)=>{
+    const b=d.bar==='低'?'<span class="barrier b-low">低</span>':'<span class="barrier b-mid">中</span>';
+    return `<tr>
+      <td class="num">${i+1}</td>
+      <td class="track">${d.t}</td>
+      <td>${d.dom}</td>
+      <td>${d.ovs}</td>
+      <td class="oss">${d.oss}</td>
+      <td>${b}</td>
+      <td>${d.ai}</td>
+      <td>${d.f}</td>
+    </tr>`;
+  }).join('');
+  cnt.textContent=`共 ${rows.length} 条`;
+}
+
+document.querySelectorAll('.chip').forEach(c=>{
+  c.onclick=()=>{
+    document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    curCat=c.dataset.cat;
+    render();
+  };
+});
+q.oninput=render;
+render();
+</script>
+</body>
+</html>

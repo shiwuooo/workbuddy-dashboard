@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>想去清单 · 存下你想去的地方</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --text:#1f2329; --sub:#646a73;
+    --line:#e5e6eb; --brand:#2f6bff; --brand-soft:#eaf1ff;
+    --want:#ff7d00; --plan:#2f6bff; --done:#22b07d;
+    --high:#f53f3f; --mid:#ff7d00; --low:#86909c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
+  header{background:#fff;border-bottom:1px solid var(--line);padding:14px 20px;position:sticky;top:0;z-index:10}
+  .h-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  h1{font-size:18px;margin:0;display:flex;align-items:center;gap:8px}
+  .stats{color:var(--sub);font-size:12px;margin-left:auto}
+  .stats b{color:var(--text)}
+  .tip{background:var(--brand-soft);color:#1d4ed8;font-size:12px;padding:8px 12px;border-radius:8px;margin:10px 20px 0}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px 0}
+  .toolbar input,.toolbar select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--text)}
+  .toolbar input[type=text]{min-width:220px;flex:1}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;padding:10px 20px 0}
+  .chip{font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--sub);cursor:pointer}
+  .chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;padding:16px 20px 40px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px;position:relative}
+  .card .thumb{width:100%;height:150px;object-fit:cover;border-radius:8px;background:#eee}
+  .card h3{margin:0;font-size:15px}
+  .badge{font-size:11px;padding:2px 8px;border-radius:999px;color:#fff;display:inline-block}
+  .b-want{background:var(--want)} .b-plan{background:var(--plan)} .b-done{background:var(--done)}
+  .pri{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--sub)}
+  .pri-high{color:var(--high);border-color:var(--high)} .pri-mid{color:var(--mid);border-color:var(--mid)} .pri-low{color:var(--low);border-color:var(--low)}
+  .thought{color:var(--sub);font-size:13px;white-space:pre-wrap;max-height:60px;overflow:hidden}
+  .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .tag{font-size:11px;color:var(--brand);background:var(--brand-soft);padding:1px 8px;border-radius:999px}
+  .ai-have{font-size:11px;color:var(--done)}
+  .actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:6px;border-top:1px dashed var(--line)}
+  .btn{font:inherit;font-size:12px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--text);cursor:pointer}
+  .btn:hover{border-color:var(--brand);color:var(--brand)}
+  .btn-primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .btn-primary:hover{opacity:.9;color:#fff}
+  .btn-ai{background:#7c3aed;color:#fff;border-color:#7c3aed}
+  .btn-ai:hover{opacity:.9;color:#fff}
+  .row-end{display:flex;justify-content:flex-end;gap:8px;margin-left:auto}
+  /* modal */
+  .mask{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-start;justify-content:center;padding:30px 12px;z-index:50;overflow:auto}
+  .mask.show{display:flex}
+  .modal{background:#fff;border-radius:14px;width:100%;max-width:640px;padding:20px;box-shadow:0 10px 40px rgba(0,0,0,.2)}
+  .modal h2{margin:0 0 14px;font-size:17px}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px}
+  .field input[type=text],.field textarea,.field select{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--text)}
+  .field textarea{resize:vertical;min-height:64px}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg label{display:flex;align-items:center;gap:4px;font-size:13px;color:var(--text);border:1px solid var(--line);padding:6px 12px;border-radius:8px;cursor:pointer}
+  .seg input{display:none}
+  .seg label.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+  .ai-box{background:#faf8ff;border:1px solid #e9defb;border-radius:10px;padding:12px}
+  .ai-box h4{margin:0 0 8px;font-size:13px;color:#7c3aed}
+  .ai-box pre{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;max-height:200px;overflow:auto;margin:0 0 8px}
+  .ai-intro{white-space:pre-wrap;font-size:13px;color:var(--text);background:#fafafa;border:1px solid var(--line);border-radius:8px;padding:10px;min-height:60px}
+  .toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#1f2329;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.3s;z-index:99;pointer-events:none}
+  .toast.show{opacity:1}
+  .empty{text-align:center;color:var(--sub);padding:60px 20px}
+  .src-link{color:var(--brand);text-decoration:none;font-size:12px;word-break:break-all}
+  .foot{text-align:center;color:var(--sub);font-size:12px;padding:0 20px 30px}
+  .foot code{background:#fff;border:1px solid var(--line);padding:1px 6px;border-radius:6px}
+  .tabs{display:flex;gap:8px;padding:12px 20px 0}
+  .tab{font:inherit;font-size:13px;padding:7px 16px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--sub);cursor:pointer}
+  .tab.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .link-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;max-width:780px}
+  .link-card.cluster{border-color:#e9defb;background:#faf8ff}
+  .lc-title{font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .lc-note{font-size:12px;color:var(--sub);font-weight:normal}
+  .lc-list{display:flex;flex-direction:column;gap:4px}
+  .lc-item{padding:6px 8px;border-radius:8px;cursor:pointer;font-size:13px}
+  .lc-item:hover{background:var(--bg)}
+  .lc-name{font-weight:500}
+  .lc-area{color:var(--brand);font-size:12px}
+  .lc-thought{color:var(--sub);font-size:12px}
+  #fClusterJson{width:100%;min-height:120px;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;color:var(--text)}
+  /* panel dashboard */
+  .panel-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px}
+  .ps-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  .ps-num{font-size:26px;font-weight:700;color:var(--brand)}
+  .ps-label{font-size:12px;color:var(--sub);margin-top:4px}
+  .panel-cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:760px){.panel-cols{grid-template-columns:1fr}}
+  .panel-col{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+  .panel-col h3{margin:0 0 12px;font-size:14px;border-left:3px solid var(--brand);padding-left:8px}
+  .panel-col h3:not(:first-child){margin-top:20px}
+  .statbar{display:flex;height:22px;border-radius:6px;overflow:hidden;background:var(--line)}
+  .statbar span{display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;min-width:18px}
+  .legend{display:flex;gap:14px;font-size:12px;color:var(--sub);margin-top:8px;flex-wrap:wrap}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle}
+  .citybar{display:flex;flex-direction:column;gap:8px}
+  .cb-row{display:flex;align-items:center;gap:8px;font-size:13px}
+  .cb-name{width:92px;flex-shrink:0;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cb-track{flex:1;background:var(--bg);border-radius:6px;height:18px;overflow:hidden}
+  .cb-fill{height:100%;background:var(--brand);border-radius:6px}
+  .cb-count{width:28px;text-align:right;color:var(--sub);font-size:12px}
+  .grp{background:var(--bg);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+  .grp.clus{background:#faf8ff}
+  .grp h4{margin:0 0 6px;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .grp .members{display:flex;flex-direction:column;gap:3px}
+  .grp .members span{font-size:12px;color:var(--sub);cursor:pointer}
+  .grp .members span:hover{color:var(--brand)}
+  .empty-sm{color:var(--sub);font-size:12px;padding:8px 0}
+  /* smart paste modal */
+  .modal-wide{max-width:860px}
+  .ext-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;transition:.15s}
+  .ext-card.open{border-color:var(--brand);background:#fafbff}
+  .ext-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer}
+  .ext-idx{background:var(--brand);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+  .ext-name{flex:1;font:inherit;font-size:14px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;min-width:140px;background:transparent}
+  .ext-badges{display:flex;gap:4px;align-items:center}
+  .ext-del{background:transparent;border:1px solid var(--line);width:28px;height:28px;border-radius:8px;cursor:pointer;color:var(--sub);font-size:14px;line-height:1}
+  .ext-del:hover{border-color:var(--high);color:var(--high)}
+  .ext-body{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);display:none}
+  .ext-card.open .ext-body{display:block}
+  .ext-card.open .ext-name{border-color:var(--brand);background:#fff}
+  .ext-img-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .ext-img-prev{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .ext-img-prev img{width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--line)}
+  .ext-img-prev .del{cursor:pointer;font-size:11px;color:var(--high);background:#fff;border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:-22px;margin-top:-4px}
+  .ext-stale{opacity:.5}
+  .ext-empty{color:var(--sub);font-size:13px;padding:18px;text-align:center;border:1px dashed var(--line);border-radius:10px;background:#fff}
+  .thumb-pill{display:inline-block;background:var(--brand-soft);color:var(--brand);padding:4px 10px;border-radius:999px;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="h-row">
+    <h1>🗺️ 想去清单</h1>
+    <div class="stats" id="stats"></div>
+    <div class="row-end">
+      <button class="btn" id="btnExport">导出备份</button>
+      <button class="btn" id="btnImport">导入</button>
+      <button class="btn-primary" id="btnAdd">+ 存一个想去的地方</button>
+      <input type="file" id="fileImport" accept="application/json" hidden>
+    </div>
+  </div>
+</header>
+<div class="tip">数据只存在你这台电脑的浏览器里（localStorage）。换浏览器 / 清缓存会丢，记得常点「导出备份」存到 D 盘。AI 介绍由 WorkBuddy 代写，你复制 prompt 发我、再把回复发回卡片即可。</div>
+
+<div class="tabs">
+  <button class="tab on" id="tabList">📋 清单</button>
+  <button class="tab" id="tabLink">🗺️ 关联</button>
+  <button class="tab" id="tabPanel">📊 面板</button>
+</div>
+<div class="toolbar" id="toolbar">
+  <input type="text" id="search" placeholder="搜地名 / 想法 / 标签…">
+  <select id="filterStatus">
+    <option value="all">全部状态</option>
+    <option value="want">想去</option>
+    <option value="plan">计划去</option>
+    <option value="done">已去</option>
+  </select>
+  <select id="sortBy">
+    <option value="new">最新添加</option>
+    <option value="old">最早添加</option>
+    <option value="pri">按优先级</option>
+  </select>
+</div>
+<div class="tags" id="tagBar"></div>
+
+<div class="grid" id="grid"></div>
+<div class="empty" id="empty" style="display:none">还没有存任何地方。点右上角「+ 存一个想去的地方」开始。</div>
+
+<div class="foot" id="foot">提示：复制「让AI介绍」生成的 prompt 发给我（WorkBuddy），我写好介绍后你粘回卡片的「AI介绍」框，点保存即可。</div>
+
+<div id="linkView" style="display:none;padding:16px 20px 40px">
+  <div class="ai-box" style="max-width:780px;margin-bottom:18px">
+    <h4>让 WorkBuddy 智能归类 / 出线路</h4>
+    <p style="font-size:12px;color:var(--sub);margin:0 0 10px">把下面所有地方交给 WorkBuddy，它会补全每个地方的「城市 / 区域」，并把地理上相近的（同城市、同一条街、邻近城市）聚成可一起安排的「线路」。返回 JSON 后粘到下面点应用。</p>
+    <button class="btn btn-ai" id="btnClassify">复制全部发给 WorkBuddy</button>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+      <textarea id="fClusterJson" placeholder="把 WorkBuddy 返回的 JSON 粘到这里"></textarea>
+      <button class="btn-primary" id="btnApplyCluster" style="align-self:flex-start">应用关联</button>
+    </div>
+  </div>
+  <div id="linkContent"></div>
+</div>
+
+<div id="panelView" style="display:none;padding:16px 20px 40px"></div>
+
+<!-- Add / Edit modal (smart paste) -->
+<div class="mask" id="mask">
+  <div class="modal modal-wide">
+    <h2 id="modalTitle">存想去的地方</h2>
+
+    <div class="field">
+      <label>把你刷到的、想到的都丢这里（碎碎念、链接、截图都行）</label>
+      <textarea id="fPaste" rows="6" placeholder="一行一个地方，留空分段。例：
+东京晴空塔
+看夜景超美，明年樱花季想去
+
+大阪环球影城
+朋友说哈利波特新开了要冲
+
+京都清水寺 春天樱花超治愈
+
+冰岛蓝湖温泉 想冬天去泡
+https://xhslink.com/a/xxx  小红书攻略"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+        <button class="btn" id="btnAttachImg">+ 加截图</button>
+        <input type="file" id="fImages" accept="image/*" multiple hidden>
+        <input type="text" id="fBulkLink" placeholder="或粘贴链接，自动附给第一个" style="flex:1;min-width:200px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font:inherit">
+        <button class="btn" id="btnApplyLink">附上</button>
+        <span id="attachInfo" style="font-size:12px;color:var(--sub)"></span>
+      </div>
+      <div id="imgThumbs" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"></div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+      <button class="btn btn-primary" id="btnLocalParse">⚡ 本地自动提取</button>
+      <button class="btn btn-ai" id="btnAiParse">✨ 让 WorkBuddy 智能补全</button>
+      <span style="font-size:12px;color:var(--sub)">智能识别后下面会出现预览，可微调</span>
+    </div>
+
+    <div class="ai-box" id="aiBox" style="display:none;margin-bottom:14px">
+      <h4>WorkBuddy 智能补全（无 key，老套路）</h4>
+      <p style="font-size:12px;color:var(--sub);margin:0 0 8px">点上方「让 WorkBuddy 智能补全」会复制 prompt → 发给我 → 我返回 JSON → 粘下面 → 点应用</p>
+      <textarea id="fAiJson" placeholder="把 WorkBuddy 返回的 JSON 粘到这里" style="width:100%;min-height:90px;font:inherit;padding:8px;border:1px solid var(--line);border-radius:8px"></textarea>
+      <button class="btn-primary" id="btnApplyAi" style="margin-top:8px">应用到预览</button>
+    </div>
+
+    <div id="extractPreview"></div>
+
+    <div class="actions" style="border:none;margin-top:14px">
+      <button class="btn" id="btnCancel">取消</button>
+      <button class="btn-primary" id="btnSave" style="margin-left:auto">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='wantgo_list_v1';
+const STATUS={want:'想去',plan:'计划去',done:'已去'};
+const PRI={high:'高',mid:'中',low:'低'};
+const CK='wantgo_clusters_v1';
+let data=load();
+let clusters=loadClusters();
+let editingId=null, activeTag=null;
+let extractState=[];
+let pendingImages=[];
+
+/* ---------- 智能输入：城市词库与关键词 ---------- */
+const CITYLIST=['北京','上海','广州','深圳','杭州','成都','重庆','西安','南京','苏州','武汉','长沙','厦门','青岛','大连','哈尔滨','沈阳','济南','郑州','合肥','福州','昆明','拉萨','丽江','大理','三亚','海口','桂林','贵阳','兰州','乌鲁木齐','银川','西宁','南宁','太原','石家庄','天津','香港','澳门','台北','东京','大阪','京都','名古屋','札幌','福冈','横滨','神户','奈良','冲绳','北海道','富士山','镰仓','日光','首尔','釜山','济州岛','曼谷','清迈','普吉','苏梅岛','新加坡','吉隆坡','沙巴','巴厘岛','金边','胡志明','河内','巴黎','伦敦','罗马','米兰','威尼斯','佛罗伦萨','巴塞罗那','马德里','柏林','慕尼黑','阿姆斯特丹','维也纳','布拉格','苏黎世','日内瓦','雅典','里斯本','莫斯科','纽约','洛杉矶','旧金山','芝加哥','西雅图','波士顿','华盛顿','多伦多','温哥华','墨西哥城','悉尼','墨尔本','奥克兰','迪拜','伊斯坦布尔','马尔代夫','斯里兰卡','尼泊尔','不丹','埃及','南非','肯尼亚','摩洛哥','土耳其','冰岛','挪威','瑞典','丹麦','芬兰','荷兰','比利时','葡萄牙','波兰','匈牙利','捷克'];
+const STATUS_KW={plan:['计划','已定','定了','下次就','安排','出发','即将','行程','订了','预订'],done:['去过','已去','去年','前年','今年','打卡','刚去','刚从','今年去了','去年去了']};
+const PRI_KW={high:['超想','必去','一定去','做梦都想','立刻','马上','迫不及待','太想','爆赞','神级','yyds','最爱','超爱','极想','冲！','冲啊','必冲'],low:['顺路','如果','看情况','再决定','有空再说','再说','以后','可能']};
+const TAG_KW={'海边':['海边','海岛','沙滩','潜水','冲浪','海景','海岸'],'冬天':['雪','温泉','滑雪','冬天','冬季','看雪'],'春天':['樱花','春天','春季','花季'],'夏天':['夏天','夏季','避暑'],'秋天':['秋天','秋季','红叶','枫叶'],'美食':['美食','餐厅','料理','拉面','火锅','小吃','夜市','烧烤','米其林','好吃'],'咖啡':['咖啡','咖啡馆','cafe'],'古镇':['古镇','老街','胡同','古村','古城'],'人文':['寺庙','神社','教堂','博物馆','宫殿','古迹'],'户外':['山','徒步','登山','露营','滑雪'],'小众':['小众','秘境','隐藏','私藏'],'购物':['购物','逛街','商场','药妆','奥特莱斯'],'亲子':['亲子','带娃','孩子','小朋友','儿童'],'夜生活':['酒吧','夜店','夜生活','club'],'艺术':['展览','画廊','美术馆'],'建筑':['地标','塔','桥']};
+const YEARS=['2019','2020','2021','2022','2023','2024','2025','2026','2027'];
+
+function detectCity(text){for(const c of CITYLIST){if(text.includes(c))return c}return ''}
+function detectStatus(text){for(const k of STATUS_KW.done){if(text.includes(k))return 'done'}for(const k of STATUS_KW.plan){if(text.includes(k))return 'plan'}return 'want'}
+function detectPriority(text){for(const k of PRI_KW.high){if(text.includes(k))return 'high'}for(const k of PRI_KW.low){if(text.includes(k))return 'low'}return 'mid'}
+function detectTags(text){const t=new Set();for(const tag in TAG_KW){for(const kw of TAG_KW[tag]){if(text.includes(kw)){t.add(tag);break}}}return[...t]}
+function extractUrl(t){const m=t.match(/https?:\/\/[^\s,，]+/);return m?m[0]:''}
+
+function localParse(raw){
+  raw=(raw||'').trim();
+  if(!raw)return[];
+  let chunks;
+  if(/\n\s*\n/.test(raw)||/^\s*\d+[.、．)]\s/m.test(raw)){
+    chunks=raw.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean);
+    const out=[];
+    for(const c of chunks){const sub=c.split(/\n(?=\s*\d+[.、．)]\s*)/);for(const s of sub){const t=s.trim();if(t)out.push(t)}}
+    chunks=out;
+  }else{
+    chunks=raw.split('\n').map(s=>s.trim()).filter(Boolean);
+  }
+  // 合并：URL 单独成行的，归到上一条
+  const merged=[];
+  for(const c of chunks){
+    const lines=c.split('\n').map(s=>s.trim()).filter(Boolean);
+    const isUrlOnly=lines.length===1&&/^https?:\/\//.test(lines[0]);
+    if(isUrlOnly&&merged.length){
+      const url=extractUrl(c);
+      if(url&&!merged[merged.length-1].includes('http')){
+        merged[merged.length-1]+='\n'+url;
+      }
+      continue;
+    }
+    // 过滤：整块只有 URL 没有其他文字
+    const nonUrlLines=lines.filter(l=>!/^https?:\/\//.test(l));
+    if(!nonUrlLines.length)continue;
+    merged.push(c);
+  }
+  return merged.map(parseChunk);
+}
+function parseChunk(blk){
+  const lines=blk.split('\n').map(s=>s.trim()).filter(Boolean);
+  let first=lines[0].replace(/^\d+[.、．)]\s*/,'');
+  const rest=lines.slice(1).join('\n');
+  const url=extractUrl(blk);
+  let thought=rest;
+  if(url){
+    const full=(first+(rest?'\n'+rest:'')).split(url).join('\n');
+    const ll=full.split('\n').map(s=>s.trim()).filter(Boolean);
+    first=ll[0]||first;
+    thought=ll.slice(1).join('\n')||'';
+  }
+  const text=first+' '+thought;
+  return{
+    name:first.trim(),
+    thought:thought.trim(),
+    city:detectCity(text),
+    area:'',
+    sourceUrl:url,
+    sourceType:url?'link':'none',
+    tags:detectTags(text),
+    status:detectStatus(text),
+    priority:detectPriority(text),
+    aiIntro:'',
+    imageData:null,
+    _existingId:null
+  };
+}
+
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function save(){localStorage.setItem(KEY,JSON.stringify(data))}
+function loadClusters(){try{return JSON.parse(localStorage.getItem(CK))||[]}catch(e){return[]}}
+function saveClusters(){localStorage.setItem(CK,JSON.stringify(clusters))}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+
+function compressImage(file,cb){
+  const r=new FileReader();
+  r.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=1200; let {width:w,height:h}=img;
+      if(w>max||h>max){const s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s)}
+      const c=document.createElement('canvas');c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.7));
+    };
+    img.src=e.target.result;
+  };
+  r.readAsDataURL(file);
+}
+
+function render(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const fs=document.getElementById('filterStatus').value;
+  const sb=document.getElementById('sortBy').value;
+  let list=data.filter(d=>{
+    if(fs!=='all'&&d.status!==fs)return false;
+    if(activeTag&&!(d.tags||[]).includes(activeTag))return false;
+    if(q){const hay=(d.name+' '+(d.thought||'')+' '+(d.tags||[]).join(' ')).toLowerCase();if(!hay.includes(q))return false}
+    return true;
+  });
+  const pr={'high':0,'mid':1,'low':2};
+  list.sort((a,b)=>{
+    if(sb==='new')return b.createdAt-a.createdAt;
+    if(sb==='old')return a.createdAt-b.createdAt;
+    return pr[a.priority]-pr[b.priority];
+  });
+  const grid=document.getElementById('grid');grid.innerHTML='';
+  document.getElementById('empty').style.display=list.length?'none':'block';
+  list.forEach(d=>{
+    const card=document.createElement('div');card.className='card';
+    if(d.imageData){const im=new Image();im.src=d.imageData;im.className='thumb';card.appendChild(im)}
+    const h=document.createElement('h3');h.textContent=d.name;card.appendChild(h);
+    const meta=document.createElement('div');meta.className='meta';
+    const b=document.createElement('span');b.className='badge b-'+d.status;b.textContent=STATUS[d.status];meta.appendChild(b);
+    const p=document.createElement('span');p.className='pri pri-'+d.priority;p.textContent='优先级·'+PRI[d.priority];meta.appendChild(p);
+    if(d.aiIntro){const ai=document.createElement('span');ai.className='ai-have';ai.textContent='✓ 已有AI介绍';meta.appendChild(ai)}
+    card.appendChild(meta);
+    if(d.thought){const t=document.createElement('div');t.className='thought';t.textContent=d.thought;card.appendChild(t)}
+    if(d.sourceType==='link'&&d.sourceUrl){const a=document.createElement('a');a.className='src-link';a.href=d.sourceUrl;a.target='_blank';a.textContent='来源链接 ↗';a.rel='noopener';card.appendChild(a)}
+    const tags=document.createElement('div');tags.className='meta';
+    (d.tags||[]).forEach(tg=>{const s=document.createElement('span');s.className='tag';s.textContent=tg;tags.appendChild(s)});
+    if((d.tags||[]).length)card.appendChild(tags);
+    const acts=document.createElement('div');acts.className='actions';
+    const bMap=document.createElement('button');bMap.className='btn';bMap.textContent='地图打开';
+    bMap.onclick=()=>window.open('https://www.amap.com/search?query='+encodeURIComponent(d.name),'_blank');
+    const bAi=document.createElement('button');bAi.className='btn btn-ai';bAi.textContent='让AI介绍';
+    bAi.onclick=()=>openModal(d.id,true);
+    const bEdit=document.createElement('button');bEdit.className='btn';bEdit.textContent='编辑';
+    bEdit.onclick=()=>openModal(d.id,false);
+    const bDel=document.createElement('button');bDel.className='btn';bDel.textContent='删除';
+    bDel.onclick=()=>{if(confirm('确定删除「'+d.name+'」？')){data=data.filter(x=>x.id!==d.id);save();render();toast('已删除')}};
+    acts.append(bMap,bAi,bEdit,bDel);card.appendChild(acts);
+    grid.appendChild(card);
+  });
+  renderStats();renderTags();
+  if(document.getElementById('linkView').style.display!=='none')renderLink();
+  if(document.getElementById('panelView').style.display!=='none')renderPanel();
+}
+
+function renderStats(){
+  const c={want:0,plan:0,done:0};data.forEach(d=>c[d.status]++);
+  document.getElementById('stats').innerHTML='共 <b>'+data.length+'</b> · 想去 <b>'+c.want+'</b> · 计划去 <b>'+c.plan+'</b> · 已去 <b>'+c.done+'</b>';
+}
+
+function renderTags(){
+  const bar=document.getElementById('tagBar');bar.innerHTML='';
+  const all=[];data.forEach(d=>(d.tags||[]).forEach(t=>all.push(t)));
+  [...new Set(all)].forEach(t=>{
+    const c=document.createElement('span');c.className='chip'+(activeTag===t?' on':'');c.textContent=t;
+    c.onclick=()=>{activeTag=activeTag===t?null:t;render()};bar.appendChild(c);
+  });
+}
+
+function buildPrompt(d){
+  let src='（无来源）';
+  if(d.sourceType==='link')src='链接：'+(d.sourceUrl||'');
+  else if(d.sourceType==='image')src='（附有截图，请在对话里把图也发我，让我先认出是哪里）';
+  return `请为我的「想去清单」写一段关于【${d.name}】的介绍，纯粹为我个人参考，不是发作品。
+
+我的想法 / 为什么想去：
+${d.thought||'（没写，按通用值得去的原因介绍即可）'}
+
+来源：${src}
+
+请用中文、像朋友安利一样通俗地写，结构化输出：
+1. 一句话简介
+2. 为什么值得去（结合我上面的想法）
+3. 最佳出行季节 / 时间
+4. 怎么玩（建议玩法、必看 / 必吃、1-3 天大致安排）
+5. 交通与住宿贴士
+6. 注意事项 / 常见坑
+7. 可关联的旅行灵感（相似目的地或主题）
+
+写好后直接把这段发回我，我会粘回「想去清单」工具。`;
+}
+
+function openModal(id,aiFocus){
+  editingId=id;
+  extractState=[];pendingImages=[];
+  document.getElementById('modalTitle').textContent=id?'编辑 · '+((data.find(x=>x.id===id)||{}).name||''):'存想去的地方';
+  document.getElementById('fPaste').value='';
+  document.getElementById('fBulkLink').value='';
+  document.getElementById('attachInfo').textContent='';
+  document.getElementById('imgThumbs').innerHTML='';
+  document.getElementById('aiBox').style.display='none';
+  document.getElementById('fAiJson').value='';
+  renderExtractPreview();
+  if(id){
+    const d=data.find(x=>x.id===id);
+    if(d){
+      const lines=[d.name];
+      if(d.thought)lines.push(d.thought);
+      if(d.sourceUrl)lines.push(d.sourceUrl);
+      document.getElementById('fPaste').value=lines.join('\n\n');
+      extractState=[{
+        name:d.name||'',
+        thought:d.thought||'',
+        city:d.city||'',
+        area:d.area||'',
+        sourceUrl:d.sourceUrl||'',
+        sourceType:d.sourceType||(d.sourceUrl?'link':'none'),
+        tags:d.tags||[],
+        status:d.status||'want',
+        priority:d.priority||'mid',
+        aiIntro:d.aiIntro||'',
+        imageData:d.imageData||null,
+        _existingId:d.id
+      }];
+      renderExtractPreview();
+    }
+  }
+  document.getElementById('mask').classList.add('show');
+  document.getElementById('fPaste').focus();
+}
+
+/* ---------- 预览卡片渲染 ---------- */
+function renderExtractPreview(){
+  const box=document.getElementById('extractPreview');
+  if(!extractState.length){
+    box.innerHTML='<div class="ext-empty">把想法丢进上面文本框 → 点「⚡ 本地自动提取」→ 在这里微调 → 保存</div>';
+    document.getElementById('btnSave').textContent='保存';
+    return;
+  }
+  box.innerHTML=extractState.map((p,i)=>{
+    const tagsStr=(p.tags||[]).join(',');
+    const safe=p.imageData?esc(p.imageData):'';
+    return `<div class="ext-card${false}" data-i="${i}">
+      <div class="ext-head">
+        <span class="ext-idx">${i+1}</span>
+        <input type="text" class="ext-name" value="${esc(p.name)}" placeholder="地名">
+        <span class="ext-badges">
+          <span class="badge b-${p.status}">${STATUS[p.status]||'想去'}</span>
+          <span class="pri pri-${p.priority}">${PRI[p.priority]||'中'}</span>
+        </span>
+        <button class="ext-del" title="删除">×</button>
+      </div>
+      <div class="ext-body">
+        <div class="field"><label>我的想法</label><textarea class="ext-thought" rows="2" placeholder="为什么想去 / 碎碎念">${esc(p.thought||'')}</textarea></div>
+        <div class="field"><label>城市</label><input type="text" class="ext-city" value="${esc(p.city||'')}" placeholder="如：东京"></div>
+        <div class="field"><label>区域 / 街道</label><input type="text" class="ext-area" value="${esc(p.area||'')}" placeholder="更细粒度"></div>
+        <div class="field"><label>链接</label><input type="text" class="ext-link" value="${esc(p.sourceUrl||'')}" placeholder="可空"></div>
+        <div class="field"><label>标签（逗号分隔）</label><input type="text" class="ext-tags" value="${esc(tagsStr)}" placeholder="如：国内,海边,美食"></div>
+        <div class="field"><label>状态</label>
+          <div class="seg ext-status">
+            <label class="${p.status==='want'?'on':''}"><input type="radio" name="st${i}" value="want" ${p.status==='want'?'checked':''}>想去</label>
+            <label class="${p.status==='plan'?'on':''}"><input type="radio" name="st${i}" value="plan" ${p.status==='plan'?'checked':''}>计划去</label>
+            <label class="${p.status==='done'?'on':''}"><input type="radio" name="st${i}" value="done" ${p.status==='done'?'checked':''}>已去</label>
+          </div>
+        </div>
+        <div class="field"><label>优先级</label>
+          <div class="seg ext-pri">
+            <label class="${p.priority==='high'?'on':''}"><input type="radio" name="pr${i}" value="high" ${p.priority==='high'?'checked':''}>高</label>
+            <label class="${p.priority==='mid'?'on':''}"><input type="radio" name="pr${i}" value="mid" ${p.priority==='mid'?'checked':''}>中</label>
+            <label class="${p.priority==='low'?'on':''}"><input type="radio" name="pr${i}" value="low" ${p.priority==='low'?'checked':''}>低</label>
+          </div>
+        </div>
+        <div class="field"><label>AI 介绍（可空）</label><textarea class="ext-ai" rows="3" placeholder="把 WorkBuddy 写好的介绍粘这里">${esc(p.aiIntro||'')}</textarea></div>
+        <div class="field"><label>截图</label>
+          <div class="ext-img-row">
+            <button class="btn ext-addimg">+ 加截图</button>
+            <input type="file" accept="image/*" class="ext-img-input" hidden>
+            <span class="ext-img-info" style="font-size:12px;color:var(--sub)">${p.imageData?'已有':'无'}</span>
+          </div>
+          ${p.imageData?`<div class="ext-img-prev"><img src="${safe}"></div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  document.getElementById('btnSave').textContent='保存 '+extractState.length+' 个地方';
+  // wire events
+  box.querySelectorAll('.ext-card').forEach(card=>{
+    const i=+card.dataset.i;
+    card.querySelector('.ext-head').onclick=(e)=>{
+      if(e.target.classList.contains('ext-del')||e.target.classList.contains('ext-name'))return;
+      card.classList.toggle('open');
+    };
+    card.querySelector('.ext-name').oninput=e=>{extractState[i].name=e.target.value};
+    card.querySelector('.ext-del').onclick=e=>{e.stopPropagation();extractState.splice(i,1);renderExtractPreview()};
+    card.querySelector('.ext-thought').oninput=e=>{extractState[i].thought=e.target.value};
+    card.querySelector('.ext-city').oninput=e=>{extractState[i].city=e.target.value};
+    card.querySelector('.ext-area').oninput=e=>{extractState[i].area=e.target.value};
+    card.querySelector('.ext-link').oninput=e=>{extractState[i].sourceUrl=e.target.value;extractState[i].sourceType=e.target.value?'link':'none'};
+    card.querySelector('.ext-tags').oninput=e=>{extractState[i].tags=e.target.value.split(',').map(s=>s.trim()).filter(Boolean)};
+    card.querySelector('.ext-ai').oninput=e=>{extractState[i].aiIntro=e.target.value};
+    card.querySelectorAll('.ext-status label').forEach(lab=>{
+      lab.onclick=()=>{
+        const v=lab.querySelector('input').value;
+        extractState[i].status=v;
+        card.querySelectorAll('.ext-status label').forEach(l=>l.classList.toggle('on',l.querySelector('input').value===v));
+        const b=card.querySelector('.ext-badges .badge');
+        b.className='badge b-'+v;b.textContent=STATUS[v]||'想去';
+      };
+    });
+    card.querySelectorAll('.ext-pri label').forEach(lab=>{
+      lab.onclick=()=>{
+        const v=lab.querySelector('input').value;
+        extractState[i].priority=v;
+        card.querySelectorAll('.ext-pri label').forEach(l=>l.classList.toggle('on',l.querySelector('input').value===v));
+        const p=card.querySelector('.ext-badges .pri');
+        p.className='pri pri-'+v;p.textContent=PRI[v]||'中';
+      };
+    });
+    const addImgBtn=card.querySelector('.ext-addimg');
+    const imgInput=card.querySelector('.ext-img-input');
+    addImgBtn.onclick=()=>imgInput.click();
+    imgInput.onchange=ev=>{
+      const f=ev.target.files[0];if(!f)return;
+      compressImage(f,dataUrl=>{
+        extractState[i].imageData=dataUrl;
+        renderExtractPreview();
+      });
+    };
+  });
+}
+
+function collectExtract(){
+  return extractState.filter(p=>p.name&&p.name.trim()).map(p=>({
+    ...p,
+    name:p.name.trim(),
+    thought:(p.thought||'').trim(),
+    city:(p.city||'').trim(),
+    area:(p.area||'').trim(),
+    sourceUrl:(p.sourceUrl||'').trim(),
+    tags:p.tags||[],
+    aiIntro:(p.aiIntro||'').trim(),
+    status:p.status||'want',
+    priority:p.priority||'mid'
+  }));
+}
+
+function buildAiParsePrompt(){
+  const items=extractState.map((p,i)=>({
+    idx:i,
+    name:p.name||'',
+    thought:p.thought||'',
+    city:p.city||'',
+    area:p.area||'',
+    status:p.status,
+    priority:p.priority,
+    tags:p.tags||[]
+  }));
+  return `我是「想去清单」用户，下面是我刚粘贴的工具要存的地方（共 ${items.length} 条）。本地已经做了基础识别，但识别不准的字段需要你补全。
+
+请帮我：
+1) 给每个地方补全 / 确认 城市(city) 与 区域街道(area)。看不出来就 city 留空。
+2) 优化标签(tags)：基于「我的想法」+ 地名，给 2-5 个最能概括的标签（如 海边/冬天/美食/咖啡/古镇/人文/户外/小众/购物/亲子/夜生活/艺术/建筑）。
+3) 智能调整状态(status)：如果想法里明确说过"去过/已去"等设 done，"计划/下次就"设 plan，否则 want。
+4) 智能调整优先级(priority)：愿望强烈的（"超想/必去/做梦都想/冲"等）设 high，"顺路/如果/看情况"等设 low，否则 mid。
+5) 每个地方写一段 AI 介绍(aiIntro)：1-3 段口语化介绍，**纯粹为我个人参考**，写这个地方的精华 + 什么时候去最值得 + 一个贴士。150-300 字。
+
+只返回如下 JSON，不要 Markdown 代码块、不要任何额外说明：
+{
+  "places":[{"idx":0,"city":"","area":"","tags":[""],"status":"","priority":"","aiIntro":""}]
+}
+
+条目（idx 与返回 places 一一对应）：
+${JSON.stringify(items,null,2)}`;
+}
+
+function applyAiJson(raw){
+  let obj;
+  try{obj=JSON.parse(raw.replace(/^```(?:json)?/i,'').replace(/```$/,'').trim());}catch(e){toast('JSON 解析失败');return}
+  if(!Array.isArray(obj.places)){toast('格式不对：缺 places 数组');return}
+  let n=0;
+  for(const p of obj.places){
+    const i=p.idx;
+    if(typeof i!=='number'||!extractState[i])continue;
+    if(p.city!=null)extractState[i].city=String(p.city);
+    if(p.area!=null)extractState[i].area=String(p.area);
+    if(Array.isArray(p.tags))extractState[i].tags=p.tags.filter(Boolean);
+    if(['want','plan','done'].includes(p.status))extractState[i].status=p.status;
+    if(['high','mid','low'].includes(p.priority))extractState[i].priority=p.priority;
+    if(typeof p.aiIntro==='string')extractState[i].aiIntro=p.aiIntro;
+    n++;
+  }
+  renderExtractPreview();
+  toast('已应用 '+n+' 条');
+}
+
+document.getElementById('btnAdd').onclick=()=>openModal(null,false);
+document.getElementById('btnCancel').onclick=()=>document.getElementById('mask').classList.remove('show');
+
+document.getElementById('btnLocalParse').onclick=()=>{
+  const raw=document.getElementById('fPaste').value;
+  const parsed=localParse(raw);
+  if(!parsed.length){toast('没识别出任何东西，换种写法试试');return}
+  // 顶部附的链接/截图分给第一个
+  const bulkLink=document.getElementById('fBulkLink').value.trim();
+  if(pendingImages.length)parsed[0].imageData=pendingImages[0];
+  if(bulkLink){parsed[0].sourceUrl=bulkLink;parsed[0].sourceType='link'}
+  extractState=parsed;
+  renderExtractPreview();
+  toast('识别出 '+parsed.length+' 个地方');
+};
+
+document.getElementById('btnAiParse').onclick=()=>{
+  if(!extractState.length){
+    // 没本地解析的话先用 fPaste 解析一遍
+    const parsed=localParse(document.getElementById('fPaste').value);
+    if(parsed.length){extractState=parsed;renderExtractPreview()}
+    else{toast('先粘贴想法再点这个');return}
+  }
+  document.getElementById('aiBox').style.display='block';
+  const p=buildAiParsePrompt();
+  navigator.clipboard.writeText(p).then(()=>toast('prompt已复制，去发给 WorkBuddy'),()=>{prompt('复制下面内容发给我：',p)});
+};
+document.getElementById('btnApplyAi').onclick=()=>{
+  const raw=document.getElementById('fAiJson').value.trim();
+  if(!raw){toast('先粘 JSON');return}
+  applyAiJson(raw);
+};
+
+document.getElementById('btnAttachImg').onclick=()=>document.getElementById('fImages').click();
+document.getElementById('fImages').onchange=e=>{
+  const files=[...e.target.files];if(!files.length)return;
+  const thumbs=document.getElementById('imgThumbs');
+  let added=0;
+  let pending=files.length;
+  const info=document.getElementById('attachInfo');
+  files.forEach(f=>{
+    compressImage(f,dataUrl=>{
+      pendingImages.push(dataUrl);
+      const wrap=document.createElement('div');
+      wrap.style.cssText='position:relative;display:inline-block';
+      wrap.innerHTML=`<img src="${dataUrl}" style="width:60px;height:60px;object-fit:cover;border-radius:6px;border:1px solid var(--line)"><span class="del" style="cursor:pointer;font-size:11px;color:#fff;background:rgba(0,0,0,.5);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;position:absolute;top:-6px;right:-6px">×</span>`;
+      wrap.querySelector('.del').onclick=()=>{
+        const idx=pendingImages.indexOf(dataUrl);
+        if(idx>-1)pendingImages.splice(idx,1);
+        wrap.remove();
+        info.textContent=pendingImages.length?'待附 '+pendingImages.length+' 张截图（点本地提取时自动附给第一个）':'';
+      };
+      thumbs.appendChild(wrap);
+      added++;
+      info.textContent='待附 '+pendingImages.length+' 张截图（点本地提取时自动附给第一个）';
+    });
+  });
+  e.target.value='';
+};
+document.getElementById('btnApplyLink').onclick=()=>{
+  const v=document.getElementById('fBulkLink').value.trim();
+  if(!v){toast('粘个链接');return}
+  document.getElementById('attachInfo').textContent='链接待附（点本地提取时自动附给第一个）';
+  document.getElementById('attachInfo').dataset.link=v;
+};
+document.getElementById('btnSave').onclick=()=>{
+  const items=collectExtract();
+  if(!items.length){toast('没有可保存的地方');return}
+  let added=0,updated=0;
+  for(const f of items){
+    if(f._existingId){
+      const i=data.findIndex(x=>x.id===f._existingId);
+      if(i>-1){data[i]={...data[i],...f,id:f._existingId};updated++}
+    }else{
+      data.push({id:'g'+Date.now()+'_'+Math.random().toString(36).slice(2,6),createdAt:Date.now(),...f});
+      added++;
+    }
+  }
+  save();render();document.getElementById('mask').classList.remove('show');toast('已保存 '+added+' 条，更新 '+updated+' 条');
+};
+
+document.getElementById('btnExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify({entries:data,clusters:clusters},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='想去清单备份_'+new Date().toISOString().slice(0,10)+'.json';a.click();toast('已导出，存到 D 盘吧');
+};
+document.getElementById('btnImport').onclick=()=>document.getElementById('fileImport').click();
+document.getElementById('fileImport').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{try{
+    const obj=JSON.parse(ev.target.result);
+    if(Array.isArray(obj)){data=obj;clusters=[];}
+    else if(obj&&Array.isArray(obj.entries)){data=obj.entries;clusters=Array.isArray(obj.clusters)?obj.clusters:[];}
+    else{toast('文件格式不对');return}
+    save();saveClusters();render();if(document.getElementById('linkView').style.display!=='none')renderLink();toast('导入成功');
+  }catch(err){toast('解析失败')}};
+  r.readAsText(f);e.target.value='';
+};
+
+document.getElementById('search').oninput=render;
+document.getElementById('filterStatus').onchange=render;
+document.getElementById('sortBy').onchange=render;
+document.getElementById('mask').onclick=e=>{if(e.target.id==='mask')document.getElementById('mask').classList.remove('show')};
+
+/* ---------- 关联 / 聚类 ---------- */
+function renderLink(){
+  const box=document.getElementById('linkContent');box.innerHTML='';
+  const byCity={};
+  data.forEach(d=>{const c=(d.city||'').trim();if(c){(byCity[c]=byCity[c]||[]).push(d)}});
+  const cities=Object.keys(byCity);
+  if(cities.length===0&&clusters.length===0){
+    box.innerHTML='<div class="empty">还没有任何「城市」信息。给地方填上城市，或点上方「复制全部发给 WorkBuddy」让它自动归类。</div>';
+    return;
+  }
+  if(cities.length){
+    const h=document.createElement('h3');h.textContent='按城市分组（同城市可一起安排）';h.style.cssText='margin:6px 0 12px';box.appendChild(h);
+    cities.forEach(c=>{
+      const members=byCity[c];
+      const card=document.createElement('div');card.className='link-card';
+      const title=document.createElement('div');title.className='lc-title';
+      title.innerHTML='<b>'+esc(c)+'</b> <span class="badge '+(members.length>1?'b-done':'b-plan')+'">'+(members.length>1?('可一起 · '+members.length+'个'):(members.length+'个'))+'</span>';
+      card.appendChild(title);
+      const ul=document.createElement('div');ul.className='lc-list';
+      members.forEach(m=>{
+        const row=document.createElement('div');row.className='lc-item';
+        row.innerHTML='<span class="lc-name">'+esc(m.name)+'</span>'+(m.area?' <span class="lc-area">· '+esc(m.area)+'</span>':'')+(m.thought?' <span class="lc-thought">'+esc(m.thought.slice(0,40))+'</span>':'');
+        row.onclick=()=>openModal(m.id,false);
+        ul.appendChild(row);
+      });
+      card.appendChild(ul);box.appendChild(card);
+    });
+  }
+  if(clusters.length){
+    const h=document.createElement('h3');h.textContent='WorkBuddy 出的线路（地理相近，建议一起走）';h.style.cssText='margin:22px 0 12px';box.appendChild(h);
+    clusters.forEach(cl=>{
+      const card=document.createElement('div');card.className='link-card cluster';
+      const title=document.createElement('div');title.className='lc-title';
+      title.innerHTML='<b>'+esc(cl.title||'线路')+'</b>'+(cl.note?' <span class="lc-note">'+esc(cl.note)+'</span>':'');
+      card.appendChild(title);
+      const ul=document.createElement('div');ul.className='lc-list';
+      (cl.ids||[]).forEach(id=>{
+        const m=data.find(x=>x.id===id);if(!m)return;
+        const row=document.createElement('div');row.className='lc-item';
+        row.innerHTML='<span class="lc-name">'+esc(m.name)+'</span>'+(m.city?' <span class="lc-area">· '+esc(m.city)+'</span>':'');
+        row.onclick=()=>openModal(m.id,false);
+        ul.appendChild(row);
+      });
+      card.appendChild(ul);box.appendChild(card);
+    });
+  }
+}
+
+function showView(v){
+  const list=v==='list', link=v==='link', panel=v==='panel';
+  document.getElementById('toolbar').style.display=list?'flex':'none';
+  document.getElementById('tagBar').style.display=list?'flex':'none';
+  document.getElementById('grid').style.display=list?'grid':'none';
+  document.getElementById('empty').style.display='none';
+  document.getElementById('linkView').style.display=link?'block':'none';
+  document.getElementById('panelView').style.display=panel?'block':'none';
+  document.getElementById('foot').style.display=list?'block':'none';
+  document.getElementById('tabList').classList.toggle('on',list);
+  document.getElementById('tabLink').classList.toggle('on',link);
+  document.getElementById('tabPanel').classList.toggle('on',panel);
+  if(link)renderLink();
+  if(panel)renderPanel();
+}
+
+/* ---------- 面板 / 总览看板 ---------- */
+function panelStatsHtml(){
+  const byCity={};
+  data.forEach(d=>{const c=(d.city||'').trim();if(c)(byCity[c]=byCity[c]||[]).push(d)});
+  const cityCount=Object.keys(byCity).length;
+  const mergeGroups=Object.values(byCity).filter(a=>a.length>1).length;
+  return `<div class="panel-stats">
+    <div class="ps-card"><div class="ps-num">${data.length}</div><div class="ps-label">总想法</div></div>
+    <div class="ps-card"><div class="ps-num">${cityCount}</div><div class="ps-label">覆盖城市</div></div>
+    <div class="ps-card"><div class="ps-num">${mergeGroups}</div><div class="ps-label">可一起安排(同城市)</div></div>
+    <div class="ps-card"><div class="ps-num">${clusters.length}</div><div class="ps-label">AI线路</div></div>
+  </div>`;
+}
+function statusBarHtml(){
+  const c={want:0,plan:0,done:0};data.forEach(d=>c[d.status]++);
+  const tot=Math.max(data.length,1);
+  const seg=(k,cls)=>c[k]?`<span class="sb-${cls}" style="width:${(c[k]/tot*100).toFixed(1)}%">${c[k]}</span>`:'';
+  return `<div class="statbar">${seg('want','want')}${seg('plan','plan')}${seg('done','done')}</div>
+   <div class="legend"><span><i style="background:var(--want)"></i>想去 ${c.want}</span><span><i style="background:var(--plan)"></i>计划去 ${c.plan}</span><span><i style="background:var(--done)"></i>已去 ${c.done}</span></div>`;
+}
+function priBarHtml(){
+  const c={high:0,mid:0,low:0};data.forEach(d=>c[d.priority]++);
+  const tot=Math.max(data.length,1);
+  const seg=(k,col)=>c[k]?`<span style="width:${(c[k]/tot*100).toFixed(1)}%;background:${col}">${c[k]}</span>`:'';
+  return `<div class="statbar">${seg('high','var(--high)')}${seg('mid','var(--mid)')}${seg('low','var(--low)')}</div>
+   <div class="legend"><span><i style="background:var(--high)"></i>高 ${c.high}</span><span><i style="background:var(--mid)"></i>中 ${c.mid}</span><span><i style="background:var(--low)"></i>低 ${c.low}</span></div>`;
+}
+function cityBarsHtml(byCity){
+  const cities=Object.keys(byCity).sort((a,b)=>byCity[b].length-byCity[a].length);
+  if(!cities.length)return '<div class="empty-sm">还没有填「城市」的地方。给卡片补上城市后，这里会显示分布。</div>';
+  const max=Math.max(...cities.map(c=>byCity[c].length));
+  return '<div class="citybar">'+cities.map(c=>{
+    const n=byCity[c].length;
+    return `<div class="cb-row"><span class="cb-name" title="${esc(c)}">${esc(c)}</span><div class="cb-track"><div class="cb-fill" style="width:${(n/max*100).toFixed(0)}%"></div></div><span class="cb-count">${n}</span></div>`;
+  }).join('')+'</div>';
+}
+function mergeListHtml(byCity){
+  const cities=Object.keys(byCity).filter(c=>byCity[c].length>1);
+  if(!cities.length)return '<div class="empty-sm">同城市暂时没有 2 个以上。多存几个同城市的地方，或点「关联」让 WorkBuddy 归类。</div>';
+  return cities.map(c=>{
+    const members=byCity[c];
+    return `<div class="grp"><h4>${esc(c)} <span class="badge b-done">${members.length}个</span></h4><div class="members">${members.map(m=>`<span onclick="quickEdit('${m.id}')">${esc(m.name)}${m.area?' · '+esc(m.area):''}</span>`).join('')}</div></div>`;
+  }).join('');
+}
+function clusterListHtml(){
+  if(!clusters.length)return '<div class="empty-sm">还没有 AI 线路。点「关联」→「复制全部发给 WorkBuddy」生成。</div>';
+  return clusters.map(cl=>{
+    const ids=cl.ids||[];
+    const rows=ids.map(id=>{const m=data.find(x=>x.id===id);return m?`<span onclick="quickEdit('${m.id}')">${esc(m.name)}</span>`:''}).join('');
+    return `<div class="grp clus"><h4>${esc(cl.title||'线路')}${cl.note?' <span style="font-weight:normal;color:var(--sub);font-size:12px">· ${esc(cl.note)}</span>':''}</h4><div class="members">${rows}</div></div>`;
+  }).join('');
+}
+function renderPanel(){
+  const box=document.getElementById('panelView');
+  const byCity={};
+  data.forEach(d=>{const c=(d.city||'').trim();if(c)(byCity[c]=byCity[c]||[]).push(d)});
+  box.innerHTML=panelStatsHtml()+'<div class="panel-cols">'+
+    '<div class="panel-col"><h3>状态分布</h3>'+statusBarHtml()+
+    '<h3>优先级分布</h3>'+priBarHtml()+
+    '<h3>城市分布</h3>'+cityBarsHtml(byCity)+'</div>'+
+    '<div class="panel-col"><h3>可一起安排（同城市）</h3>'+mergeListHtml(byCity)+
+    '<h3>AI线路（地理相近）</h3>'+clusterListHtml()+'</div>'+
+    '</div>';
+}
+function quickEdit(id){openModal(id,false)}
+
+function buildClassifyPrompt(){
+  const items=data.map(d=>({id:d.id,name:d.name,thought:d.thought||'',city:d.city||'',area:d.area||'',hasImage:d.sourceType==='image'}));
+  return `我是「想去清单」用户，下面是我存的地方。请帮我做地理关联：
+1) 给每个地方补全 / 确认 城市(city) 与 区域街道(area)。判断不出城市就 city 留空字符串。
+2) 把地理上相近、适合一起安排的地方聚成「线路(cluster)」，包括：同一城市、同一条街 / 同一区域、相互邻近的城市（如大阪+京都+奈良）。每个 cluster 给标题和一句话理由。
+只返回如下 JSON，不要任何多余说明、不要 Markdown 代码块符号：
+{
+  "places":[{"id":"","city":"","area":""}],
+  "clusters":[{"title":"","note":"","ids":[""]}]
+}
+条目：
+`+JSON.stringify(items,null,2);
+}
+
+document.getElementById('tabList').onclick=()=>showView('list');
+document.getElementById('tabLink').onclick=()=>showView('link');
+document.getElementById('tabPanel').onclick=()=>showView('panel');
+document.getElementById('btnClassify').onclick=()=>{
+  if(data.length===0){toast('还没有存任何地方');return}
+  const p=buildClassifyPrompt();
+  navigator.clipboard.writeText(p).then(()=>toast('已复制全部，发给我'),()=>prompt('复制下面内容发给我：',p));
+};
+document.getElementById('btnApplyCluster').onclick=()=>{
+  const raw=document.getElementById('fClusterJson').value.trim();
+  if(!raw){toast('先粘入 WorkBuddy 返回的 JSON');return}
+  let obj;
+  try{obj=JSON.parse(raw.replace(/^```(?:json)?/i,'').replace(/```$/,'').trim());}catch(e){toast('JSON 解析失败，确认是纯 JSON');return}
+  if(Array.isArray(obj.places)){obj.places.forEach(p=>{const m=data.find(x=>x.id===p.id);if(m){if(p.city!=null)m.city=String(p.city);if(p.area!=null)m.area=String(p.area);}});}
+  if(Array.isArray(obj.clusters)){clusters=obj.clusters.filter(c=>c&&Array.isArray(c.ids)&&c.ids.length);}
+  save();saveClusters();render();renderLink();toast('关联已应用');
+};
+
+// 首次使用放一个示例，方便看懂怎么用
+if(data.length===0){
+  data=[{
+    id:'g_demo',createdAt:Date.now(),name:'示例：北海道（可删）',
+    thought:'冬天刷到雪景图，想泡温泉看雪，顺便吃札幌拉面',
+    sourceType:'none',sourceUrl:'',tags:['国内示例','冬天','美食'],city:'北海道',area:'',status:'want',priority:'mid',
+    imageData:null,
+    aiIntro:'（示例）北海道：日本最北的大岛，冬天雪国氛围拉满。值得去因为你想泡温泉看雪——登别/定山溪温泉性价比高；札幌拉面横街必吃。最佳 12-2 月。玩法：札幌→小樽→登别 3 天轻松线。贴士：租车或 JR 均可，保暖到位。坑：二世谷物价高。灵感关联：东北青森、长野白马。'
+  }];
+  save();
+}
+render();
+</script>
+</body>
+</html>

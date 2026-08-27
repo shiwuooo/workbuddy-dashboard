@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>国考行测 85分 训练台</title>
+<style>
+:root{
+  --bg:#f5f7fa; --card:#ffffff; --ink:#1f2933; --sub:#6b7785;
+  --line:#e3e8ef; --accent:#2f6fed; --good:#1f9d55; --warn:#e8830c; --bad:#d64545;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;padding:16px;}
+h1{font-size:22px;margin:0 0 4px}
+h2{font-size:17px;margin:18px 0 8px;border-left:4px solid var(--accent);padding-left:8px}
+.sub{color:var(--sub);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.metric{flex:1;min-width:120px;background:var(--bg);border-radius:8px;padding:10px;text-align:center}
+.metric .v{font-size:26px;font-weight:700}
+.metric .l{font-size:12px;color:var(--sub)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+th{background:var(--bg);font-weight:600}
+.bar{height:10px;border-radius:5px;background:var(--line);overflow:hidden;min-width:60px}
+.bar > i{display:block;height:100%}
+input,select,button{font-family:inherit;font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)}
+button{background:var(--accent);color:#fff;border:none;cursor:pointer;padding:8px 14px}
+button.ghost{background:#fff;color:var(--accent);border:1px solid var(--accent)}
+.good{color:var(--good)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+</style>
+</head>
+<body>
+<header class="card">
+  <h1>国考行测 85分 训练台</h1>
+  <div class="sub">离线本地应用 · 数据存于本机浏览器(localStorage) · 不联网不上传 · 打开即用</div>
+  <div id="countdown" class="sub"></div>
+</header>
+
+<section class="card">
+  <h2>当前态势</h2>
+  <div class="row">
+    <div class="metric"><div class="v" id="m-proj">--</div><div class="l">估算当前分(目标85)</div></div>
+    <div class="metric"><div class="v" id="m-gap">--</div><div class="l">距85还差</div></div>
+    <div class="metric"><div class="v" id="m-acc">--</div><div class="l">相对目标完成度</div></div>
+    <div class="metric"><div class="v" id="m-streak">0</div><div class="l">连续打卡天数</div></div>
+  </div>
+  <div id="verdict" class="sub" style="margin-top:8px"></div>
+</section>
+
+<section class="card">
+  <h2>试卷类型设置</h2>
+  <div class="row">
+    <label>试卷类别：</label>
+    <select id="paper">
+      <option value="130">市地级/行政执法类 (130题, 数量10)</option>
+      <option value="135">副省级 (135题, 数量15)</option>
+    </select>
+    <span class="sub">影响总分权重与目标题量</span>
+  </div>
+</section>
+
+<section class="card">
+  <h2>各模块达标情况（目标来自85分拆解）</h2>
+  <table id="modtable">
+    <thead><tr><th>模块</th><th>题量</th><th>目标正确率</th><th>当前正确率</th><th>目标分</th><th>当前分</th><th>缺口</th><th>进度</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="sub" style="margin-top:6px">当前正确率取你已记录练习的加权均值；没记录则显示「未练」。目标分=目标正确率×题量×(100/总题量)。估算分按等权计，仅供训练参考。</div>
+</section>
+
+<section class="card">
+  <h2>第一步：摸底诊断（严格计时做1套完整卷）</h2>
+  <div class="sub">把这套卷各模块「做对题数」填下面，作为起点。没做就先去「上岸通」或纸质卷做一套。</div>
+  <div id="baseline"></div>
+  <button id="saveBaseline" style="margin-top:8px">保存摸底数据</button>
+</section>
+
+<section class="card">
+  <h2>每日打卡：记录一次练习</h2>
+  <div class="row">
+    <input type="date" id="log-date">
+    <select id="log-module"></select>
+    <input type="number" id="log-total" placeholder="总题数" style="width:90px">
+    <input type="number" id="log-correct" placeholder="做对题数" style="width:90px">
+    <input type="text" id="log-note" placeholder="备注(可选)" style="width:140px">
+    <button id="addLog">+ 记录</button>
+  </div>
+  <div class="sub" style="margin-top:6px">建议每天至少记录 1 次（模块练习或套卷都可）。连续不打卡会变红提醒。</div>
+</section>
+
+<section class="card">
+  <h2>练习记录（本地）</h2>
+  <div id="logs"></div>
+  <button class="ghost" id="clearLogs" style="margin-top:8px">清空全部记录</button>
+</section>
+
+<section class="card">
+  <h2>120天四阶段计划（速览）</h2>
+  <div id="planref" class="sub"></div>
+</section>
+
+<script>
+const MODULES=[
+ {key:'资料分析',count:20,target:0.95},
+ {key:'判断推理',count:35,target:0.91},
+ {key:'言语理解',count:30,target:0.90},
+ {key:'政治理论',count:20,target:0.80},
+ {key:'常识判断',count:15,target:0.67},
+ {key:'数量关系',count:10,target:0.70},
+];
+const PHASES=[
+ {range:'第1周',name:'阶段0 摸底',goal:'严格计时做1套卷，定位弱项'},
+ {range:'第2-7周',name:'阶段1 分项突破',goal:'资料/判断/言语方法定型，正确率达标'},
+ {range:'第8-12周',name:'阶段2 提速套卷',goal:'整卷75+，固定顺序与速度'},
+ {range:'第13-15周',name:'阶段3 冲刺模考',goal:'整卷80+，单模块无短板'},
+ {range:'第16-17周',name:'阶段4 保温上场',goal:'85分状态，错题回看'},
+];
+const START='2026-08-04', EXAM='2026-11-29';
+let state=load();
+
+function load(){try{return JSON.parse(localStorage.getItem('gx85')||'null')||def()}catch(e){return def()}}
+function def(){return{baseline:null,logs:[],paper:130}}
+function save(){localStorage.setItem('gx85',JSON.stringify(state))}
+function fmt(d){const y=d.getFullYear();const m=String(d.getMonth()+1).padStart(2,'0');const day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day;}
+function totalQty(){return state.paper}
+function qPer(){return 100/totalQty()}
+function modCount(m){return (m.key==='数量关系')?(state.paper===135?15:10):m.count;}
+function accuracyOf(key){
+  let tot=0,cor=0;
+  state.logs.filter(l=>l.module===key).forEach(l=>{tot+=l.total;cor+=l.correct});
+  if(tot>0) return cor/tot;
+  if(state.baseline && state.baseline[key]!=null){
+    const b=state.baseline[key];
+    if(b.total>0) return b.correct/b.total;
+  }
+  return null;
+}
+
+function render(){
+  document.getElementById('paper').value=state.paper;
+  const today=new Date(); const ex=new Date(EXAM);
+  const days=Math.ceil((ex-today)/86400000);
+  document.getElementById('countdown').textContent='距 '+EXAM+' 笔试还有 '+days+' 天 · 始于 '+START;
+
+  const tb=document.querySelector('#modtable tbody'); tb.innerHTML='';
+  let proj=0, targetSum=0;
+  MODULES.forEach(m=>{
+    const c=modCount(m);
+    const acc=accuracyOf(m.key);
+    const targetScore=m.target*c*qPer();
+    const curScore=acc!=null?acc*c*qPer():0;
+    proj+=curScore; targetSum+=targetScore;
+    const gap=targetScore-curScore;
+    const pct=acc!=null?Math.round(acc*100):null;
+    const tgt=Math.round(m.target*100);
+    const barColor= acc==null?'var(--line)':(acc>=m.target?'var(--good)':(acc>=m.target-0.1?'var(--warn)':'var(--bad)'));
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${m.key}</td><td>${c}</td><td>${tgt}%</td>
+      <td class="${acc==null?'':(acc>=m.target?'good':(acc>=m.target-0.1?'warn':'bad'))}">${pct==null?'未练':pct+'%'}</td>
+      <td>${targetScore.toFixed(1)}</td>
+      <td>${acc==null?'--':curScore.toFixed(1)}</td>
+      <td class="${gap>0.5?'bad':(gap>0?'warn':'good')}">${acc==null?'--':(gap>0?'+'+gap.toFixed(1):gap.toFixed(1))}</td>
+      <td><div class="bar"><i style="width:${pct==null?0:pct}%;background:${barColor}"></i></div></td>`;
+    tb.appendChild(tr);
+  });
+
+  const gap=85-proj;
+  document.getElementById('m-proj').textContent=proj>0?proj.toFixed(1):'--';
+  document.getElementById('m-gap').textContent=proj>0?(gap>0?'-'+gap.toFixed(1):'+'+(-gap).toFixed(1)):'--';
+  document.getElementById('m-acc').textContent=proj>0?Math.round(proj/targetSum*100)+'%':'--';
+  const streak=computeStreak();
+  const sc=document.getElementById('m-streak'); sc.textContent=streak;
+  sc.style.color=streak>=5?'var(--good)':(streak>=1?'var(--warn)':'var(--bad)');
+  const v=document.getElementById('verdict');
+  if(proj<=0){v.textContent='先填「摸底诊断」或打卡一次，系统才能估算你的分。';}
+  else if(gap>0){v.innerHTML='当前估计 <b>'+proj.toFixed(1)+'</b> 分，距85还差 <b class="bad">'+gap.toFixed(1)+'</b> 分。把红色/橙色模块练到目标线即可补上。';}
+  else{v.innerHTML='当前估计已达 <b class="good">'+proj.toFixed(1)+'</b> 分，超过85目标！保持手感，守住正确率。';}
+
+  document.getElementById('planref').innerHTML=PHASES.map(p=>`<b>${p.range}</b> · ${p.name}：${p.goal}`).join('<br>');
+  renderBaseline();
+  renderLogs();
+}
+
+function renderBaseline(){
+  const box=document.getElementById('baseline');
+  if(!box.dataset.built){
+    box.innerHTML=MODULES.map(m=>`<div style="margin:4px 0">${m.key}：对 <input type="number" id="b-${m.key}" style="width:70px" placeholder="做对"> / 共 <input type="number" id="bt-${m.key}" style="width:70px" value="${modCount(m)}"> 题</div>`).join('');
+    box.dataset.built='1';
+  }
+  if(state.baseline){
+    MODULES.forEach(m=>{
+      const el=document.getElementById('b-'+m.key); const tel=document.getElementById('bt-'+m.key);
+      if(el&&state.baseline[m.key]){el.value=state.baseline[m.key].correct; tel.value=state.baseline[m.key].total;}
+    });
+  }
+}
+function renderLogs(){
+  const box=document.getElementById('logs');
+  if(state.logs.length===0){box.innerHTML='<div class="sub">还没有记录。</div>';return;}
+  const sorted=[...state.logs].sort((a,b)=>b.date.localeCompare(a.date));
+  box.innerHTML='<table><thead><tr><th>日期</th><th>模块</th><th>题量</th><th>做对</th><th>正确率</th><th>备注</th></tr></thead><tbody>'+
+   sorted.map(l=>`<tr><td>${l.date}</td><td>${l.module}</td><td>${l.total}</td><td>${l.correct}</td><td class="${(l.correct/l.total)>=0.9?'good':(l.correct/l.total>=0.7?'warn':'bad')}">${Math.round(l.correct/l.total*100)}%</td><td>${l.note||''}</td></tr>`).join('')+'</tbody></table>';
+}
+function computeStreak(){
+  if(state.logs.length===0)return 0;
+  const dates=[...new Set(state.logs.map(l=>l.date))].sort().reverse();
+  const has=(d)=>dates.includes(fmt(d));
+  let cursor=new Date();
+  if(!has(cursor)){cursor.setDate(cursor.getDate()-1); if(!has(cursor)) return 0;}
+  let streak=0;
+  while(has(cursor)){streak++;cursor.setDate(cursor.getDate()-1);}
+  return streak;
+}
+
+document.getElementById('paper').addEventListener('change',e=>{state.paper=+e.target.value;save();render();});
+document.getElementById('saveBaseline').addEventListener('click',()=>{
+  const b={}; let ok=true;
+  MODULES.forEach(m=>{
+    const c=+document.getElementById('b-'+m.key).value;
+    const t=+document.getElementById('bt-'+m.key).value;
+    if(isNaN(c)||isNaN(t)||t<=0){ok=false;return;}
+    b[m.key]={correct:c,total:t};
+  });
+  if(!ok){alert('请填完所有模块的对题数和总题数');return;}
+  state.baseline=b;save();render();alert('摸底数据已保存');
+});
+document.getElementById('addLog').addEventListener('click',()=>{
+  const date=document.getElementById('log-date').value||fmt(new Date());
+  const module=document.getElementById('log-module').value;
+  const total=+document.getElementById('log-total').value;
+  const correct=+document.getElementById('log-correct').value;
+  const note=document.getElementById('log-note').value;
+  if(!module||isNaN(total)||isNaN(correct)||total<=0||correct>total){alert('请正确填写：模块/总题数/做对题数');return;}
+  state.logs.push({date,module,total,correct,note});save();render();
+  document.getElementById('log-total').value='';document.getElementById('log-correct').value='';document.getElementById('log-note').value='';
+});
+document.getElementById('clearLogs').addEventListener('click',()=>{
+  if(confirm('确定清空全部练习记录？此操作不可恢复。')){state.logs=[];save();render();}
+});
+document.getElementById('log-module').innerHTML=MODULES.map(m=>`<option>${m.key}</option>`).join('');
+document.getElementById('log-date').value=fmt(new Date());
+render();
+</script>
+</body>
+</html>

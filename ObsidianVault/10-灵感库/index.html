@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵感库 · 统一看板</title>
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;--accent:#3b82f6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--purple:#8b5cf6;--blue:#3b82f6}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#1f2937,#334155);color:#fff;padding:18px 24px}
+header h1{margin:0;font-size:21px}
+header .sub{font-size:12px;opacity:.82;margin-top:4px;line-height:1.6}
+.kpis{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.kpi{background:rgba(255,255,255,.13);border-radius:10px;padding:6px 12px;font-size:12px}
+.kpi b{font-size:17px;display:block}
+nav{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);display:flex;gap:4px;padding:10px 16px;overflow-x:auto;z-index:20}
+nav button{border:none;background:none;color:var(--sub);padding:8px 14px;font-size:14px;cursor:pointer;border-radius:8px;white-space:nowrap}
+nav button.active{background:var(--accent);color:#fff}
+.page{display:none;padding:20px;max-width:1120px;margin:0 auto}
+.page.active{display:block}
+.flabel{font-size:12px;color:var(--sub);margin:10px 0 6px}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
+.filters button{border:1px solid var(--line);background:#fff;color:var(--ink);padding:5px 13px;border-radius:20px;cursor:pointer;font-size:13px}
+.filters button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+/* capture */
+.cap-wrap{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+.cap-wrap textarea{width:100%;min-height:90px;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:14px;font-family:inherit;resize:vertical}
+.cap-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;background:var(--accent);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.cap-hint{color:var(--sub);font-size:12px;margin-top:10px;line-height:1.7}
+.cap-list{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.cap-item{background:#fafbff;border:1px solid var(--line);border-radius:10px;padding:12px;position:relative}
+.cap-item .top{display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--sub);margin-bottom:6px}
+.badge{font-size:11px;padding:2px 9px;border-radius:10px;color:#fff}
+.b-growth{background:var(--green)}.b-values{background:var(--blue)}.b-idea{background:var(--amber)}.b-hold{background:#9ca3af}
+.topic{background:#eef2ff;color:#4338ca;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:4px}
+.cap-item .txt{font-size:13px;line-height:1.6;white-space:pre-wrap}
+.cap-item .del{position:absolute;top:10px;right:10px;border:none;background:none;color:var(--red);cursor:pointer;font-size:12px}
+/* library grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px;display:flex;flex-direction:column;cursor:pointer;transition:.15s}
+.card:hover{border-color:var(--accent);box-shadow:0 4px 14px rgba(0,0,0,.06)}
+.card h3{margin:0 0 8px;font-size:15px;line-height:1.4}
+.card .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.tag{background:#eef2ff;color:#4338ca;font-size:11px;padding:2px 8px;border-radius:10px}
+.card .sum{color:var(--sub);font-size:13px;line-height:1.6;flex:1}
+  .card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--sub)}
+  .rate{color:var(--amber);letter-spacing:1px}
+  .stat-badge{font-size:11px;padding:2px 8px;border-radius:10px;background:#eef2ff;color:#4338ca}
+  .detail-box{max-height:260px;overflow:hidden;position:relative}
+  .detail-box.expanded{max-height:none}
+  .detail-fade{position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(transparent,#fff);pointer-events:none}
+  .detail-box.expanded .detail-fade{display:none}
+  .detail-toggle{border:none;background:none;color:var(--accent);font-size:12px;cursor:pointer;padding:6px 0;margin-top:4px}
+/* modal */
+#mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-start;justify-content:center;padding:30px 16px;overflow:auto;z-index:50}
+#mask.show{display:flex}
+.modal{background:#fff;border-radius:14px;max-width:760px;width:100%;padding:22px;position:relative}
+.modal .x{position:absolute;top:14px;right:16px;border:none;background:none;font-size:22px;cursor:pointer;color:var(--sub)}
+.modal h2{margin:0 0 4px;font-size:19px}
+.modal .m-meta{color:var(--sub);font-size:12px;margin-bottom:12px}
+.sec{margin:14px 0;padding-top:12px;border-top:1px solid var(--line)}
+.sec h4{margin:0 0 8px;font-size:14px;color:var(--ink)}
+.sec p,.sec li{font-size:13px;line-height:1.7;color:#374151}
+.cls-tags{display:flex;gap:6px;flex-wrap:wrap}
+.cls-tags span{background:#f1f5f9;color:#334155;font-size:12px;padding:3px 10px;border-radius:8px}
+.review{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#fafbff}
+.review .who{font-weight:600;font-size:13px}
+.v{font-size:11px;padding:2px 9px;border-radius:10px;color:#fff;margin-left:8px}
+.v-chong{background:var(--green)}.v-deng{background:var(--amber)}.v-kan{background:var(--red)}
+.review .c{font-size:13px;line-height:1.6;margin:6px 0;color:#374151}
+.review .t{font-size:12px;color:var(--sub);background:#eef2ff;padding:6px 10px;border-radius:8px;display:inline-block}
+/* form */
+.frm{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:8px}
+.frm input,.frm textarea{border:1px solid var(--line);border-radius:8px;padding:7px;font-size:13px;font-family:inherit;width:100%}
+/* pipeline */
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.col{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;min-height:200px}
+.col h3{margin:0 0 10px;font-size:14px;text-align:center}
+.col.s-idea{background:#eff6ff}.col.s-do{background:#fffbeb}.col.s-done{background:#ecfdf5}
+.pcard{border:1px solid var(--line);border-radius:9px;padding:10px;margin-bottom:10px;background:#fff;font-size:13px}
+.pcard .pmove{display:flex;gap:6px;margin-top:8px}
+.pcard .pmove button{flex:1;border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px;font-size:12px;cursor:pointer}
+/* review table */
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+th,td{border:1px solid var(--line);padding:8px;text-align:left}
+th{background:#f1f5f9}
+.insight{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:12px;margin-top:10px;font-size:13px;line-height:1.7}
+.empty{color:var(--sub);padding:30px;text-align:center}
+/* 关联图谱 */
+.rel-list{display:flex;flex-direction:column;gap:8px}
+.rel-card{border:1px solid var(--line);border-radius:8px;padding:10px;cursor:pointer;background:#fafbff;transition:.15s}
+.rel-card:hover{border-color:var(--accent);background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.rel-head{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--ink)}
+.rel-score{background:var(--accent);color:#fff;font-size:11px;padding:2px 8px;border-radius:10px}
+.rel-reasons{font-size:11px;color:var(--sub);margin-top:5px;display:flex;gap:5px;flex-wrap:wrap}
+.rel-reasons span{background:#eef2ff;color:#4338ca;padding:2px 7px;border-radius:8px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🗂️ 灵感库 · 统一看板</h1>
+  <div class="sub">输入两通道：① 下方「捕获」页直接粘贴（存本地）→ 喊「整理捕获箱」让我精炼；② 任意对话发我链接/截图/名字/一句话 → 我分类+五视角点评+写进 data.js。</div>
+  <div class="kpis" id="kpis"></div>
+</header>
+<nav>
+  <button class="active" data-tab="capture">📥 捕获</button>
+  <button data-tab="library">📚 收藏库</button>
+  <button data-tab="pipeline">🚀 选题进度</button>
+  <button data-tab="review">📊 数据复盘</button>
+  <button data-tab="relmap">🔗 关联图谱</button>
+</nav>
+
+<!-- 捕获 -->
+<section class="page active" id="capture">
+  <div class="cap-wrap">
+    <div class="flabel">粘到这里（一段一条，空行分隔多条）</div>
+    <textarea id="ta" placeholder="例如：小红书起号要不要先发满 30 篇再投流？"></textarea>
+    <div class="cap-row">
+      <button class="btn" onclick="addIn()">＋ 存入捕获箱</button>
+      <button class="btn ghost" onclick="clearTa()">清空输入框</button>
+      <button class="btn ghost" onclick="copyAll()">复制全部发助手</button>
+      <button class="btn ghost" onclick="exportMd()">导出备份</button>
+      <button class="btn ghost" onclick="clearAll()">清空全部</button>
+    </div>
+    <div class="cap-hint">自动按关键词预判分类（练/想/用/存）+ 主题标签。这些是 raw 原文，<b>精炼成卡才算真的用上</b>。整理：点「复制全部发助手」→ 在对话里喊「整理捕获箱」。</div>
+    <div class="cap-list" id="capList"></div>
+  </div>
+</section>
+
+<!-- 收藏库 -->
+<section class="page" id="library">
+  <div class="flabel">按类型筛选</div>
+  <div class="filters" id="fType"></div>
+  <div class="flabel">按标签筛选（可多选叠加）</div>
+  <div class="filters" id="fTag"></div>
+  <div class="grid" id="grid"></div>
+</section>
+
+<!-- 选题进度 -->
+<section class="page" id="pipeline">
+  <div class="flabel">状态在浏览器本地保存（点按钮流转）。要永久存档就告诉我那条的状态，我写进 data.js。</div>
+  <div class="cols" id="cols">
+    <div class="col s-idea"><h3>💤 想法</h3><div id="col-idea"></div></div>
+    <div class="col s-do"><h3>✍️ 在做</h3><div id="col-do"></div></div>
+    <div class="col s-done"><h3>✅ 已发布</h3><div id="col-done"></div></div>
+  </div>
+</section>
+
+<!-- 数据复盘 -->
+<section class="page" id="review">
+  <div class="kpis" id="rkpis"></div>
+  <div class="flabel">回填已发布内容的数据（本地保存）</div>
+  <table id="rTable"><thead><tr><th>标题</th><th>浏览</th><th>赞</th><th>藏</th><th>评</th><th>涨粉</th><th>发布日</th><th>复盘结论</th></tr></thead><tbody></tbody></table>
+  <div id="insights"></div>
+</section>
+
+<!-- 关联图谱 -->
+<section class="page" id="relmap">
+  <div class="flabel">基于 tags / classify / detail 引用自动计算的关联。点关联卡可跳转详情。</div>
+  <div id="relmapList" style="margin-top:16px"></div>
+</section>
+
+<div id="mask"><div class="modal" id="modal"></div></div>
+
+<script src="data.js"></script>
+<script>
+/* ===================== 数据 ===================== */
+const V = window.VAULT || {updated:"",items:[]};
+const TYPE_NAME={article:"📄 文章",blogger:"👤 博主",quote:"💬 金句",idea:"💡 想法",misc:"✨ 其他",growth:"🌱 训练",values:"🧭 决策",card:"🃏 卡片"};
+
+/* ===================== 顶部 KPI ===================== */
+(function(){
+  const c={};V.items.forEach(i=>c[i.type]=(c[i.type]||0)+1);
+  const html=Object.keys(c).map(t=>`<div class="kpi"><b>${c[t]}</b>${TYPE_NAME[t]||t}</div>`).join("");
+  document.getElementById('kpis').innerHTML=`<div class="kpi"><b>${V.items.length}</b>总卡片</div>`+html+`<div class="kpi"><b>${V.updated}</b>更新日期</div>`;
+})();
+
+/* ===================== 导航 ===================== */
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(b.dataset.tab).classList.add('active');
+});
+
+/* ===================== 捕获箱（localStorage） ===================== */
+const CAP_KEY='insp_capture_v2', CAP_LOG='insp_capture_log_v2';
+const KW={idea:['标题','转发','选题','内容','传播','运营','小红书','爆款','流量','文案','涨粉','变现','账号','粉丝','笔记','钩子','开头','排版','分享','网盘','副业','赚钱','项目','投放','聚光','私域'],growth:['行动','执行','自律','习惯','决策','直接做','练习','微决策','坚持','专注','拖延','执行力','做起来','立刻做','从小事','练'],values:['脸面','烦恼','当下','重生','主线','心态','看开','意义','价值','焦虑','内耗','勇气','希望','自我','放下','接纳','认知','投射','人生','活着','情绪']};
+const TOPIC_KW={'#沟通社交':['沟通','社交','拒绝','礼貌','表情','眼神','别人','群聊','同事','领导','人际关系','聊天','客气'],'#自我成长':['成长','行动','执行','自律','习惯','决策','坚持','专注','拖延','练','微决策','从小事','执行力','自我'],'#心态看开':['脸面','烦恼','当下','重生','主线','心态','看开','意义','价值','焦虑','内耗','勇气','希望','放下','接纳','认知','投射','人生','活着','情绪'],'#内容运营':['标题','转发','选题','内容','传播','运营','小红书','爆款','流量','文案','涨粉','变现','账号','粉丝','笔记','钩子','开头','排版','分享'],'#理财搞钱':['理财','搞钱','财富','赚钱','收入','存款','投资','副业','钱','网盘','项目','投放'],'#健康':['健康','运动','睡眠','身体','饮食','健身','锻炼'],'#学习':['学习','读书','阅读','知识','速算','除法','考试','公考','申论','笔记法']};
+const CNAME={growth:'练',values:'想',idea:'用',hold:'存'};
+let capItems=capLoad(),capLog=capLoadLog();
+function capLoad(){try{return JSON.parse(localStorage.getItem(CAP_KEY))||[]}catch(e){return[]}}
+function capSave(){try{localStorage.setItem(CAP_KEY,JSON.stringify(capItems))}catch(e){alert('浏览器存不了，请用导出')}}
+function capLoadLog(){try{return JSON.parse(localStorage.getItem(CAP_LOG))||[]}catch(e){return[]}}
+function fmtT(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function fmtF(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`}
+function classify(t){let best='hold',max=0;for(const k in KW){let n=0;for(const w of KW[k])if(t.includes(w))n++;if(n>max){max=n;best=k}}return best}
+function topicsFor(t){const out=[];for(const tk in TOPIC_KW){let hit=false;for(const w of TOPIC_KW[tk])if(t.includes(w)){hit=true;break}if(hit)out.push(tk);if(out.length>=3)break}return out}
+function addIn(){const raw=document.getElementById('ta').value.trim();if(!raw){alert('先粘点东西');return}
+  const blocks=raw.split(/\n\s*\n+/).map(s=>s.trim()).filter(Boolean);const now=fmtT();
+  blocks.forEach(b=>capItems.unshift({id:Date.now()+Math.random(),text:b,type:classify(b),topics:topicsFor(b),time:now}));
+  capSave();document.getElementById('ta').value='';
+  capLog.unshift({time:now,count:blocks.length,preview:blocks[0].slice(0,28)+(blocks[0].length>28?'…':'')});localStorage.setItem(CAP_LOG,JSON.stringify(capLog));capRender();}
+function clearTa(){document.getElementById('ta').value=''}
+function capDel(id){capItems=capItems.filter(i=>i.id!==id);capSave();capRender()}
+function clearAll(){if(confirm('确定清空全部？建议先点导出')){capItems=[];capSave();capRender()}}
+function copyAll(){if(!capItems.length){alert('空的');return}
+  const txt=capItems.map(i=>`[${CNAME[i.type]} · ${(i.topics||[]).join(' ')} · ${i.time}] ${i.text}`).join('\n\n');
+  navigator.clipboard?.writeText(txt).then(()=>alert(`已复制 ${capItems.length} 条。去对话里喊「整理捕获箱」`)).catch(()=>prompt('复制下面发给我：',txt));}
+function exportMd(){if(!capItems.length){alert('空的');return}
+  let md=`# 捕获箱备份 ${fmtT()}\n\n> 共 ${capItems.length} 条\n\n`;
+  capItems.forEach((i,n)=>{md+=`### [${CNAME[i.type]} ${(i.topics||[]).join(' ')}] 条目${n+1} · ${i.time}\n${i.text}\n\n`});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'}));a.download=`捕获箱备份_${fmtF()}.md`;a.click();}
+function capRender(){
+  const c={growth:0,values:0,idea:0,hold:0};capItems.forEach(i=>c[i.type]++);
+  document.getElementById('capList').innerHTML=capItems.length?capItems.map(i=>`
+    <div class="cap-item"><button class="del" onclick="capDel(${i.id})">删除</button>
+      <div class="top"><span>存入 ${i.time} · <span class="badge b-${i.type}">${CNAME[i.type]}</span>${''}<span class="topic">${(i.topics||[]).join('</span><span class="topic">')}</span></span></div>
+      <div class="txt">${i.text.replace(/</g,'&lt;')}</div></div>`).join('') : '<div class="empty">还没有内容，粘一段试试 👆</div>';
+}
+
+/* ===================== 收藏库 ===================== */
+let curT='all',curTags=new Set();
+function allTags(){const s=new Set();V.items.forEach(i=>(i.tags||[]).forEach(t=>s.add(t)));return [...s].sort();}
+function renderFilters(){
+  const types=['all',...new Set(V.items.map(i=>i.type))];
+  document.getElementById('fType').innerHTML=types.map(t=>`<button class="${t===curT?'active':''}" onclick="setT('${t}')">${t==='all'?'全部':(TYPE_NAME[t]||t)}</button>`).join('');
+  const tags=allTags();
+  document.getElementById('fTag').innerHTML=['all',...tags].map(t=>{const on=curTags.has(t);const active=(t==='all'&&curTags.size===0)||on;return `<button class="${active?'active':''}" onclick="setTag('${t}')">${t==='all'?'全部标签':t}</button>`}).join('');
+}
+function setT(t){curT=t;renderFilters();renderLib();}
+function setTag(t){if(t==='all')curTags.clear();else curTags.has(t)?curTags.delete(t):curTags.add(t);renderFilters();renderLib();}
+function matchLib(i){
+  if(curT!=='all'&&i.type!==curT)return false;
+  if(curTags.size&&!(i.tags||[]).some(t=>curTags.has(t)))return false;
+  return true;
+}
+function renderLib(){
+  const items=V.items.filter(matchLib);
+  document.getElementById('grid').innerHTML=items.length?items.map(i=>`
+    <div class="card" onclick="openModal('${i.id}')">
+      <h3>${i.title}</h3>
+      <div class="tags"><span class="stat-badge">${TYPE_NAME[i.type]||i.type}</span>${(i.tags||[]).slice(0,4).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <div class="sum">${i.summary||''}</div>
+      <div class="foot"><span class="rate">${'★'.repeat(i.rating||0)}${'☆'.repeat(5-(i.rating||0))}</span>${i.detail?'<span>完整分析 ↓</span>':''}</div>
+    </div>`).join('') : '<div class="empty">当前筛选无内容</div>';
+}
+
+/* ===================== 详情弹窗 ===================== */
+function openModal(id){
+  const i=V.items.find(x=>x.id===id);if(!i)return;
+  let h=`<button class="x" onclick="closeModal()">×</button><h2>${i.title}</h2>`;
+  h+=`<div class="m-meta">${TYPE_NAME[i.type]||i.type} · 加入 ${i.added||''} · 平台 ${i.platform||'-'} · 深度 ${i.depth||'-'}${i.url?` · <a href="${i.url}" target="_blank">原链接</a>`:''}</div>`;
+  if(i.summary)h+=`<div class="sec"><h4>核心提炼</h4><p>${esc(i.summary)}</p></div>`;
+  if(i.insights&&i.insights.length)h+=`<div class="sec"><h4>💡 启发（对你）</h4><ul>${i.insights.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
+  if(i.classify)h+=`<div class="sec"><h4>🏷️ 自动分类</h4><div class="cls-tags">${Object.entries(i.classify).map(([k,v])=>`<span>${k}：${Array.isArray(v)?v.join('/'):v}</span>`).join('')}</div></div>`;
+  if(i.reviews&&i.reviews.length)h+=`<div class="sec"><h4>🎙️ 大佬点评 · 多视角</h4>${i.reviews.map(r=>`<div class="review"><span class="who">${r.who}</span><span class="v v-${r.verdict==='冲'?'chong':r.verdict==='等等看'?'deng':'kan'}">${r.verdict}</span><div class="c">${esc(r.comment)}</div>${r.tip?`<div class="t">💡 ${esc(r.tip)}</div>`:''}</div>`).join('')}</div>`;
+  if(i.actions&&i.actions.length)h+=`<div class="sec"><h4>🎯 行动建议</h4><ul>${i.actions.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
+  const rels=computeRelations(i);
+  if(rels.length)h+=`<div class="sec"><h4>🔗 关联卡（${rels.length}）</h4><div class="rel-list">${rels.map(r=>`<div class="rel-card" onclick="openModal('${r.item.id}')"><div class="rel-head"><b>${esc(r.item.title||'')}</b><span class="rel-score">${r.score}</span></div><div class="rel-reasons">${r.reasons.map(x=>`<span>${esc(x)}</span>`).join(' ')}</div></div>`).join('')}</div></div>`;
+  const rev=[];V.items.forEach(o=>{if(o.id===i.id)return;const orels=computeRelations(o);const m=orels.find(r=>r.item.id===i.id);if(m&&m.score>=5)rev.push(m);});rev.sort((a,b)=>b.score-a.score);
+  if(rev.length)h+=`<div class="sec"><h4>⬅️ 反向关联（${rev.length} · 哪些卡关联了我）</h4><div class="rel-list">${rev.map(r=>`<div class="rel-card" onclick="openModal('${r.item.id}')"><div class="rel-head"><b>${esc(r.item.title||'')}</b><span class="rel-score">${r.score}</span></div></div>`).join('')}</div></div>`;
+  if(i.detail){
+    const long=(i.detail||'').length>600;
+    h+=`<div class="sec"><h4>📖 完整分析</h4>
+      <div id="db-${i.id}" class="detail-box ${long?'':'expanded'}">
+        <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;color:#374151">${esc(i.detail)}</div>
+        ${long?'<div class="detail-fade"></div>':''}
+      </div>
+      ${long?`<button class="detail-toggle" onclick="toggleDetail('${i.id}',this)">展开全部</button>`:''}
+    </div>`;
+  }
+  // pipeline + data 回填
+  h+=`<div class="sec"><h4>🚀 生产进度 & 数据回填</h4><div class="frm">
+    <label>状态<input id="pf-status" value="${(i.pipeline&&i.pipeline.status)||'想法'}"></label>
+    <label>计划发布<input id="pf-plan" value="${(i.pipeline&&i.pipeline.planDate)||''}"></label>
+    <label>实际发布<input id="pf-pub" value="${(i.pipeline&&i.pipeline.pubDate)||''}"></label>
+    <label>作品链接<input id="pf-url" value="${(i.pipeline&&i.pipeline.url)||''}"></label>
+    <label>浏览<input id="pf-views" value="${(i.pipeline&&i.pipeline.views)||''}"></label>
+    <label>赞<input id="pf-likes" value="${(i.pipeline&&i.pipeline.likes)||''}"></label>
+    <label>藏<input id="pf-saves" value="${(i.pipeline&&i.pipeline.saves)||''}"></label>
+    <label>评<input id="pf-comments" value="${(i.pipeline&&i.pipeline.comments)||''}"></label>
+    <label>涨粉<input id="pf-follows" value="${(i.pipeline&&i.pipeline.follows)||''}"></label>
+    <label style="grid-column:1/-1">复盘结论<textarea id="pf-retro" rows="2">${(i.pipeline&&i.pipeline.retro)||''}</textarea></label>
+  </div><button class="btn" style="margin-top:8px" onclick="savePipe('${i.id}')">保存进度</button><span id="pf-msg" style="font-size:12px;color:var(--green);margin-left:10px"></span></div>`;
+  document.getElementById('modal').innerHTML=h;
+  document.getElementById('mask').classList.add('show');
+}
+function closeModal(){document.getElementById('mask').classList.remove('show');}
+document.getElementById('mask').onclick=e=>{if(e.target.id==='mask')closeModal();};
+function toggleDetail(id,btn){
+  const el=document.getElementById('db-'+id);
+  if(el.classList.contains('expanded')){el.classList.remove('expanded');btn.textContent='展开全部';}
+  else{el.classList.add('expanded');btn.textContent='收起';}
+}
+function savePipe(id){
+  const ov=JSON.parse(localStorage.getItem('insp_pipe_v2')||'{}');
+  ov[id]={status:val('pf-status'),planDate:val('pf-plan'),pubDate:val('pf-pub'),url:val('pf-url'),views:num('pf-views'),likes:num('pf-likes'),saves:num('pf-saves'),comments:num('pf-comments'),follows:num('pf-follows'),retro:val('pf-retro')};
+  localStorage.setItem('insp_pipe_v2',JSON.stringify(ov));
+  document.getElementById('pf-msg').textContent='已存本地 ✓（要永久存档告诉我）';
+  renderPipe();
+}
+function val(k){return document.getElementById(k).value.trim();}
+function num(k){const v=parseFloat(document.getElementById(k).value);return isNaN(v)?0:v;}
+
+/* ===================== 选题进度 ===================== */
+function pipeStatus(i){const ov=JSON.parse(localStorage.getItem('insp_pipe_v2')||'{}');return (ov[i.id]&&ov[i.id].status)||(i.pipeline&&i.pipeline.status)||'想法';}
+function renderPipe(){
+  const map={idea:[],do:[],done:[]};
+  V.items.forEach(i=>{const s=pipeStatus(i);if(s==='在做')map.do.push(i);else if(s==='已发布')map.done.push(i);else map.idea.push(i);});
+  const col=(arr,from)=>arr.map(i=>`<div class="pcard">${i.title}<div class="pmove">
+    ${from!=='idea'?`<button onclick="move('${i.id}','想法')">← 想法</button>`:''}
+    ${from==='idea'?`<button onclick="move('${i.id}','在做')">在做 →</button>`:''}
+    ${from==='do'?`<button onclick="move('${i.id}','已发布')">已发布 →</button>`:''}
+    ${from==='done'?`<button onclick="move('${i.id}','在做')">↩ 在做</button>`:''}
+  </div></div>`).join('')||'<div class="empty">空</div>';
+  document.getElementById('col-idea').innerHTML=col(map.idea,'idea');
+  document.getElementById('col-do').innerHTML=col(map.do,'do');
+  document.getElementById('col-done').innerHTML=col(map.done,'done');
+}
+function move(id,s){const ov=JSON.parse(localStorage.getItem('insp_pipe_v2')||'{}');ov[id]=ov[id]||{};ov[id].status=s;if(s==='已发布'&&!ov[id].pubDate)ov[id].pubDate=fmtT().slice(0,10);localStorage.setItem('insp_pipe_v2',JSON.stringify(ov));renderPipe();}
+
+/* ===================== 数据复盘 ===================== */
+function renderReview(){
+  const ov=JSON.parse(localStorage.getItem('insp_pipe_v2')||'{}');
+  const pub=V.items.filter(i=>{const p=ov[i.id]||i.pipeline;return p&&(p.status==='已发布'||p.pubDate);});
+  let tot={views:0,likes:0,saves:0,comments:0,follows:0},n=pub.length;
+  pub.forEach(i=>{const p=ov[i.id]||i.pipeline||{};tot.views+=p.views||0;tot.likes+=p.likes||0;tot.saves+=p.saves||0;tot.comments+=p.comments||0;tot.follows+=p.follows||0;});
+  document.getElementById('rkpis').innerHTML=`<div class="kpi"><b>${n}</b>已发布</div><div class="kpi"><b>${tot.likes}</b>总赞</div><div class="kpi"><b>${tot.saves}</b>总藏</div><div class="kpi"><b>${tot.likes?Math.round(tot.saves/tot.likes*100):0}%</b>藏赞比</div><div class="kpi"><b>${tot.likes?Math.round(tot.follows/tot.likes*100):0}</b>每百赞涨粉</div>`;
+  document.querySelector('#rTable tbody').innerHTML=pub.length?pub.map(i=>{const p=ov[i.id]||i.pipeline||{};return `<tr><td>${i.title}</td><td>${p.views||0}</td><td>${p.likes||0}</td><td>${p.saves||0}</td><td>${p.comments||0}</td><td>${p.follows||0}</td><td>${p.pubDate||''}</td><td>${p.retro||''}</td></tr>`}).join('') : '<tr><td colspan="8" class="empty">还没有已发布数据。在卡片里点「保存进度」选「已发布」并填数据。</td></tr>';
+  // 洞察
+  let ins='';
+  if(n>=1){
+    const byType={};pub.forEach(i=>{const p=ov[i.id]||i.pipeline||{};const t=(i.classify&&i.classify.type)||i.type;byType[t]=byType[t]||{likes:0,n:0};byType[t].likes+=p.likes||0;byType[t].n++;});
+    const ranked=Object.entries(byType).map(([t,v])=>[t,Math.round(v.likes/v.n)]).sort((a,b)=>b[1]-a[1]);
+    if(ranked.length>1)ins+=`<div class="insight">📈 <b>哪类最有效</b>：篇均赞最高是「${ranked[0][0]}」(${ranked[0][1]})，最低是「${ranked[ranked.length-1][0]}」(${ranked[ranked.length-1][1]})。资源优先压给前者。</div>`;
+    if(tot.likes)ins+=`<div class="insight">📥 <b>藏赞比 ${Math.round(tot.saves/tot.likes*100)}%</b>：${tot.saves/tot.likes>1?'资料型内容偏多 → 适合做系列+结尾领资料钩子':'情绪/即时型偏多 → 补可保存的清单/模板提升收藏'}。</div>`;
+    if(tot.likes)ins+=`<div class="insight">🔁 <b>每百赞涨粉 ${Math.round(tot.follows/tot.likes*100)}</b>：${tot.follows/tot.likes*100<5?'转化偏低 → 查主页人设/结尾引导关注':'转化健康'}。</div>`;
+  } else ins='<div class="insight">发布满 1 条后即可看基础指标；满 3 条自动出对比洞察。回填数据：在「收藏库」点卡片→「保存进度」。</div>';
+  document.getElementById('insights').innerHTML=ins;
+}
+
+/* ===================== 工具 ===================== */
+function esc(s){return (s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ===================== 关联图谱 ===================== */
+function computeRelations(target){
+  const out=[];
+  const tTags=new Set(target.tags||[]);
+  const tCls=target.classify||{};
+  const tType=target.type;
+  const m=(target.detail||'').match(/@博主[:：]\s*(\S+)/);
+  const tRef=m?m[1]:'';
+  V.items.forEach(o=>{
+    if(o.id===target.id)return;
+    let score=0,reasons=[];
+    // 显式关联 tag (e.g. "关联:网盘推广")
+    (target.tags||[]).forEach(t=>{if(t.startsWith('关联:')){if((o.tags||[]).includes(t)){score+=10;reasons.push('显式关联')}}});
+    // 同 tag
+    let tagHits=0;(o.tags||[]).forEach(t=>{if(tTags.has(t)){score+=1;tagHits++}});
+    if(tagHits>=2)reasons.push('同标签×'+tagHits);
+    // 同 classify
+    if(tCls.type&&o.classify&&o.classify.type===tCls.type){score+=3;reasons.push('同类型')}
+    if(tCls.platform&&o.classify&&o.classify.platform&&JSON.stringify(o.classify.platform)===JSON.stringify(tCls.platform)){score+=2;reasons.push('同平台')}
+    if(tCls.stage&&o.classify&&o.classify.stage===tCls.stage){score+=2;reasons.push('同阶段')}
+    // 同 type
+    if(o.type===tType){score+=1}
+    // detail 引用博主
+    if(tRef&&(o.title||'').includes(tRef)){score+=5;reasons.push('方法论引用')}
+    if(score>=2)out.push({item:o,score,reasons:reasons.length?reasons:['弱关联']});
+  });
+  out.sort((a,b)=>b.score-a.score);
+  return out.slice(0,8);
+}
+function renderRelMap(){
+  const groups=[];
+  V.items.forEach(i=>{
+    const rels=computeRelations(i);
+    if(rels.length)groups.push({item:i,rels});
+  });
+  groups.sort((a,b)=>b.rels.length-a.rels.length||b.rels[0].score-a.rels[0].score);
+  document.getElementById('relmapList').innerHTML=groups.length?groups.map(g=>`
+    <div class="card" style="margin-bottom:14px">
+      <h3 style="margin:0 0 8px;font-size:15px;cursor:pointer" onclick="openModal('${g.item.id}')">${esc(g.item.title)} <span style="font-size:12px;color:var(--sub);font-weight:400">· ${g.rels.length} 条关联</span></h3>
+      <div class="rel-list">${g.rels.map(r=>`<div class="rel-card" onclick="openModal('${r.item.id}')"><div class="rel-head"><b>${esc(r.item.title||'')}</b><span class="rel-score">${r.score}</span></div><div class="rel-reasons">${r.reasons.map(x=>`<span>${esc(x)}</span>`).join(' ')}</div></div>`).join('')}</div>
+    </div>`).join('') : '<div class="empty">还没有关联</div>';
+}
+
+/* ===================== 初始化 ===================== */
+renderFilters();renderLib();renderPipe();renderReview();capRender();renderRelMap();
+</script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>夸克网盘工具箱 · 你能用它干什么</title>
+<style>
+  :root { --bg:#f5f6f8; --card:#fff; --line:#e3e6ea; --ink:#1f2733; --sub:#6b7785; --accent:#2f6fed; --ok:#16a34a; --warn:#d97706; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--ink); }
+  header { padding:26px 32px 10px; }
+  h1 { margin:0 0 6px; font-size:23px; }
+  .hint { color:var(--sub); font-size:13px; margin:0; line-height:1.7; }
+  main { padding:6px 32px 40px; max-width:1100px; }
+  section { margin-top:26px; }
+  section h2 { font-size:15px; color:var(--sub); font-weight:600; margin:0 0 12px; letter-spacing:.5px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px 18px; }
+  .card h3 { margin:0 0 6px; font-size:16px; }
+  .card .what { font-size:13px; color:var(--sub); line-height:1.6; margin:0 0 10px; }
+  .cmd { display:flex; align-items:center; gap:8px; background:#f0f3f7; border:1px solid var(--line); border-radius:8px; padding:7px 10px; font-family:Consolas,Menlo,monospace; font-size:12.5px; word-break:break-all; }
+  .cmd code { flex:1; }
+  .copy { flex:0 0 auto; border:1px solid var(--line); background:#fff; border-radius:7px; padding:5px 10px; font-size:12px; color:var(--accent); cursor:pointer; }
+  .copy:hover { background:#eef3ff; }
+  .copy.ok { background:#e7f6ec; color:var(--ok); border-color:var(--ok); }
+  .chip { display:inline-block; margin-top:9px; font-size:12px; padding:4px 10px; border-radius:20px; background:#eef3ff; color:var(--accent); }
+  .chip.warn { background:#fef3e2; color:var(--warn); }
+  .stat { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; }
+  .stat .box { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .stat .num { font-size:22px; font-weight:700; color:var(--accent); }
+  .stat .lab { font-size:12px; color:var(--sub); margin-top:3px; line-height:1.5; }
+  .note { font-size:12.5px; color:var(--sub); line-height:1.8; margin-top:22px; background:#fff; border:1px solid var(--line); border-radius:12px; padding:14px 18px; }
+  footer { padding:0 32px 36px; color:var(--sub); font-size:12px; max-width:1100px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>夸克网盘工具箱</h1>
+  <p class="hint">管理 40TB / 34 万文件的本地工具链。点卡片看"能干什么"，命令可直接复制；常用操作在
+  <code>D:\workbuddy\网盘工具\夸克网盘\</code> 里有"一键xx.bat"，双击即跑。</p>
+</header>
+<main>
+
+  <section>
+    <h2>当前数据状态</h2>
+    <div class="stat">
+      <div class="box"><div class="num">341,396</div><div class="lab">全盘文件清单 inventory.json<br>（名字/大小/位置，170MB）</div></div>
+      <div class="box"><div class="num">156,226</div><div class="lab">视频索引 video_index.json<br>（字幕+简介，可按剧情搜）</div></div>
+      <div class="box"><div class="num">18,338</div><div class="lab">发现的重复组<br>可清理 21,507 个文件</div></div>
+      <div class="box"><div class="num">约 1.9 TB</div><div class="lab">去重后预计可释放空间<br>（需复核后执行）</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>你能用它干什么</h2>
+    <div class="grid">
+
+      <div class="card">
+        <h3>1. 全量清单导出</h3>
+        <p class="what">把网盘里所有文件的名字、大小、位置拉成本地表。这是其他所有功能的"地基"，新增文件后跑一次就能更新。</p>
+        <div class="cmd"><code>quark.bat export</code><button class="copy" onclick="cp(this,'quark.bat export')">复制</button></div>
+        <span class="chip">双击「一键导出清单.bat」即可</span>
+      </div>
+
+      <div class="card">
+        <h3>2. 视频索引</h3>
+        <p class="what">给 15 万+ 视频建索引：读字幕和简介文本，之后就能按"剧情/类型/演员"找视频，不用记住文件名。</p>
+        <div class="cmd"><code>quark.bat index</code><button class="copy" onclick="cp(this,'quark.bat index')">复制</button></div>
+        <span class="chip">双击「一键视频索引.bat」即可</span>
+      </div>
+
+      <div class="card">
+        <h3>3. 画面识别</h3>
+        <p class="what">对指定视频抽帧 + AI 写画面描述和标签。字幕里没有的画面（雪山、赛博朋克、某演员）也能搜到。按文件夹分批做，会消耗视觉 API 额度。</p>
+        <div class="cmd"><code>quark.bat frames --folder "电影/2024" --sample 20</code><button class="copy" onclick="cp(this,'quark.bat frames --folder &quot;电影/2024&quot; --sample 20')">复制</button></div>
+        <span class="chip warn">需 VLM_API_KEY（已设则免）</span>
+      </div>
+
+      <div class="card">
+        <h3>4. 语义检索</h3>
+        <p class="what">用大白话搜视频："找有雪山的电影""讲一个人失忆后找家人"。画面 + 字幕一起搜，双击进交互模式一条条问。</p>
+        <div class="cmd"><code>quark.bat search</code><button class="copy" onclick="cp(this,'quark.bat search')">复制</button></div>
+        <span class="chip">双击「一键搜索视频.bat」即可（交互式）</span>
+      </div>
+
+      <div class="card">
+        <h3>5. 网盘去重</h3>
+        <p class="what">找出内容重复的文件（同一套资料复制了十几份那种），出报告估算能释放多少空间。已发现约 1.9TB。默认只出报告不动文件，复核后再执行。</p>
+        <div class="cmd"><code>quark.bat dedup</code><button class="copy" onclick="cp(this,'quark.bat dedup')">复制</button></div>
+        <div class="cmd" style="margin-top:6px"><code>quark.bat dedup --confirm 50</code><button class="copy" onclick="cp(this,'quark.bat dedup --confirm 50')">复制</button></div>
+        <span class="chip warn">先 --confirm 复核，再 --apply 才真删</span>
+      </div>
+
+      <div class="card">
+        <h3>6. 批量重命名</h3>
+        <p class="what">把网盘文件批量改名，比如把文件名里的"副本"两个字删掉。默认只出预览，确认后才真正改名。</p>
+        <div class="cmd"><code>quark.bat rename --find "副本" --replace ""</code><button class="copy" onclick="cp(this,'quark.bat rename --find &quot;副本&quot; --replace &quot;&quot;')">复制</button></div>
+        <span class="chip">先看预览，加 --apply 才执行</span>
+      </div>
+
+      <div class="card">
+        <h3>7. 每周自动更新</h3>
+        <p class="what">注册后每周日 14:00 自动跑一次"导出清单 + 视频索引"，结果自动覆盖旧的。不想用了随时取消。</p>
+        <div class="cmd"><code>quark.bat setup</code><button class="copy" onclick="cp(this,'quark.bat setup')">复制</button></div>
+        <div class="cmd" style="margin-top:6px"><code>quark.bat remove</code><button class="copy" onclick="cp(this,'quark.bat remove')">复制</button></div>
+        <span class="chip">前提：电脑开着 + cookie 没过期</span>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="note">
+    <b>常用提醒</b><br>
+    · 所有数据都在 <code>D:\workbuddy\网盘工具\夸克网盘\</code>：脚本、cookie、清单、索引、报告放一起，整理好不乱跑。<br>
+    · cookie（登录态）放在同一目录的 quark_cookie.txt；过期了重新登录网盘复制一次即可。<br>
+    · 去重执行动作默认"移入回收站/隔离夹"，可恢复；执行前会要求输入 YES 二次确认。<br>
+    · 画面识别和搜索的 AI 相关功能需要视觉模型 API Key（VLM_API_KEY），已配置系统环境变量则免填。
+  </div>
+
+</main>
+<footer>夸克网盘工具箱 · 由 WorkBuddy 生成 · 脚本在 D:\workbuddy\网盘工具\夸克网盘\</footer>
+<script>
+function cp(btn, text){
+  navigator.clipboard.writeText(text).then(function(){
+    btn.textContent = '已复制';
+    btn.classList.add('ok');
+    setTimeout(function(){ btn.textContent='复制'; btn.classList.remove('ok'); }, 1200);
+  });
+}
+</script>
+</body>
+</html>

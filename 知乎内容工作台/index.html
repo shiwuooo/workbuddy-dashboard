@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>知乎搞钱内容 · 整理利用工作台</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --panel:#ffffff; --ink:#1f2733; --sub:#6b7785; --line:#e6ebf1;
+    --brand:#2563eb; --brand-soft:#eaf1ff;
+    --green:#16a34a; --green-soft:#e9f8ee;
+    --amber:#d97706; --amber-soft:#fdf3e3;
+    --red:#dc2626;  --red-soft:#fdeaea;
+    --purple:#7c3aed; --purple-soft:#f1ebfe;
+    --gray:#64748b; --gray-soft:#eef1f5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6}
+  a{color:var(--brand);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .app{display:flex;min-height:100vh}
+  /* sidebar */
+  .side{width:248px;background:var(--panel);border-right:1px solid var(--line);padding:18px 14px;position:sticky;top:0;height:100vh;overflow-y:auto;flex-shrink:0}
+  .logo{font-size:16px;font-weight:700;color:var(--brand);margin-bottom:4px}
+  .privacy{font-size:11px;color:var(--sub);background:var(--green-soft);border:1px solid #cdeccd;padding:6px 8px;border-radius:8px;margin:10px 0 16px}
+  .nav{list-style:none}
+  .nav li{margin:2px 0}
+  .nav button{width:100%;text-align:left;background:none;border:none;cursor:pointer;padding:9px 10px;border-radius:8px;font-size:13.5px;color:var(--ink);font-family:inherit}
+  .nav button:hover{background:var(--brand-soft)}
+  .nav button.active{background:var(--brand);color:#fff;font-weight:600}
+  .nav .qbtn{font-size:12.5px;color:var(--sub);padding-left:22px}
+  .nav .sep{height:1px;background:var(--line);margin:10px 4px}
+  .nav .seplabel{font-size:11px;color:var(--sub);padding:4px 10px 2px;letter-spacing:.5px}
+  /* main */
+  .main{flex:1;padding:24px 30px;overflow-y:auto;max-width:1100px}
+  .page{display:none}
+  .page.active{display:block}
+  h1{font-size:22px;margin-bottom:6px}
+  h2{font-size:17px;margin:22px 0 12px;padding-left:9px;border-left:3px solid var(--brand)}
+  h3{font-size:14.5px;margin:16px 0 8px;color:var(--sub)}
+  .meta{color:var(--sub);font-size:12.5px;margin-bottom:14px}
+  /* stat cards */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .stat .n{font-size:24px;font-weight:700;color:var(--brand)}
+  .stat .l{font-size:12px;color:var(--sub);margin-top:2px}
+  /* question cards wall */
+  .wall{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  .qcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;transition:.15s}
+  .qcard:hover{border-color:var(--brand);box-shadow:0 4px 14px rgba(37,99,235,.08);transform:translateY(-2px)}
+  .qcard .t{font-size:15px;font-weight:600;margin-bottom:6px}
+  .qcard .u{font-size:11.5px;color:var(--brand);word-break:break-all;margin-bottom:10px;display:block}
+  .qcard .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  /* tags */
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
+  .tag-思路{background:var(--brand-soft);color:var(--brand)}
+  .tag-技巧{background:var(--amber-soft);color:var(--amber)}
+  .tag-实操{background:var(--green-soft);color:var(--green)}
+  .tag-套路{background:var(--purple-soft);color:var(--purple)}
+  .tag-坑{background:var(--red-soft);color:var(--red)}
+  .tag-金句{background:#fef3f3;color:#e11d48}
+  .tag-选题,.tag-话术,.tag-案例,.tag-方法论,.tag-分发,.tag-SOP,.tag-产品化{background:var(--gray-soft);color:var(--gray)}
+  .badge{font-size:11px;background:var(--brand-soft);color:var(--brand);padding:3px 9px;border-radius:20px;font-weight:600}
+  /* detail sections */
+  .block{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+  .block .qtitle{font-size:18px;font-weight:700;margin-bottom:4px}
+  .link{font-size:12px;word-break:break-all;color:var(--brand);display:block;margin:6px 0 12px}
+  .qdesc{background:var(--gray-soft);border-radius:8px;padding:10px 12px;color:var(--sub);font-size:13px}
+  .ans{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+  .ans.top{border-color:var(--brand);background:var(--brand-soft)}
+  .ans .h{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+  .ans .author{font-weight:600}
+  .ans .votes{font-size:12px;color:var(--sub)}
+  .ans ul{margin:6px 0 0 18px}
+  .ans li{margin:3px 0}
+  .insight{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .insight:last-child{border-bottom:none}
+  .insight .tag{flex-shrink:0;margin-top:2px}
+  .insight .txt{flex:1}
+  .insight .from{font-size:11px;color:var(--sub);margin-top:2px}
+  .cluster{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+  .cluster.tension{border-color:var(--amber);background:var(--amber-soft)}
+  .cluster .th{font-weight:700;margin-bottom:4px}
+  .cluster .src{font-size:11px;color:var(--sub);margin-bottom:6px}
+  .exp{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .exp:last-child{border-bottom:none}
+  .exp .tag{flex-shrink:0}
+  .cross{display:grid;grid-template-columns:1fr;gap:12px}
+  .foot{margin-top:30px;padding-top:14px;border-top:1px solid var(--line);color:var(--sub);font-size:12px}
+  /* A 横向库 */
+  .lib{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  .lib .lh{font-size:16px;font-weight:700;margin-bottom:2px}
+  .lib .ld{font-size:12.5px;color:var(--sub);margin-bottom:10px}
+  .libitem{display:flex;gap:10px;padding:9px 0;border-bottom:1px dashed var(--line);align-items:flex-start}
+  .libitem:last-child{border-bottom:none}
+  .libitem .txt{flex:1}
+  .libitem .from{font-size:11px;color:var(--sub);margin-top:2px}
+  /* B 状态看板 */
+  .status-badge{cursor:pointer;font-size:11px;padding:3px 9px;border-radius:20px;font-weight:600;user-select:none;white-space:nowrap}
+  .s-已采集{background:var(--gray-soft);color:var(--gray)}
+  .s-在用{background:var(--green-soft);color:var(--green)}
+  .s-已用·可翻新{background:var(--amber-soft);color:var(--amber)}
+  .s-归档{background:var(--purple-soft);color:var(--purple)}
+  .status-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .status-summary .pill{font-size:12px;padding:6px 12px;border-radius:20px;font-weight:600}
+  .audit-box{background:var(--amber-soft);border:1px solid #f0d9a8;border-radius:10px;padding:12px 14px;font-size:13px;color:#8a5a00;margin-top:8px}
+  .audit-box b{color:#7a4f00}
+  /* C 跨平台一鱼多吃 */
+  .rtable{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+  .rtable th,.rtable td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+  .rtable th{background:var(--brand-soft);color:var(--brand)}
+  .rtable td.platform{font-weight:600;white-space:nowrap;width:92px}
+  .line-badge{font-size:11px;background:var(--purple-soft);color:var(--purple);padding:2px 8px;border-radius:20px;font-weight:600;margin-left:8px}
+  @media(max-width:780px){.side{display:none}.stats{grid-template-columns:repeat(2,1fr)}.wall{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="logo">🗃️ 知乎内容工作台</div>
+    <div class="privacy" id="privacy">🔒 数据全在本地 D 盘 · 零上传</div>
+    <ul class="nav" id="nav"></ul>
+  </aside>
+
+  <main class="main">
+    <!-- 总览 -->
+    <section class="page active" id="page-overview">
+      <h1 id="ov-title">知乎搞钱内容 · 整理利用工作台</h1>
+      <div class="meta" id="ov-meta"></div>
+      <div class="stats" id="ov-stats"></div>
+      <h2>问题卡片墙</h2>
+      <div class="wall" id="ov-wall"></div>
+      <div class="foot" id="ov-foot"></div>
+    </section>
+
+    <!-- 问题详情（动态生成） -->
+    <section class="page" id="page-question">
+      <div id="q-detail"></div>
+    </section>
+
+    <!-- A 横向库 -->
+    <section class="page" id="page-libs">
+      <h1>📚 横向库（按用途横切）</h1>
+      <div class="meta">大佬心法：按用途分，不按来源分。写内容前从对应库抽一条观点/话术/案例/钩子当骨架，而不是从零想。</div>
+      <div id="libs-list"></div>
+    </section>
+
+    <!-- B 状态看板 -->
+    <section class="page" id="page-status">
+      <h1>📅 状态看板 · 月度审计</h1>
+      <div class="meta">每条资产点一下切换状态（存浏览器本地，不上传）。落实 CODE 的 Distill/Express：不用的就归档，用过的标记翻新。</div>
+      <div class="status-summary" id="status-summary"></div>
+      <div id="status-list"></div>
+      <div class="audit-box" id="audit-box">
+        <b>🗓️ 每月审计 1 小时（来自大佬节奏）：</b><br>
+        ① 删 / 归档 60 天没碰的条目；② 看「已用·可翻新」——把旧资产改写成新平台内容；③ 杀死空库，开 1 个新方向库；④ 状态数字长期偏低=系统没在用，立刻调整。
+      </div>
+    </section>
+
+    <!-- C 跨平台一鱼多吃 -->
+    <section class="page" id="page-repurpose">
+      <h1>🔀 跨平台一鱼多吃</h1>
+      <div class="meta">一处采集，五处改写分发。直接复用你现有的「网盘 CPS + 小红书」线，不必从零起号。</div>
+      <div id="repurpose-list"></div>
+    </section>
+
+    <!-- 跨问题去重 -->
+    <section class="page" id="page-cross">
+      <h1>跨问题去重 · 共识与张力</h1>
+      <div class="meta">把多个知乎问题的内容合并同类项，找出共识与矛盾点。</div>
+      <div class="cross" id="cross-list"></div>
+    </section>
+  </main>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  var D = window.WORKBENCH;
+  if(!D){ document.body.innerHTML = "<p style='padding:30px'>未找到 data.js，请确认与本文件同目录。</p>"; return; }
+
+  // ---- 计算统计 ----
+  var totalAnswers=0, totalInsights=0, totalExp=0, totalClusters=0, totalLib=0;
+  D.questions.forEach(function(q){ totalAnswers+=q.answers.length; totalInsights+=q.insights.length; totalExp+=q.expansions.length; totalClusters+=q.clusters.length; });
+  if(D.libraries) D.libraries.forEach(function(l){ totalLib+=l.items.length; });
+
+  // ---- 侧边导航 ----
+  var nav = document.getElementById("nav");
+  function navItem(label, page, cls, active){
+    var li=document.createElement("li");
+    var b=document.createElement("button");
+    b.textContent=label; b.setAttribute("data-page", page); if(cls)b.className=cls; if(active)b.classList.add("active");
+    b.onclick=function(){ show(page); };
+    li.appendChild(b); nav.appendChild(li); return b;
+  }
+  navItem("📊 总览", "overview", null, true);
+  D.questions.forEach(function(q,i){ navItem((i+1)+". "+q.title, "q:"+q.id, "qbtn"); });
+  // 分组：整理利用
+  var sep=document.createElement("li"); sep.className="sep"; nav.appendChild(sep);
+  var sepL=document.createElement("li"); sepL.className="seplabel"; sepL.textContent="整理利用"; nav.appendChild(sepL);
+  navItem("📚 横向库", "libs");
+  navItem("📅 状态看板", "status");
+  navItem("🔀 一鱼多吃", "repurpose");
+  navItem("🔗 跨问题去重", "cross");
+
+  function show(page){
+    document.querySelectorAll(".page").forEach(function(p){p.classList.remove("active");});
+    document.querySelectorAll("#nav button").forEach(function(b){b.classList.remove("active");});
+    var target;
+    if(page==="overview"){ target=document.getElementById("page-overview"); }
+    else if(page==="libs"){ target=document.getElementById("page-libs"); renderLibs(); }
+    else if(page==="status"){ target=document.getElementById("page-status"); renderStatus(); }
+    else if(page==="repurpose"){ target=document.getElementById("page-repurpose"); renderRepurpose(); }
+    else if(page==="cross"){ target=document.getElementById("page-cross"); }
+    else { target=document.getElementById("page-question"); renderQuestion(page.split(":")[1]); }
+    target.classList.add("active");
+    var btn=document.querySelector('#nav button[data-page="'+page+'"]');
+    if(btn) btn.classList.add("active");
+    window.scrollTo(0,0);
+  }
+
+  // ---- 总览渲染 ----
+  document.getElementById("privacy").textContent = "🔒 " + D.meta.privacy.split("。")[0];
+  document.getElementById("ov-title").textContent = D.meta.title;
+  document.getElementById("ov-meta").textContent = "生成时间：" + D.meta.generatedAt + " ｜ " + D.meta.note;
+  document.getElementById("ov-stats").innerHTML =
+    stat(D.questions.length, "分析问题") +
+    stat(totalAnswers, "收录答案") +
+    stat(totalLib, "横向库条目") +
+    stat(D.crossClusters.length, "跨问题共识");
+
+  function stat(n,l){ return '<div class="stat"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
+
+  var wall=document.getElementById("ov-wall");
+  D.questions.forEach(function(q){
+    var c=document.createElement("div"); c.className="qcard"; c.onclick=function(){show("q:"+q.id);};
+    c.innerHTML='<div class="t">'+q.title+'</div>'+
+      '<a class="u" href="'+q.url+'" target="_blank" onclick="event.stopPropagation()">'+q.url+'</a>'+
+      '<div class="row"><span class="badge">答案 '+q.answers.length+'</span>'+
+      '<span class="badge">洞察 '+q.insights.length+'</span>'+
+      '<span class="badge">扩展 '+q.expansions.length+'</span></div>';
+    wall.appendChild(c);
+  });
+  document.getElementById("ov-foot").textContent = "提示：左侧点问题看详情；横向库/状态看板/一鱼多吃是「按用途整理」的核心。新增问题只需在 data.js 的 questions 数组追加一项。";
+
+  // ---- 问题详情渲染 ----
+  function renderQuestion(qid){
+    var q=D.questions.find(function(x){return x.id===qid;});
+    if(!q) return;
+    var html="";
+    html+='<div class="block"><div class="qtitle">'+q.title+'</div>'+
+      '<a class="link" href="'+q.url+'" target="_blank">'+q.url+'</a>'+
+      '<div class="qdesc"><b>问题：</b>'+q.questionDesc+'</div>'+
+      '<div class="row" style="margin-top:10px"><span class="badge">答案数 '+q.answerCount+'</span>'+
+      '<span class="badge">高赞答案 '+q.topAnswerCount+'</span></div></div>';
+
+    html+='<h2>📝 答案（'+q.answers.length+'）</h2>';
+    q.answers.forEach(function(a,i){
+      var isTop = q.topAnswers.indexOf(q.id+"-a"+i)>=0;
+      html+='<div class="ans'+(isTop?' top':'')+'"><div class="h"><span class="author">'+a.author+'</span>'+
+        (isTop?'<span class="tag tag-实操">高赞</span>':'')+
+        '<span class="votes">赞同：'+(a.votes==null?'未获取':a.votes)+'</span>'+
+        (a.role?'<span class="badge">'+a.role+'</span>':'')+'</div>'+
+        '<div style="color:var(--sub);font-size:13px;margin-bottom:6px">'+a.summary+'</div><ul>';
+      a.highlights.forEach(function(h){ html+='<li>'+h+'</li>'; });
+      html+='</ul></div>';
+    });
+
+    html+='<h2>💡 答案间的想法 / 思路 / 技巧 / 实操</h2><div class="block">';
+    q.insights.forEach(function(it){
+      html+='<div class="insight"><span class="tag tag-'+it.type+'">'+it.type+'</span>'+
+        '<div class="txt">'+it.text+'<div class="from">— 来自：'+it.from.join("、")+'</div></div></div>';
+    });
+    html+='</div>';
+
+    html+='<h2>🔁 相同内容去重 · 观点聚类</h2><div class="block">';
+    q.clusters.forEach(function(cl){
+      html+='<div class="cluster"><div class="th">'+cl.theme+'</div>'+
+        '<div class="src">合并自：'+cl.mergedFrom.join(" / ")+'</div><ul style="margin-left:18px">';
+      cl.points.forEach(function(p){ html+='<li>'+p+'</li>'; });
+      html+='</ul></div>';
+    });
+    html+='</div>';
+
+    html+='<h2>🚀 进一步扩展 · 多维度利用</h2><div class="block">';
+    q.expansions.forEach(function(e){
+      html+='<div class="exp"><span class="tag tag-'+e.angle+'">'+e.angle+'</span><div>'+e.draft+'</div></div>';
+    });
+    html+='</div>';
+
+    document.getElementById("q-detail").innerHTML=html;
+  }
+
+  // ---- A 横向库 ----
+  function renderLibs(){
+    var box=document.getElementById("libs-list"); box.innerHTML="";
+    D.libraries.forEach(function(l){
+      var div=document.createElement("div"); div.className="lib";
+      var items=l.items.map(function(it){
+        return '<div class="libitem"><div class="txt">'+it.text+
+          '<div class="from">— 来自：'+it.from+'（'+it.qid.toUpperCase()+'）</div></div></div>';
+      }).join("");
+      div.innerHTML='<div class="lh">'+l.name+' <span class="badge">'+l.items.length+'</span></div>'+
+        '<div class="ld">'+l.desc+'</div>'+items;
+      box.appendChild(div);
+    });
+  }
+
+  // ---- B 状态看板（localStorage，本地不上传） ----
+  var STATUS = ["已采集","在用","已用·可翻新","归档"];
+  var LS_KEY = "wb_status_v1";
+  function loadStatus(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||"{}"); }catch(e){ return {}; } }
+  function saveStatus(map){ try{ localStorage.setItem(LS_KEY, JSON.stringify(map)); }catch(e){} }
+  function curStatus(id){ var m=loadStatus(); return m[id] || "已采集"; }
+  function cycleStatus(id){
+    var m=loadStatus(); var i=STATUS.indexOf(m[id]||"已采集");
+    m[id]=STATUS[(i+1)%STATUS.length]; saveStatus(m); renderStatus();
+  }
+  function renderStatus(){
+    var all=[]; D.libraries.forEach(function(l){ l.items.forEach(function(it){ all.push(it); }); });
+    var counts={}; STATUS.forEach(function(s){counts[s]=0;});
+    all.forEach(function(it){ counts[curStatus(it.id)]++; });
+    var sum=document.getElementById("status-summary");
+    sum.innerHTML = STATUS.map(function(s){
+      var color = s==="已采集"?"var(--gray)": s==="在用"?"var(--green)": s==="已用·可翻新"?"var(--amber)":"var(--purple)";
+      return '<span class="pill" style="background:var(--panel);border:1px solid var(--line);color:'+color+'">'+s+'：'+counts[s]+'</span>';
+    }).join("");
+
+    var box=document.getElementById("status-list"); box.innerHTML="";
+    D.libraries.forEach(function(l){
+      var div=document.createElement("div"); div.className="lib";
+      var items=l.items.map(function(it){
+        var st=curStatus(it.id);
+        return '<div class="libitem"><div class="txt">'+it.text+
+          '<div class="from">— 来自：'+it.from+'（'+it.qid.toUpperCase()+'）</div></div>'+
+          '<span class="status-badge s-'+st+'" onclick="window.__cycle(\''+it.id+'\')" title="点击切换状态">'+st+'</span></div>';
+      }).join("");
+      div.innerHTML='<div class="lh">'+l.name+'</div>'+items;
+      box.appendChild(div);
+    });
+  }
+  window.__cycle = cycleStatus;
+
+  // ---- C 跨平台一鱼多吃 ----
+  function renderRepurpose(){
+    var box=document.getElementById("repurpose-list"); box.innerHTML="";
+    D.repurpose.forEach(function(r){
+      var div=document.createElement("div"); div.className="block";
+      var rows=Object.keys(r.platforms).map(function(p){
+        return '<tr><td class="platform">'+p+'</td><td>'+r.platforms[p]+'</td></tr>';
+      }).join("");
+      div.innerHTML='<div class="qtitle" style="font-size:16px">'+r.asset+
+        ' <span class="line-badge">'+r.from+'</span><span class="line-badge">'+r.line+'</span></div>'+
+        '<table class="rtable"><thead><tr><th style="width:92px">平台</th><th>怎么改</th></tr></thead><tbody>'+rows+'</tbody></table>';
+      box.appendChild(div);
+    });
+  }
+
+  // ---- 跨问题去重 ----
+  var cl=document.getElementById("cross-list");
+  D.crossClusters.forEach(function(c){
+    var div=document.createElement("div");
+    div.className="cluster"+(c.tension?" tension":"");
+    div.innerHTML='<div class="th">'+(c.tension?'⚡ ':'✅ ')+c.theme+'</div>'+
+      '<div class="src">涉及问题：'+c.inQuestions.join("、")+'</div><ul style="margin-left:18px">'+
+      c.points.map(function(p){return '<li>'+p+'</li>';}).join("")+'</ul>';
+    cl.appendChild(div);
+  });
+
+  // 初始
+  show("overview");
+})();
+</script>
+</body>
+</html>

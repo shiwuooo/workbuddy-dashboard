@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行测 AI 一对一陪练</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#1f2329; --sub:#6b7280;
+    --line:#e5e7eb; --brand:#2563eb; --brand2:#1d4ed8;
+    --ok:#16a34a; --bad:#dc2626; --warn:#d97706; --soft:#eff4ff;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;font-size:14px}
+  header{background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;
+    padding:14px 20px;display:flex;align-items:center;gap:10px}
+  header h1{font-size:17px;margin:0;font-weight:700}
+  header small{opacity:.85;font-weight:400}
+  nav{display:flex;gap:4px;background:var(--card);padding:0 12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  nav button{background:none;border:none;padding:12px 16px;cursor:pointer;color:var(--sub);
+    font-size:14px;border-bottom:2px solid transparent}
+  nav button.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+  main{max-width:920px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+  h2{font-size:15px;margin:0 0 12px}
+  label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
+  input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;
+    font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+  textarea{resize:vertical;min-height:80px}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:140px}
+  button.primary{background:var(--brand);color:#fff;border:none;padding:10px 18px;border-radius:8px;
+    cursor:pointer;font-size:14px;font-weight:600;margin-top:12px}
+  button.primary:hover{background:var(--brand2)}
+  button.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand);padding:9px 16px;
+    border-radius:8px;cursor:pointer;font-size:13px}
+  button.ghost:hover{background:var(--soft)}
+  .hint{font-size:12px;color:var(--sub);margin-top:6px}
+  .report{background:var(--soft);border:1px solid #dbeafe;border-radius:10px;padding:16px;margin-top:14px;
+    white-space:pre-wrap;word-break:break-word}
+  .report h3,.report h2,.report h1{color:var(--brand2);margin:14px 0 6px}
+  .report ul,.report ol{margin:6px 0;padding-left:22px}
+  .report code{background:#e2e8f0;padding:1px 5px;border-radius:4px;font-size:12px}
+  .bar{height:14px;background:#eef2f7;border-radius:7px;overflow:hidden;margin:4px 0}
+  .bar>span{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#2563eb)}
+  .stat{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;border-bottom:1px dashed var(--line)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left}
+  th{background:#f8fafc;color:var(--sub);font-weight:600}
+  .pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px}
+  .pill.bad{background:#fee2e2;color:var(--bad)}
+  .pill.ok{background:#dcfce7;color:var(--ok)}
+  .pill.warn{background:#fef3c7;color:var(--warn)}
+  .qrow{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .qrow>*{flex:1;min-width:90px}
+  .qrow .del{flex:0 0 auto;min-width:auto}
+  .hidden{display:none}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111827;color:#fff;
+    padding:10px 18px;border-radius:8px;font-size:13px;opacity:0;transition:.3s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>行测 AI 一对一陪练</h1>
+  <small>基于你每次练习（单题 + 整套卷）主动给一对一诊断 · 本地离线 · 数据在你电脑</small>
+</header>
+<nav>
+  <button data-tab="single" class="active">单题陪练</button>
+  <button data-tab="paper">整卷复盘</button>
+  <button data-tab="profile">学情档案</button>
+  <button data-tab="settings">设置</button>
+</nav>
+<main>
+
+<!-- 单题陪练 -->
+<section id="tab-single">
+  <div class="card">
+    <h2>① 录入这道题的练习情况</h2>
+    <div class="row">
+      <div><label>模块</label>
+        <select id="s-mod">
+          <option>言语理解</option><option>数量关系</option><option>判断推理</option>
+          <option>资料分析</option><option>常识判断</option>
+        </select>
+      </div>
+      <div><label>考点（如：片段阅读/整除特性）</label>
+        <input id="s-point" placeholder="填具体考点，越细诊断越准"></div>
+    </div>
+    <label>题目原文（可留空，诊断仍可给思路）</label>
+    <textarea id="s-q" placeholder="把题干粘这里"></textarea>
+    <div class="row">
+      <div><label>你的答案</label><input id="s-ua" placeholder="如：B"></div>
+      <div><label>正确答案</label><input id="s-ca" placeholder="如：C"></div>
+      <div><label>用时（秒）</label><input id="s-time" type="number" placeholder="如：45"></div>
+    </div>
+    <button class="primary" id="s-gen">生成陪练 Prompt → 复制给 AI</button>
+    <div class="hint">点上面按钮会把整理好的 prompt 复制到剪贴板。粘到 opencode（你的免费模型）里问它，再把回答贴回下方。</div>
+  </div>
+
+  <div class="card">
+    <h2>② 把 AI 的回答贴回来 → 存档</h2>
+    <textarea id="s-ans" placeholder="在此粘贴 AI 的回答"></textarea>
+    <div class="row" style="align-items:center">
+      <button class="ghost" id="s-save">格式化并存入学情档案</button>
+      <span class="hint" style="margin:0">存完会在「学情档案」看到这道题的考点掌握度变化。</span>
+    </div>
+    <div id="s-out"></div>
+  </div>
+</section>
+
+<!-- 整卷复盘 -->
+<section id="tab-paper" class="hidden">
+  <div class="card">
+    <h2>① 录入整卷答题记录</h2>
+    <div class="hint">逐行添加，或把「模块|考点|你的答案|正确答案|用时(秒)」每行一题粘贴到下方文本框，点「批量解析」。</div>
+    <div id="qlist"></div>
+    <button class="ghost" id="p-add">+ 加一题</button>
+    <label style="margin-top:14px">批量粘贴（每行一题，竖线分隔）</label>
+    <textarea id="p-bulk" placeholder="言语理解|片段阅读|B|C|40&#10;数量关系|整除|A|A|75&#10;判断推理|图形推理|D|C|50"></textarea>
+    <button class="ghost" id="p-parse">批量解析填入</button>
+    <button class="primary" id="p-gen">生成整卷复盘 Prompt → 复制给 AI</button>
+  </div>
+  <div class="card">
+    <h2>② 把 AI 的整卷报告贴回来 → 存档</h2>
+    <textarea id="p-ans" placeholder="在此粘贴 AI 的整卷报告"></textarea>
+    <div class="row" style="align-items:center">
+      <button class="ghost" id="p-save">格式化并存入学情档案</button>
+      <span class="hint" style="margin:0">会自动更新各考点掌握度与时间诊断。</span>
+    </div>
+    <div id="p-out"></div>
+  </div>
+</section>
+
+<!-- 学情档案 -->
+<section id="tab-profile" class="hidden">
+  <div class="card">
+    <h2>考点掌握度</h2>
+    <div id="pf-mastery"></div>
+  </div>
+  <div class="card">
+    <h2>累计统计</h2>
+    <div id="pf-stats"></div>
+  </div>
+  <div class="card">
+    <h2>练习历史</h2>
+    <div id="pf-history"></div>
+    <button class="ghost" id="pf-clear" style="margin-top:10px">清空全部数据</button>
+  </div>
+</section>
+
+<!-- 设置 -->
+<section id="tab-settings" class="hidden">
+  <div class="card">
+    <h2>AI 调用方式</h2>
+    <label>模式</label>
+    <select id="cfg-mode">
+      <option value="copy">复制粘贴桥接（用 opencode 等已有免费模型，零配置）</option>
+      <option value="api">直接调用 API（需填下方，OpenAI 兼容格式）</option>
+    </select>
+    <div id="cfg-api" class="hidden">
+      <label>API Base URL（如 https://api.deepseek.com/v1）</label>
+      <input id="cfg-base" placeholder="https://api.deepseek.com/v1">
+      <label>API Key</label>
+      <input id="cfg-key" type="password" placeholder="sk-...">
+      <label>模型名（如 deepseek-chat）</label>
+      <input id="cfg-model" placeholder="deepseek-chat">
+      <div class="hint">填好后在单题/整卷页会出现「直接调用 AI」按钮，自动跑完诊断。</div>
+    </div>
+    <button class="primary" id="cfg-save">保存设置</button>
+    <div class="hint">所有数据仅存你浏览器本地（localStorage），不会上传。</div>
+  </div>
+</section>
+
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const LS = 'xingce_sessions_v1';
+const CFG = 'xingce_cfg_v1';
+
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800);}
+function load(){try{return JSON.parse(localStorage.getItem(LS))||[]}catch(e){return[]}}
+function save(a){localStorage.setItem(LS,JSON.stringify(a));}
+
+// tabs
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  ['single','paper','profile','settings'].forEach(t=>{
+    $('#tab-'+t).classList.toggle('hidden', b.dataset.tab!==t);
+  });
+  if(b.dataset.tab==='profile') renderProfile();
+});
+
+// minimal markdown -> html
+function md(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/^### (.*)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.*)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.*)$/gm,'<h1>$1</h1>')
+    .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
+    .replace(/^- (.*)$/gm,'<li>$1</li>')
+    .replace(/^\d+\. (.*)$/gm,'<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g,m=>'<ul>'+m+'</ul>')
+    .replace(/\n{2,}/g,'<br><br>');
+}
+
+/* ---------- 单题 ---------- */
+function singlePrompt(){
+  const mod=$('#s-mod').value, point=$('#s-point').value.trim(), q=$('#s-q').value.trim();
+  const ua=$('#s-ua').value.trim(), ca=$('#s-ca').value.trim(), time=$('#s-time').value.trim();
+  if(!ua||!ca){toast('请填你的答案和正确答案');return '';}
+  return `你是一位行测一对一私教。请根据下面这道题目的练习情况，严格按格式输出。
+
+【题目信息】
+模块：${mod}
+考点：${point||'未填'}
+题目：${q||'（学员未提供题干）'}
+学员答案：${ua}
+正确答案：${ca}
+用时：${time||'?'}秒
+
+【输出格式，严格遵守】
+## 一、为什么错（归因到唯一主因）
+从以下四类选一，并一句话说明：
+- 知识点盲区
+- 审题偏差
+- 计算/粗心
+- 套路不熟
+
+## 二、正确思路拆解
+3-5步，每步一行。
+
+## 三、举一反三
+出1道同考点变式题（只给题干+选项，不急着给答案）。
+
+## 四、记忆钩子
+一句话口诀或秒杀技，帮助下次秒答。`;
+}
+
+$('#s-gen').onclick=async()=>{
+  const p=singlePrompt(); if(!p)return;
+  const cfg=JSON.parse(localStorage.getItem(CFG)||'{}');
+  if(cfg.mode==='api'&&cfg.base&&cfg.key){ await callAI(p, $('#s-ans')); }
+  else { navigator.clipboard.writeText(p); toast('Prompt 已复制，去 opencode 粘贴提问'); }
+};
+$('#s-save').onclick=()=>{
+  const text=$('#s-ans').value.trim(); if(!text){toast('先贴入 AI 回答');return;}
+  const mod=$('#s-mod').value, point=$('#s-point').value.trim()||'未填';
+  const ua=$('#s-ua').value.trim(), ca=$('#s-ca').value.trim();
+  const wrong = ua!==ca;
+  const arr=load();
+  arr.push({type:'single',time:Date.now(),mod,point,ua,ca,wrong,
+    timeSec:+$('#s-time').value||0,report:text});
+  save(arr);
+  $('#s-out').innerHTML='<div class="report">'+md(text)+'</div>';
+  toast('已存入学情档案');
+};
+
+/* ---------- 整卷 ---------- */
+function addRow(mod='',point='',ua='',ca='',t=''){
+  const d=document.createElement('div');d.className='qrow';
+  d.innerHTML=`<select>${['言语理解','数量关系','判断推理','资料分析','常识判断'].map(m=>`<option ${m===mod?'selected':''}>${m}</option>`).join('')}</select>
+    <input placeholder="考点" value="${point}">
+    <input placeholder="你的答案" value="${ua}">
+    <input placeholder="正确答案" value="${ca}">
+    <input placeholder="用时s" value="${t}" style="max-width:80px">
+    <button class="ghost del">×</button>`;
+  d.querySelector('.del').onclick=()=>d.remove();
+  $('#qlist').appendChild(d);
+}
+addRow();
+$('#p-add').onclick=()=>addRow();
+$('#p-parse').onclick=()=>{
+  const lines=$('#p-bulk').value.trim().split('\n');
+  $('#qlist').innerHTML='';
+  lines.forEach(l=>{const p=l.split('|');if(p.length>=3)addRow(p[0].trim(),p[1].trim(),p[2].trim(),(p[3]||'').trim(),(p[4]||'').trim());});
+  toast('已解析 '+lines.length+' 题');
+};
+function paperQuestions(){
+  return [...$('#qlist').children].map(d=>{
+    const s=d.querySelectorAll('select,input');
+    return {mod:s[0].value,point:s[1].value.trim()||'未填',ua:s[2].value.trim(),
+      ca:s[3].value.trim(),time:+(s[4].value||0)};
+  }).filter(q=>q.ua&&q.ca);
+}
+function paperPrompt(){
+  const qs=paperQuestions(); if(!qs.length){toast('先录入题目');return '';}
+  const json=JSON.stringify(qs.map(q=>({模块:q.mod,考点:q.point,学员答案:q.ua,正确答案:q.ca,用时秒:q.time})),null,1);
+  return `你是一位行测一对一私教。下面是学员一次完整模考的答题记录（JSON）。请严格按格式输出诊断报告。
+
+${json}
+
+【输出格式】
+## 一、模块得分率
+用表格：模块 | 正确率 | 平均用时 | 评价
+
+## 二、时间分配诊断
+指出哪块超时/该放弃，给推荐节奏（120分钟分配建议）。
+
+## 三、高频薄弱考点 TOP5
+按错频排序，每条：考点 | 错因 | 建议。
+
+## 四、下次冲刺建议
+3-5条可执行的下一步（刷哪类专项、做几套、节奏怎么调）。`;
+}
+$('#p-gen').onclick=async()=>{
+  const p=paperPrompt(); if(!p)return;
+  const cfg=JSON.parse(localStorage.getItem(CFG)||'{}');
+  if(cfg.mode==='api'&&cfg.base&&cfg.key){ await callAI(p, $('#p-ans')); }
+  else { navigator.clipboard.writeText(p); toast('Prompt 已复制，去 opencode 粘贴提问'); }
+};
+$('#p-save').onclick=()=>{
+  const text=$('#p-ans').value.trim(); if(!text){toast('先贴入 AI 报告');return;}
+  const qs=paperQuestions();
+  const arr=load();
+  arr.push({type:'paper',time:Date.now(),questions:qs,report:text});
+  save(arr);
+  $('#p-out').innerHTML='<div class="report">'+md(text)+'</div>';
+  toast('整卷已存入学情档案');
+};
+
+/* ---------- 学情档案 ---------- */
+function renderProfile(){
+  const arr=load();
+  const map={};
+  arr.forEach(s=>{
+    const qs=s.type==='paper'?s.questions:[{mod:s.mod,point:s.point,ua:s.ua,ca:s.ca,wrong:s.wrong,timeSec:s.timeSec}];
+    qs.forEach(q=>{
+      const k=q.mod+' / '+q.point;
+      if(!map[k])map[k]={mod:q.mod,point:q.point,n:0,right:0,t:0};
+      map[k].n++; if(q.ua===q.ca)map[k].right++; map[k].t+=(+q.timeSec||0);
+    });
+  });
+  const keys=Object.keys(map);
+  if(!keys.length){$('#pf-mastery').innerHTML='<p class="hint">还没有练习记录，去单题或整卷页练一练。</p>';}
+  else{
+    $('#pf-mastery').innerHTML='<table><tr><th>模块 / 考点</th><th>正确率</th><th>平均用时</th><th>趋势</th></tr>'+
+      keys.map(k=>{const m=map[k];const r=Math.round(m.right/m.n*100);
+        const cls=r>=70?'ok':r>=40?'warn':'bad';
+        return `<tr><td>${k}</td><td><span class="pill ${cls}">${r}%</span> (${m.right}/${m.n})</td>
+          <td>${m.n?Math.round(m.t/m.n):0}s</td><td>${r>=70?'✅稳':r>=40?'⚠️练':'🔴弱'}</td></tr>`;
+      }).join('')+'</table>';
+  }
+  const total=arr.length;
+  const allQ=arr.reduce((a,s)=>a+(s.type==='paper'?s.questions.length:1),0);
+  const right=arr.reduce((a,s)=>a+(s.type==='paper'?s.questions.filter(q=>q.ua===q.ca).length:(s.wrong?0:1)),0);
+  $('#pf-stats').innerHTML=
+    `<div class="stat"><span>练习场次</span><b>${total}</b></div>
+     <div class="stat"><span>题目总量</span><b>${allQ}</b></div>
+     <div class="stat"><span>总体正确率</span><b>${allQ?Math.round(right/allQ*100):0}%</b></div>
+     <div class="stat"><span>单题场 / 整卷场</span><b>${arr.filter(s=>s.type==='single').length} / ${arr.filter(s=>s.type==='paper').length}</b></div>`;
+  $('#pf-history').innerHTML = total? arr.slice().reverse().map(s=>{
+    const d=new Date(s.time);const tag=s.type==='single'?'单题':'整卷';
+    return `<div class="stat"><span>${d.toLocaleString()} · ${tag} · ${s.mod||(s.questions?Object.keys(s.questions.reduce((a,q)=>{a[q.mod]=(a[q.mod]||0)+1;return a},{}))[0]||''):''}</span><b>${s.wrong===false?'✅对':s.questions?('错'+s.questions.filter(q=>q.ua!==q.ca).length):'—'}</b></div>`;
+  }).join('') : '<p class="hint">暂无记录</p>';
+}
+$('#pf-clear').onclick=()=>{ if(confirm('确定清空全部练习数据？')){localStorage.removeItem(LS);renderProfile();toast('已清空');}};
+
+/* ---------- 设置 / API ---------- */
+function syncCfg(){
+  const cfg=JSON.parse(localStorage.getItem(CFG)||'{}');
+  $('#cfg-mode').value=cfg.mode||'copy';
+  $('#cfg-base').value=cfg.base||'';$('#cfg-key').value=cfg.key||'';$('#cfg-model').value=cfg.model||'';
+  $('#cfg-api').classList.toggle('hidden',$('#cfg-mode').value!=='api');
+}
+$('#cfg-mode').onchange=()=>$('#cfg-api').classList.toggle('hidden',$('#cfg-mode').value!=='api');
+$('#cfg-save').onclick=()=>{
+  const cfg={mode:$('#cfg-mode').value,base:$('#cfg-base').value,key:$('#cfg-key').value,model:$('#cfg-model').value};
+  localStorage.setItem(CFG,JSON.stringify(cfg));toast('设置已保存');
+};
+async function callAI(prompt, target){
+  const cfg=JSON.parse(localStorage.getItem(CFG)||'{}');
+  try{
+    const r=await fetch(cfg.base.replace(/\/$/,'')+'/chat/completions',{
+      method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+cfg.key},
+      body:JSON.stringify({model:cfg.model,messages:[{role:'user',content:prompt}],temperature:0.5})
+    });
+    const j=await r.json();
+    const txt=j.choices?.[0]?.message?.content||'(空响应)';
+    target.value=txt; toast('AI 已返回，点存档');
+  }catch(e){ toast('API 调用失败：'+e.message); }
+}
+syncCfg();
+</script>
+</body>
+</html>

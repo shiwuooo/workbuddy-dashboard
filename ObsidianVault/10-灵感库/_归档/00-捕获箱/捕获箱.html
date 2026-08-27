@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>统一捕获箱 · 随手存</title>
+<style>
+  :root{--bg:#f7f8fa;--card:#fff;--ink:#1f2329;--sub:#6b7280;--line:#e5e7eb;
+    --growth:#10b981;--values:#3b82f6;--idea:#f59e0b;--hold:#9ca3af;--accent:#3b82f6}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);padding:22px}
+  .wrap{max-width:960px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:var(--sub);font-size:13px;margin-bottom:16px;line-height:1.6}
+  textarea{width:100%;height:130px;border:1px solid var(--line);border-radius:10px;
+    padding:12px;font-size:14px;font-family:inherit;resize:vertical;background:#fff}
+  .row{display:flex;gap:10px;margin:10px 0 16px;flex-wrap:wrap}
+  button{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);
+    padding:8px 16px;border-radius:8px;font-size:13px}
+  button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  button.ghost{background:transparent}
+  .stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .chip{font-size:12px;padding:4px 10px;border-radius:14px;background:#fff;border:1px solid var(--line);color:var(--sub)}
+  .chip b{color:var(--ink)}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .filters button{padding:6px 14px;border-radius:18px}
+  .filters button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .grid{display:flex;flex-direction:column;gap:12px}
+  .item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);
+    border-radius:10px;padding:13px 15px}
+  .item.growth{border-left-color:var(--growth)} .item.values{border-left-color:var(--values)}
+  .item.idea{border-left-color:var(--idea)} .item.hold{border-left-color:var(--hold)}
+  .item .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+  .item .meta{font-size:12px;color:var(--sub)}
+  .badge{font-size:11px;padding:2px 9px;border-radius:10px;color:#fff;margin-right:4px}
+  .badge.growth{background:var(--growth)} .badge.values{background:var(--values)}
+  .badge.idea{background:var(--idea)} .badge.hold{background:var(--hold)}
+  .badge.topic{background:#ecfdf5;color:#047857}
+  .item .txt{font-size:13.5px;line-height:1.65;color:#374151;white-space:pre-wrap;
+    max-height:140px;overflow:auto}
+  .item .del{font-size:12px;color:#ef4444;background:none;border:none;cursor:pointer;padding:0}
+  .empty{color:var(--sub);padding:36px;text-align:center;border:1px dashed var(--line);border-radius:10px}
+  .tip{margin-top:18px;font-size:12px;color:var(--sub);line-height:1.7;background:#fff;
+    border:1px solid var(--line);border-radius:10px;padding:14px}
+  .tip b{color:var(--ink)}
+  .bk{margin-top:14px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:12px 14px}
+  .bk summary{cursor:pointer;font-size:13px;color:var(--ink);font-weight:600}
+  .bk ul{margin:10px 0 0;padding-left:20px;font-size:12px;color:var(--sub);line-height:1.7}
+  .bk .warn{color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;
+    padding:8px 10px;font-size:12px;margin-top:10px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📥 统一捕获箱</h1>
+  <div class="sub">把你散在微信 / 备忘录 / 石墨 / 小红书的内容，<b>全部粘这里</b>就够了。自动粗分用途 + 主题标签、记录存入时间、攒一批后一键交给助手做 AI 精修 + 关联。</div>
+
+  <textarea id="ta" placeholder="把想存的内容粘进来（可一次粘多段，用空行隔开会自动拆成多条）…"></textarea>
+  <div class="row">
+    <button class="primary" onclick="add()">＋ 存入捕获箱</button>
+    <button class="ghost" onclick="clearTa()">清空输入框</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="row" style="margin-top:18px">
+    <button class="primary" onclick="copyAll()">📋 复制给助手（带时间戳）</button>
+    <button onclick="exportMd()">⬇️ 导出时间戳备份.md</button>
+    <button class="ghost" onclick="clearAll()">🗑️ 清空全部</button>
+  </div>
+
+  <details class="bk">
+    <summary>📅 备份记录（本机存了什么、什么时间）</summary>
+    <ul id="bklog"></ul>
+    <div class="warn">⚠️ 这是<b>浏览器内</b>记录，清缓存/换电脑会丢。要真正落到 D 盘永久保存：点上面「复制给助手（带时间戳）」发到对话，助手会自动写入 <code>00-捕获箱/backup-日期.md</code>。或点「导出时间戳备份.md」下载存档。</div>
+  </details>
+
+  <div class="tip">
+    <b>怎么用最省事</b><br>
+    ① 平时刷到想存的 → 打开本网页粘进来（双击即可），每条自动记<b>存入时间</b>并粗分<b>用途（练/想/用/存）+ 主题标签</b>。<br>
+    ② 攒一批后 → 点「复制给助手（带时间戳）」，发到对话喊「整理」；助手做 <b>AI 智能分类 + 总结 + 关联</b>并写进 D 盘灵感库。<br>
+    ③ 网页标签是<b>关键词粗分（预估）</b>，仅供参考；真正智能的分类/总结/跨条关联由助手（LLM）完成，比关键词准得多。<br>
+    ④ 嫌开网页麻烦？直接把内容粘贴到对话发我，我照样走 clip-refine 流程。
+  </div>
+</div>
+
+<script>
+const KEY='capture_inbox_v1', BKEY='capture_backup_log_v1';
+// 用途轴：关键词粗分（预估）
+const KW={
+  idea:['标题','转发','选题','内容','传播','运营','小红书','爆款','流量','文案','涨粉','变现','账号','粉丝','笔记','钩子','开头','排版','分享'],
+  growth:['行动','执行','自律','习惯','决策','直接做','练习','微决策','坚持','专注','拖延','执行力','做起来','立刻做','从小事','练'],
+  values:['脸面','烦恼','当下','重生','主线','心态','看开','意义','价值','焦虑','内耗','勇气','希望','自我','放下','接纳','认知','投射','人生','活着','情绪']
+};
+// 主题标签轴：可多选粗分（预估）
+const TOPIC_KW={
+  '#沟通社交':['沟通','社交','拒绝','礼貌','表情','眼神','别人','群聊','同事','领导','人际关系','聊天','客气'],
+  '#自我成长':['成长','行动','执行','自律','习惯','决策','坚持','专注','拖延','练','微决策','从小事','执行力','自我'],
+  '#心态看开':['脸面','烦恼','当下','重生','主线','心态','看开','意义','价值','焦虑','内耗','勇气','希望','放下','接纳','认知','投射','人生','活着','情绪'],
+  '#内容运营':['标题','转发','选题','内容','传播','运营','小红书','爆款','流量','文案','涨粉','变现','账号','粉丝','笔记','钩子','开头','排版','分享'],
+  '#理财搞钱':['理财','搞钱','财富','赚钱','收入','存款','投资','副业','钱'],
+  '#健康':['健康','运动','睡眠','身体','饮食','健身','锻炼'],
+  '#学习':['学习','读书','阅读','知识','速算','除法','考试','公考','申论','笔记法']
+};
+const NAME={growth:'练',values:'想',idea:'用',hold:'存'};
+let items=load(), blog=loadLog();
+let cur='all';
+
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){alert('浏览器存不了，请用「导出时间戳备份.md」')}}
+function loadLog(){try{return JSON.parse(localStorage.getItem(BKEY))||[]}catch(e){return[]}}
+function saveLog(){try{localStorage.setItem(BKEY,JSON.stringify(blog))}catch(e){}}
+
+function fmt(){const d=new Date();const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function fmtFile(){const d=new Date();const p=n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`}
+
+function classify(t){
+  let best='hold',max=0;
+  for(const k in KW){let n=0;for(const w of KW[k])if(t.includes(w))n++;if(n>max){max=n;best=k}}
+  return best;
+}
+function topicsFor(t){
+  const out=[];
+  for(const tk in TOPIC_KW){let hit=false;for(const w of TOPIC_KW[tk])if(t.includes(w)){hit=true;break;}
+    if(hit)out.push(tk); if(out.length>=3)break;}
+  return out;
+}
+function add(){
+  const raw=document.getElementById('ta').value.trim();
+  if(!raw){alert('先粘点东西');return}
+  const blocks=raw.split(/\n\s*\n+/).map(s=>s.trim()).filter(Boolean);
+  const now=fmt();
+  blocks.forEach(b=>items.unshift({id:Date.now()+Math.random(),text:b,type:classify(b),topics:topicsFor(b),time:now}));
+  save();document.getElementById('ta').value='';
+  blog.unshift({time:now,count:blocks.length,preview:blocks[0].slice(0,28)+(blocks[0].length>28?'…':'')});
+  saveLog();render();
+}
+function clearTa(){document.getElementById('ta').value=''}
+function del(id){items=items.filter(i=>i.id!==id);save();render()}
+function clearAll(){if(confirm('确定清空全部？建议先点「导出时间戳备份.md」')){items=[];save();render()}}
+
+function copyAll(){
+  if(!items.length){alert('空的');return}
+  const txt=items.map(i=>`[${NAME[i.type]} · ${(i.topics||[]).join(' ')} · ${i.time}] ${i.text}`).join('\n\n');
+  navigator.clipboard?.writeText(txt).then(()=>alert('已复制 '+items.length+' 条（含用途+主题+时间戳）。发到对话里喊「整理」即可，助手会写进 D 盘备份'))
+    .catch(()=>{prompt('复制下面全部内容发给我：',txt)});
+}
+function exportMd(){
+  if(!items.length){alert('空的');return}
+  const f=fmtFile();
+  let md=`# 捕获箱时间戳备份 ${fmt()}\n\n> 来源：统一捕获箱网页（用途/主题为首页关键词预估，最终以助手 AI 分类为准）\n> 共 ${items.length} 条\n\n`;
+  items.forEach((i,n)=>{md+=`### [${NAME[i.type]} ${(i.topics||[]).join(' ')}] 条目${n+1} · 存入 ${i.time}\n${i.text}\n\n`});
+  const blob=new Blob([md],{type:'text/markdown'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`捕获箱备份_${f}.md`;a.click();
+}
+
+function render(){
+  const c={growth:0,values:0,idea:0,hold:0};items.forEach(i=>c[i.type]++);
+  document.getElementById('stats').innerHTML=
+    `<span class="chip">共 <b>${items.length}</b> 条</span>`+
+    Object.keys(NAME).map(k=>`<span class="chip">${NAME[k]} <b>${c[k]}</b></span>`).join('');
+  const keys=['all',...Object.keys(NAME)];
+  document.getElementById('filters').innerHTML=keys.map(k=>
+    `<button class="${k===cur?'active':''}" onclick="set('${k}')">${k==='all'?'全部':NAME[k]}</button>`).join('');
+  const list=items.filter(i=>cur==='all'||i.type===cur);
+  document.getElementById('grid').innerHTML=list.length?list.map(i=>`
+    <div class="item ${i.type}">
+      <div class="top">
+        <span class="meta">存入 ${i.time} · <span class="badge ${i.type}">${NAME[i.type]}</span> <span style="opacity:.7">（预估）</span>
+          ${(i.topics||[]).map(t=>`<span class="badge topic">${t}</span>`).join('')}</span>
+        <button class="del" onclick="del(${i.id})">删除</button>
+      </div>
+      <div class="txt">${i.text.replace(/</g,'&lt;')}</div>
+    </div>`).join('') : '<div class="empty">还没有内容，粘一段试试 👆</div>';
+  document.getElementById('bklog').innerHTML=blog.length?blog.map(b=>
+    `<li>${b.time} · 存入 <b>${b.count}</b> 条 · ${b.preview.replace(/</g,'&lt;')}</li>`).join('') : '<li>暂无备份记录</li>';
+}
+function set(t){cur=t;render()}
+render();
+</script>
+</body>
+</html>

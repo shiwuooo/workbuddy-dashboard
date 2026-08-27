@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>行测 AI 一对一教练</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Microsoft YaHei","PingFang SC",system-ui,sans-serif;
+  background: #f5f6f8; color: #1f2329; line-height: 1.6; }
+header { background: #2b6cb0; color: #fff; padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between; }
+header h1 { font-size: 18px; margin: 0; }
+nav .navbtn { background: transparent; border: 1px solid #fff; color: #fff;
+  padding: 4px 12px; margin-left: 8px; border-radius: 4px; cursor: pointer; }
+nav .navbtn.active { background: #fff; color: #2b6cb0; }
+.view { max-width: 860px; margin: 20px auto; padding: 0 16px; }
+h2 { font-size: 20px; border-left: 4px solid #2b6cb0; padding-left: 10px; }
+h3 { font-size: 17px; margin-top: 24px; }
+.mode label { display: block; margin: 8px 0; cursor: pointer; }
+select, input[type=number] { padding: 6px 8px; border: 1px solid #ccd0d6;
+  border-radius: 4px; font-size: 14px; max-width: 100%; }
+#modBtns label { display: inline-block; margin: 4px 8px 4px 0; padding: 6px 10px;
+  border: 1px solid #ccd0d6; border-radius: 16px; cursor: pointer; user-select: none; }
+#modBtns label.on { background: #2b6cb0; color: #fff; border-color: #2b6cb0; }
+button { font-size: 14px; }
+.primary { background: #2b6cb0; color: #fff; border: none; padding: 10px 24px;
+  border-radius: 6px; cursor: pointer; font-size: 15px; margin-top: 12px; }
+.primary:hover { background: #245a92; }
+.hint { color: #888; font-size: 13px; }
+.exambar { display: flex; align-items: center; justify-content: space-between;
+  background: #fff; padding: 10px 14px; border-radius: 6px; position: sticky; top: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+#timer { font-size: 20px; font-weight: bold; font-variant-numeric: tabular-nums; }
+#progress { color: #666; }
+#qbox { background: #fff; border-radius: 6px; padding: 18px; margin: 14px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.qtext { font-size: 16px; white-space: pre-wrap; margin-bottom: 14px; }
+.material { background: #f0f4f8; padding: 10px; border-radius: 4px; margin-bottom: 12px;
+  white-space: pre-wrap; font-size: 14px; }
+.opt { display: block; width: 100%; text-align: left; padding: 10px 12px; margin: 6px 0;
+  border: 1px solid #ccd0d6; border-radius: 6px; background: #fff; cursor: pointer; font-size: 15px; }
+.opt:hover { border-color: #2b6cb0; }
+.opt.sel { background: #2b6cb0; color: #fff; border-color: #2b6cb0; }
+.navbtns { display: flex; justify-content: space-between; }
+.navbtns button { padding: 8px 20px; border: 1px solid #ccd0d6; background: #fff;
+  border-radius: 6px; cursor: pointer; }
+.card { background: #fff; border-radius: 6px; padding: 14px; margin: 10px 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.bigscore { font-size: 40px; font-weight: bold; color: #2b6cb0; }
+.bars .bar { display: flex; align-items: center; margin: 6px 0; }
+.bars .bar .name { width: 90px; }
+.bars .bar .track { flex: 1; height: 16px; background: #eef0f3; border-radius: 8px; overflow: hidden; }
+.bars .bar .fill { height: 100%; background: #2b6cb0; }
+.wrong { border-left: 4px solid #e53e3e; }
+.wrong summary { cursor: pointer; font-weight: bold; }
+.wrong .explain { background: #f7fafc; padding: 10px; margin-top: 8px; border-radius: 4px;
+  white-space: pre-wrap; font-size: 14px; }
+.kw { display: inline-block; background: #fff3cd; color: #856404; padding: 2px 8px;
+  border-radius: 10px; margin: 2px; font-size: 13px; }
+textarea { width: 100%; min-height: 90px; border: 1px solid #ccd0d6; border-radius: 6px;
+  padding: 10px; font-size: 14px; font-family: inherit; }
+hr { border: none; border-top: 1px solid #e2e6ea; margin: 24px 0; }
+.rec { border-bottom: 1px solid #eee; padding: 10px 0; }
+.rec .meta { color: #888; font-size: 13px; }
+.fatal { max-width: 600px; margin: 60px auto; padding: 24px; background: #fff;
+  border: 1px solid #e53e3e; border-radius: 8px; color: #c53030; text-align: center; line-height: 1.9; }
+.fatal small { color: #999; }
+</style>
+</head>
+<body>
+<header>
+  <h1>行测 AI 一对一教练</h1>
+  <nav>
+    <button data-view="setup" class="navbtn active">组卷</button>
+    <button data-view="profile" class="navbtn">学情档案</button>
+  </nav>
+</header>
+
+<section id="setup" class="view">
+  <h2>第一步：选怎么刷</h2>
+  <div class="mode">
+    <label><input type="radio" name="mode" value="paper" checked> 整套真题卷</label>
+    <label><input type="radio" name="mode" value="custom"> 自定义组卷（自己定题数 / 模块）</label>
+  </div>
+  <div id="paperBox">
+    <p>选一套真题卷：</p>
+    <select id="paperSel"></select>
+  </div>
+  <div id="customBox" style="display:none">
+    <p>选模块（可多选）：</p>
+    <div id="modBtns"></div>
+    <p>每组题数：<input type="number" id="nQ" value="20" min="5" max="300"> 题</p>
+  </div>
+  <button id="startBtn" class="primary">开始答题</button>
+  <p class="hint">做题时全程无 AI 打扰；交卷后 AI 统一复盘并建档。</p>
+</section>
+
+<section id="exam" class="view" style="display:none">
+  <div class="exambar">
+    <span id="timer">00:00</span>
+    <span id="progress">第 1 / 1 题</span>
+    <button id="submitBtn" class="primary">交卷</button>
+  </div>
+  <div id="qbox"></div>
+  <div class="navbtns">
+    <button id="prevBtn">上一题</button>
+    <button id="nextBtn">下一题</button>
+  </div>
+</section>
+
+<section id="report" class="view" style="display:none">
+  <h2>复盘报告</h2>
+  <div id="reportBody"></div>
+  <hr>
+  <h3>AI 一对一教练（桥接 DeepSeek 免费模型）</h3>
+  <p class="hint">点"生成教练 Prompt"→ 复制去 OpenCode 问（已选 DeepSeek V4 Flash + High）→ 把回答贴回下方保存。</p>
+  <button id="genPromptBtn">生成教练 Prompt</button>
+  <textarea id="promptBox" placeholder="点击上方按钮生成"></textarea>
+  <button id="copyPromptBtn">复制 Prompt</button>
+  <textarea id="aiReply" placeholder="把 AI 的回答贴在这里"></textarea>
+  <button id="saveAiBtn">保存 AI 建议到档案</button>
+  <div id="aiSaved"></div>
+  <button id="backSetup" class="primary">再刷一套</button>
+</section>
+
+<section id="profile" class="view" style="display:none">
+  <h2>学情档案</h2>
+  <div id="profileBody"></div>
+</section>
+
+<script src="bank.js"></script>
+<script>
+// ===== 行测 AI 一对一教练 · 单页版（零服务，file:// 双击即用）=====
+const MOD_ORDER = ["changshi","yanyu","shuliang","panduan","ziliao"];
+let MOD_CN = {};
+const state = { mode:"paper", paperId:null, questions:[], answers:{}, qTime:{},
+  enter:0, idx:0, timer:null, startTs:0, _report:null };
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+function init() {
+  if (!window.BANK || !window.BANK.papers || !window.BANK.papers.length) {
+    document.body.innerHTML = '<div class="fatal">⚠ 题库未加载<br><br>请确认 <b>bank.js</b> 与 index.html 在同一文件夹下，再刷新本页。<br><small>若只有 index.html 一个文件，去下载配套的 bank.js</small></div>';
+    return;
+  }
+  MOD_CN = window.BANK.module_names || {};
+  const sel = $("#paperSel");
+  sel.innerHTML = "";
+  window.BANK.papers.forEach(p => {
+    const o = document.createElement("option");
+    o.value = p.id;
+    o.textContent = `${p.name}（${p.total}题）`;
+    sel.appendChild(o);
+  });
+  const present = new Set();
+  window.BANK.papers.forEach(p => p.qs.forEach(q => present.add(q.module)));
+  const mods = MOD_ORDER.filter(m => present.has(m));
+  const mb = $("#modBtns");
+  mb.innerHTML = "";
+  mods.forEach(m => {
+    const l = document.createElement("label");
+    l.innerHTML = `<input type="checkbox" value="${m}"> ${MOD_CN[m] || m}`;
+    l.dataset.m = m;
+    l.onclick = () => l.classList.toggle("on");
+    mb.appendChild(l);
+  });
+  bindEvents();
+}
+
+function bindEvents() {
+  $$('input[name=mode]').forEach(r => r.onchange = () => {
+    const m = $("input[name=mode]:checked").value;
+    $("#paperBox").style.display = m === "paper" ? "block" : "none";
+    $("#customBox").style.display = m === "custom" ? "block" : "none";
+  });
+  $("#startBtn").onclick = startExam;
+  $("#prevBtn").onclick = () => nav(-1);
+  $("#nextBtn").onclick = () => nav(1);
+  $("#submitBtn").onclick = submitExam;
+  $("#backSetup").onclick = () => showView("setup");
+  $$(".navbtn").forEach(b => b.onclick = () => {
+    if (b.dataset.view === "profile") renderProfile();
+    showView(b.dataset.view);
+  });
+  $("#genPromptBtn").onclick = genPrompt;
+  $("#copyPromptBtn").onclick = copyPrompt;
+  $("#saveAiBtn").onclick = saveAi;
+}
+
+function showView(v) {
+  $$(".view").forEach(s => s.style.display = "none");
+  $("#" + v).style.display = "block";
+  $$(".navbtn").forEach(b => b.classList.toggle("active", b.dataset.view === v));
+  if (v === "setup") window.scrollTo(0,0);
+}
+
+function startExam() {
+  const m = $("input[name=mode]:checked").value;
+  state.mode = m; state.answers = {}; state.qTime = {}; state.idx = 0; state._report = null;
+  if (m === "paper") {
+    state.paperId = $("#paperSel").value;
+    const paper = window.BANK.papers.find(x => x.id === state.paperId);
+    state.questions = paper ? paper.qs.slice() : [];
+  } else {
+    const picked = [...$$("#modBtns label.on input")].map(i => i.value);
+    if (!picked.length) { alert("至少选一个模块"); return; }
+    const all = [];
+    window.BANK.papers.forEach(p => p.qs.forEach(q => { if (picked.includes(q.module)) all.push(q); }));
+    const n = Math.min(parseInt($("#nQ").value) || 20, all.length);
+    // 洗牌取 n
+    for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [all[i],all[j]]=[all[j],all[i]]; }
+    state.questions = all.slice(0, n);
+  }
+  if (!state.questions.length) { alert("本题库该条件下无题目"); return; }
+  state.startTs = Date.now();
+  state.enter = Date.now();
+  showView("exam");
+  renderQ();
+  startTimer();
+}
+
+function renderQ() {
+  const q = state.questions[state.idx];
+  const box = $("#qbox");
+  let html = `<div class="qtext">${state.idx + 1}. ${esc(q.q)}</div>`;
+  if (q.material) html += `<div class="material">${esc(q.material)}</div>`;
+  q.options.forEach((o, i) => {
+    const sel = state.answers[q.id] === i ? " sel" : "";
+    html += `<button class="opt${sel}" data-i="${i}">${letter(i)}. ${esc(o)}</button>`;
+  });
+  box.innerHTML = html;
+  box.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+    state.answers[q.id] = parseInt(b.dataset.i);
+    box.querySelectorAll(".opt").forEach(x => x.classList.remove("sel"));
+    b.classList.add("sel");
+  });
+  $("#progress").textContent = `第 ${state.idx + 1} / ${state.questions.length} 题`;
+  state.enter = Date.now();
+}
+
+function nav(d) {
+  tickTime();
+  state.idx = Math.max(0, Math.min(state.questions.length - 1, state.idx + d));
+  state.enter = Date.now();
+  renderQ();
+}
+
+function tickTime() {
+  if (state.enter && state.questions[state.idx]) {
+    const qid = state.questions[state.idx].id;
+    state.qTime[qid] = (state.qTime[qid] || 0) + (Date.now() - state.enter) / 1000;
+  }
+}
+
+function startTimer() {
+  if (state.timer) clearInterval(state.timer);
+  state.timer = setInterval(() => {
+    const s = Math.floor((Date.now() - state.startTs) / 1000);
+    $("#timer").textContent = fmt(s);
+  }, 1000);
+}
+
+function fmt(s) { const m = Math.floor(s / 60); return `${String(m).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`; }
+function letter(i) { return String.fromCharCode(65 + i); }
+function esc(t) { return (t || "").replace(/[&<>]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;" }[c])); }
+
+// 本地判分（无需服务）
+function judge(qs, answers) {
+  let total = qs.length, correct = 0; const results = [];
+  qs.forEach(q => {
+    const ua = answers[q.id];
+    const isc = ua != null && String(ua) === String(q.answer);
+    if (isc) correct++;
+    results.push({ id:q.id, correct:isc, user:ua, answer:q.answer, explain:q.explain,
+      keypoints:q.keypoints, module:q.module, q:q.q, options:q.options });
+  });
+  return { total, correct, rate: total ? correct/total : 0, results };
+}
+
+function submitExam() {
+  if (!confirm("确认交卷？交卷后 AI 统一复盘。")) return;
+  tickTime();
+  clearInterval(state.timer);
+  const timeSec = Math.floor((Date.now() - state.startTs) / 1000);
+  const r = judge(state.questions, state.answers);
+  renderReport(r, timeSec);
+  saveRecord(r, timeSec);
+  showView("report");
+}
+
+function renderReport(judge, timeSec) {
+  const body = $("#reportBody");
+  const modStats = {};
+  judge.results.forEach(r => {
+    const m = r.module;
+    if (!modStats[m]) modStats[m] = { c:0, t:0 };
+    modStats[m].t++; if (r.correct) modStats[m].c++;
+  });
+  let html = `<div class="card"><div class="bigscore">${judge.correct}/${judge.total}</div>
+    <div>正确率 <b>${(judge.rate*100).toFixed(1)}%</b> ｜ 总用时 ${fmt(timeSec)}</div></div>`;
+
+  html += `<div class="card bars"><h3 style="margin-top:0">各模块得分率</h3>`;
+  Object.keys(modStats).forEach(m => {
+    const s = modStats[m]; const pct = Math.round(s.c/s.t*100);
+    html += `<div class="bar"><span class="name">${MOD_CN[m]||m}</span>
+      <span class="track"><span class="fill" style="width:${pct}%"></span></span>
+      <span>${pct}%（${s.c}/${s.t}）</span></div>`;
+  });
+  html += `</div>`;
+
+  const wrong = judge.results.filter(r => !r.correct);
+  html += `<div class="card"><h3 style="margin-top:0">错题精解（${wrong.length} 道）</h3>`;
+  wrong.forEach((r, i) => {
+    html += `<details class="wrong"><summary>${i+1}. ${esc(r.q).slice(0,60)}… ｜ 你选 ${r.user!=null?letter(r.user):"未答"} → 正确 ${letter(r.answer)}</summary>
+      <div class="explain"><b>题干：</b>${esc(r.q)}<br><b>你的选项：</b>${r.user!=null?letter(r.user)+". "+esc(r.options[r.user]||""):"未作答"}<br>
+      <b>正确答案：</b>${letter(r.answer)}. ${esc(r.options[r.answer]||"")}<br>
+      <b>考点：</b>${(r.keypoints||[]).map(k=>`<span class="kw">${esc(k)}</span>`).join("")}<br>
+      <b>解析：</b>${esc(r.explain)}</div></details>`;
+  });
+  html += `</div>`;
+
+  const kpCount = {};
+  wrong.forEach(r => (r.keypoints||[]).forEach(k => kpCount[k]=(kpCount[k]||0)+1));
+  const topKp = Object.entries(kpCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  html += `<div class="card"><h3 style="margin-top:0">薄弱考点 TOP5</h3>`;
+  if (topKp.length) topKp.forEach(([k,c]) => html += `<span class="kw">${esc(k)} ×${c}</span> `);
+  else html += `本次无错题，保持！`;
+  html += `</div>`;
+
+  const modTime = {};
+  judge.results.forEach(r => { const m=r.module; modTime[m]=(modTime[m]||0)+(state.qTime[r.id]||0); });
+  const avg = timeSec / judge.total;
+  html += `<div class="card"><h3 style="margin-top:0">时间分配诊断</h3>`;
+  Object.keys(modTime).forEach(m => {
+    const per = modTime[m]/(modStats[m].t||1);
+    const flag = per > avg*1.5 ? " ⚠ 耗时偏高" : "";
+    html += `<div>${MOD_CN[m]||m}：平均每题 ${per.toFixed(1)}s${flag}</div>`;
+  });
+  html += `<div class="hint">整体平均每题 ${avg.toFixed(1)}s</div></div>`;
+
+  const weakMod = Object.keys(modStats).sort((a,b)=>(modStats[a].c/modStats[a].t)-(modStats[b].c/modStats[b].t))[0];
+  html += `<div class="card"><h3 style="margin-top:0">下次冲刺建议</h3>`;
+  if (weakMod) html += `<div>① 优先补强 <b>${MOD_CN[weakMod]||weakMod}</b>（本次正确率最低）。</div>`;
+  if (topKp.length) html += `<div>② 重点突破考点：${topKp.slice(0,3).map(([k])=>k).join("、")}。</div>`;
+  html += `<div>③ 错题已存入学情档案，建议 1–2 天后间隔复习重做。</div></div>`;
+  body.innerHTML = html;
+  state._report = { judge, timeSec, modStats, weakMod, topKp };
+}
+
+function genPrompt() {
+  const { judge, timeSec, modStats, weakMod, topKp } = state._report;
+  const wrong = judge.results.filter(r => !r.correct);
+  let p = `你是一位公务员考试（行测）一对一教练。以下是我的本次练习数据，请给我一对一复盘。\n\n`;
+  p += `【练习概况】模式：${state.mode==="paper"?"整套真题卷":"自定义组卷"}；总题数 ${judge.total}；答对 ${judge.correct}；正确率 ${(judge.rate*100).toFixed(1)}%；总用时 ${fmt(timeSec)}。\n`;
+  p += `【各模块正确率】\n`;
+  Object.keys(modStats).forEach(m => { const s=modStats[m]; p += `- ${MOD_CN[m]||m}：${Math.round(s.c/s.t*100)}%（${s.c}/${s.t}）\n`; });
+  p += `\n【错题清单】（题干 / 我的选项 / 正确选项 / 考点 / 官方解析）：\n`;
+  wrong.forEach((r,i) => {
+    p += `${i+1}. 题干：${r.q}\n   我选：${r.user!=null?letter(r.user):"未答"} 正确：${letter(r.answer)} 考点：${(r.keypoints||[]).join("、")||"无"}\n   解析：${r.explain}\n`;
+  });
+  p += `\n【薄弱考点TOP5】${topKp.map(([k,c])=>`${k}×${c}`).join("，")||"无"}\n`;
+  p += `\n【我的诉求】请基于以上数据给我：①每道错题的精准错因归因（盲区/审题/计算/套路/时间管理）；②针对最弱模块的专项提升路径与练习量建议；③下次练习重点；④一句针对性鼓励。请用小白能懂的语言，不要堆术语。\n`;
+  $("#promptBox").value = p;
+}
+function copyPrompt() { navigator.clipboard.writeText($("#promptBox").value).then(()=>alert("已复制，去 OpenCode 粘贴提问")); }
+
+function saveAi() {
+  const txt = $("#aiReply").value.trim();
+  if (!txt) { alert("先把 AI 回答贴进来"); return; }
+  const recs = loadProfile();
+  if (recs.length) recs[recs.length-1].ai = txt;
+  saveProfile(recs);
+  $("#aiSaved").innerHTML = `<div class="hint">已保存到最新一条练习记录。</div>`;
+}
+
+const PK = "xcs_profile_v1";
+function loadProfile() { try { return JSON.parse(localStorage.getItem(PK)||"[]"); } catch(e){ return []; } }
+function saveProfile(a) { localStorage.setItem(PK, JSON.stringify(a)); }
+function saveRecord(judge, timeSec) {
+  const modStats = {};
+  judge.results.forEach(r => { const m=r.module; if(!modStats[m]) modStats[m]={c:0,t:0}; modStats[m].t++; if(r.correct) modStats[m].c++; });
+  const kpCount = {};
+  judge.results.filter(r=>!r.correct).forEach(r=>(r.keypoints||[]).forEach(k=>kpCount[k]=(kpCount[k]||0)+1));
+  const rec = {
+    date: new Date().toISOString().slice(0,16).replace("T"," "),
+    mode: state.mode,
+    label: state.mode==="paper" ? $("#paperSel").selectedOptions[0].textContent : "自定义组卷",
+    total: judge.total, correct: judge.correct, rate: judge.rate, timeSec,
+    modStats, weakKps: Object.entries(kpCount).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([k])=>k)
+  };
+  const recs = loadProfile(); recs.push(rec); saveProfile(recs);
+}
+function renderProfile() {
+  const recs = loadProfile();
+  const body = $("#profileBody");
+  if (!recs.length) { body.innerHTML = `<p class="hint">还没有练习记录。去"组卷"刷一套吧。</p>`; return; }
+  const avgRate = recs.reduce((s,r)=>s+r.rate,0)/recs.length;
+  const modAgg = {};
+  recs.forEach(r => Object.keys(r.modStats).forEach(m => { if(!modAgg[m]) modAgg[m]={c:0,t:0}; modAgg[m].c+=r.modStats[m].c; modAgg[m].t+=r.modStats[m].t; }));
+  let html = `<div class="card">练习次数 <b>${recs.length}</b> ｜ 平均正确率 <b>${(avgRate*100).toFixed(1)}%</b></div>`;
+  html += `<div class="card bars"><h3 style="margin-top:0">模块累计掌握度</h3>`;
+  Object.keys(modAgg).forEach(m => { const s=modAgg[m]; const pct=Math.round(s.c/s.t*100);
+    html += `<div class="bar"><span class="name">${MOD_CN[m]||m}</span><span class="track"><span class="fill" style="width:${pct}%"></span></span><span>${pct}%</span></div>`; });
+  html += `</div>`;
+  html += `<div class="card"><h3 style="margin-top:0">近期练习</h3>`;
+  recs.slice().reverse().forEach(r => {
+    html += `<div class="rec"><div><b>${r.date}</b> ｜ ${r.label}</div><div class="meta">正确率 ${(r.rate*100).toFixed(1)}% ｜ ${r.correct}/${r.total} ｜ 用时 ${fmt(r.timeSec)}</div>${r.ai?'<div class="meta">已存 AI 建议</div>':''}</div>`;
+  });
+  html += `</div>`;
+  body.innerHTML = html;
+}
+
+init();
+</script>
+</body>
+</html>

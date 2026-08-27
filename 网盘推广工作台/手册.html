@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网盘推广完整作战手册（深挖版 v2.0 可编辑）</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --warn: #f59e0b;
+      --warn-bg: #fffbeb;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --success: #16a34a;
+      --success-bg: #f0fdf4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+    header {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 28px; margin-bottom: 16px;
+    }
+    h1 { margin: 0 0 12px; font-size: 28px; line-height: 1.3; }
+    .meta { color: var(--muted); font-size: 14px; }
+    .meta strong { color: var(--text); }
+
+    /* 编辑工具栏 */
+    .toolbar {
+      position: sticky; top: 12px; z-index: 20;
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 12px 16px; margin-bottom: 24px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .toolbar button {
+      border: 1px solid var(--border); background: #fff; color: var(--text);
+      padding: 6px 14px; border-radius: 6px; font-size: 14px; cursor: pointer;
+      transition: all .15s;
+    }
+    .toolbar button:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+    .toolbar button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .toolbar button.primary:hover { background: #1d4ed8; color: #fff; }
+    .toolbar .status {
+      margin-left: auto; font-size: 13px; color: var(--muted);
+    }
+    .toolbar .status.saved { color: var(--success); }
+    .toolbar .status.error { color: var(--danger); }
+
+    /* 编辑模式：内容可编辑、表格可加行 */
+    body.edit-mode .editable { outline: 2px dashed var(--accent); outline-offset: 2px; border-radius: 4px; min-height: 1em; }
+    body.edit-mode section, body.edit-mode header, body.edit-mode nav { cursor: text; }
+    body.edit-mode .editable:hover { background: #fffbe6; }
+    body.edit-mode .table-wrap { position: relative; }
+    body.edit-mode .table-wrap::after {
+      content: "+ 行 / - 行（右键表格）";
+      position: absolute; right: 8px; top: -22px; font-size: 11px; color: var(--muted);
+    }
+
+    /* 表格编辑辅助 */
+    .add-row-btn, .del-row-btn {
+      display: none;
+      border: 1px solid var(--accent); background: var(--accent-light); color: var(--accent);
+      padding: 2px 8px; font-size: 12px; border-radius: 4px; cursor: pointer; margin: 4px 0 0 0;
+    }
+    body.edit-mode .add-row-btn, body.edit-mode .del-row-btn { display: inline-block; }
+    .del-row-btn { background: #fef2f2; color: var(--danger); border-color: var(--danger); margin-left: 6px; }
+
+    nav {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 20px 24px; margin-bottom: 24px;
+    }
+    nav h2 { margin: 0 0 12px; font-size: 16px; }
+    nav ul { margin: 0; padding-left: 18px; font-size: 14px; }
+    nav li { margin: 4px 0; }
+    nav a { color: var(--accent); text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+
+    section {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px 28px; margin-bottom: 20px;
+    }
+    h2 { margin-top: 0; font-size: 20px; border-bottom: 2px solid var(--accent-light); padding-bottom: 10px; }
+    h3 { font-size: 16px; margin: 20px 0 10px; }
+    p { margin: 12px 0; }
+    ul, ol { padding-left: 22px; }
+    li { margin: 6px 0; }
+    blockquote {
+      margin: 16px 0; padding: 16px 20px;
+      border-left: 4px solid var(--accent); background: var(--accent-light);
+      border-radius: 0 8px 8px 0;
+    }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
+    th { background: #f3f4f6; font-weight: 600; }
+    tr:nth-child(even) { background: #f9fafb; }
+    code {
+      background: #f3f4f6; padding: 2px 6px; border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px;
+    }
+    .warn { background: var(--warn-bg); border-left: 4px solid var(--warn); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; }
+    .danger { background: var(--danger-bg); border-left: 4px solid var(--danger); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; }
+    .success { background: var(--success-bg); border-left: 4px solid var(--success); padding: 14px 18px; border-radius: 0 8px 8px 0; margin: 14px 0; }
+    .back-to-top { display: inline-block; margin-top: 20px; font-size: 13px; color: var(--accent); text-decoration: none; }
+
+    footer { text-align: center; color: var(--muted); font-size: 13px; padding: 20px 0 40px; }
+
+    @media (max-width: 640px) {
+      .container { padding: 16px; }
+      header, section, nav { padding: 18px; }
+      h1 { font-size: 22px; }
+      table { font-size: 12px; }
+      th, td { padding: 8px; }
+      .toolbar { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header id="top" contenteditable="false">
+      <h1 class="editable" data-key="title">网盘推广完整作战手册（深挖版 v2.0）</h1>
+      <div class="meta editable" data-key="meta">
+        生成：2026-07-31 ｜ 主推：<strong>夸克</strong> ｜ 策略：<strong>同一资源多平台叠加（百度/夸克/迅雷）</strong><br>
+        来源：知乎《网盘拉新需要准备什么？》高赞回答 + 5 篇第三方实操文（fly63 / sohu / xianlaishouzhuan / github wangpan-laxin / 022999）<br>
+        说明：知乎页面经工具只能抓到约 4 个高赞回答，本手册用更广的第三方实操文补全了"回答里没写全"的打法。
+      </div>
+    </header>
+
+    <div class="toolbar" id="toolbar">
+      <button id="btnEdit" class="primary">✏️ 进入编辑</button>
+      <button id="btnEditOff">👁 停止编辑</button>
+      <button id="btnSave">💾 保存到本地</button>
+      <button id="btnRestore">↩ 恢复初始</button>
+      <button id="btnExport">📤 导出 HTML 文件</button>
+      <span id="status" class="status">已加载</span>
+    </div>
+
+    <nav id="nav" contenteditable="false">
+      <h2 class="editable" data-key="nav-title">目录</h2>
+      <ul class="editable" data-key="nav-list">
+        <li><a href="#sec1">一、平台怎么选</a></li>
+        <li><a href="#sec2">二、资源准备（钩子才是核心）</a></li>
+        <li><a href="#sec3">三、渠道战术</a></li>
+        <li><a href="#sec4">四、留存与私域</a></li>
+        <li><a href="#sec5">五、数据怎么看</a></li>
+        <li><a href="#sec6">六、年入千万视角</a></li>
+        <li><a href="#sec7">七、隐私与合规</a></li>
+      </ul>
+    </nav>
+
+    <main id="content" contenteditable="false">
+
+      <section id="sec1" data-key="sec1">
+        <h2 class="editable" data-key="sec1-h">一、平台怎么选</h2>
+        <p class="editable" data-key="sec1-p1">你已定夸克，多平台叠加 = 正确。</p>
+        <h3 class="editable" data-key="sec1-h3">2026 年主流网盘拉新单价对比</h3>
+        <div class="table-wrap">
+          <table data-key="sec1-table" class="editable">
+            <thead>
+              <tr><th>平台</th><th>拉新单价</th><th>转存</th><th>会员分成</th><th>适合资源</th><th>备注</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>夸克</strong></td><td>7–12元（年终12/日常7-10）</td><td>0.3–0.47元</td><td>30%</td><td>教育/职场/AI/短视频/闲鱼</td><td>转化链短，新手首选</td></tr>
+              <tr><td>百度</td><td>8元+PC+3</td><td>~0.45元</td><td>20%（老用户10%）</td><td>全场景，尤学生</td><td>知名度高、资源池大</td></tr>
+              <tr><td>迅雷</td><td>6–10元</td><td>有</td><td>有</td><td>游戏/影音大文件</td><td>PC端流量好</td></tr>
+              <tr><td>UC</td><td>6–10元</td><td>有</td><td>有</td><td>学习/文件类</td><td>易自然植入</td></tr>
+              <tr><td>移动云盘</td><td>5–8元</td><td>有</td><td>有</td><td>新平台红利</td><td>竞争小</td></tr>
+            </tbody>
+          </table>
+          <button class="add-row-btn" data-target="sec1-table">+ 加一行</button>
+        </div>
+        <div class="success editable" data-key="sec1-success">
+          <strong>你"一个资源同时放百度/夸克/迅雷"的做法是对的：</strong>覆盖不同用户群，收益叠加。
+        </div>
+        <div class="warn editable" data-key="sec1-warn">
+          <strong>⚠️ 绑定 UID 才能结算：</strong>每个平台要分别走官方授权服务商绑定 UID（夸克→项小推/蜂小推；百度→任推邦），链接才带你的标识、才结算。未绑定的普通分享链接<strong>不产生佣金</strong>。
+        </div>
+        <a class="back-to-top" href="#top">↑ 返回顶部</a>
+      </section>
+
+      <section id="sec2" data-key="sec2">
+        <h2 class="editable" data-key="sec2-h">二、资源准备（钩子才是核心）</h2>
+        <ul class="editable" data-key="sec2-list">
+          <li><strong>合规底线</strong>：避开未授权影视剧、破解软件、太露骨内容。优先：学习/工具/AI/职场。</li>
+          <li><strong>高转化 4 类</strong>（经过流量+收益检验）：
+            <ol>
+              <li><strong>考试考证</strong>：2026考研/考公/教资真题（标"考生回忆版+自用整理"）、CPA、小众高客单（如物业经理资格证）</li>
+              <li><strong>职场技能</strong>：AI办公(ChatGPT+Excel)、短视频脚本、简历/PPT优化、跨境电商手册</li>
+              <li><strong>兴趣实用</strong>：自媒体选题库、露营攻略、儿童口才、Excel函数大全</li>
+              <li><strong>通用模板</strong>：法律文书、幼儿园手工作业、办公软件安装包（带教程）</li>
+            </ol>
+          </li>
+          <li><strong>打包技巧</strong>：做成文件夹合集（勿散传单文件）；命名含关键词（"2026考研英语真题+网课笔记合集"比"考研资料"转化高）；能压缩/大文件更好（提高转存意愿）。</li>
+          <li><strong>防搬运</strong>：去重+水印（醒图加"仅学习参考，24h删"+昵称）；包内放 <code>资源持续更新说明.txt</code> 引导关注你后续内容。</li>
+          <li><strong>多平台落地</strong>：同一资源分别上传夸克/百度/迅雷，各生成带标识链接；内容里按用户习惯给对应平台的<strong>中文口令码</strong>。</li>
+        </ul>
+        <a class="back-to-top" href="#top">↑ 返回顶部</a>
+      </section>
+
+      <section id="sec3" data-key="sec3">
+        <h2 class="editable" data-key="sec3-h">三、渠道战术（按平台差异化，别全铺）</h2>
+        <div class="table-wrap">
+          <table data-key="sec3-table" class="editable">
+            <thead>
+              <tr><th>渠道</th><th>关键玩法</th><th>夸克相关提示</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>知乎</strong></td><td>长尾极强，回答能在<strong>百度搜到挂几年</strong>（百度权重9级）；新号先养号（认真答不带链接），再慢慢带链接</td><td>你主推场景，写"资料分散/链接失效痛点→用网盘建分类库"</td></tr>
+              <tr><td><strong>小红书</strong></td><td>审核最严，正文不放链接；用<strong>粉丝群承接</strong>，群内发口令并置顶；图文门槛低、女性付费意愿高</td><td>群内发夸克口令</td></tr>
+              <tr><td><strong>抖音/快手</strong></td><td>不能直发二维码/私信发链接易违规；引导到主页简介/公开群/置顶视频；用<strong>@小号发口令</strong></td><td>口令放标题/评论/私信</td></tr>
+              <tr><td><strong>公众号</strong></td><td>可直接发二维码/链接，转化极高，是最终<strong>沉淀池</strong>（抖音/小红书都导流到这）</td><td>导流终点</td></tr>
+              <tr><td><strong>闲鱼</strong></td><td>新手最易起步：上架 0.01–9.9元 虚拟商品（"2026考研资料合集"），买家拍下私信发夸克口令</td><td><strong>极适合夸克</strong></td></tr>
+            </tbody>
+          </table>
+          <button class="add-row-btn" data-target="sec3-table">+ 加一行</button>
+        </div>
+        <div class="success editable" data-key="sec3-success">
+          <strong>中文口令码（重点·夸克）：</strong>"复制口令码 XXXX，打开夸克网盘领 XX 资料"——不易被屏蔽，用户复制打开 APP 即跳资源页。抖音/快手放标题/评论/私信。
+        </div>
+        <a class="back-to-top" href="#top">↑ 返回顶部</a>
+      </section>
+
+      <section id="sec4" data-key="sec4">
+        <h2 class="editable" data-key="sec4-h">四、留存与私域（把回答1的"留存三要素"落地）</h2>
+        <ul class="editable" data-key="sec4-list">
+          <li><strong>今日更新板块</strong>：哪怕编一条也要有，人爱看"最新"。</li>
+          <li><strong>用户反馈公告</strong>："用户说红警打不开→已解决"，强调是用户提的问题你解决了。</li>
+          <li><strong>多互动</strong>；建微信群/公众号沉淀，定期分享技巧、办活动（抽奖/打卡）。</li>
+          <li>目的：让资源被用户主动分享给朋友 → 裂变（回答1说他的第三方平台每天 1万+ 浏览量是用户互相分享来的）。</li>
+        </ul>
+        <a class="back-to-top" href="#top">↑ 返回顶部</a>
+      </section>
+
+      <section id="sec5" data-key="sec5">
+        <h2 class="editable" data-key="sec5-h">五、数据怎么看（别只看总量）</h2>
+        <ul class="editable" data-key="sec5-list">
+          <li>重点看<strong>有效转化占比</strong>：点击高但转化低 = 资源吸引力不够 / 你对"有效用户"理解有偏差。</li>
+          <li>用我给你做的 <code>网盘推广跟踪表.html</code> 每日记：链接查看 / 转存 / 各平台新用户。</li>
+          <li><strong>多平台分别记</strong>，看清哪个平台 × 渠道 × 资源 转化最高，再复制放大。</li>
+        </ul>
+        <a class="back-to-top" href="#top">↑ 返回顶部</a>
+      </section>
+
+      <section id="sec6" data-key="sec6">
+        <h2 class="editable" data-key="sec6-h">六、年入千万视角（信息都在知乎上，差距在执行）</h2>
+        <p class="editable" data-key="sec6-p1">年入千万的人把这套当<strong>免费情报</strong>，做的是：</p>
+        <ol class="editable" data-key="sec6-ol">
+          <li><strong>自有基建</strong>：自己的域名/跳转/数据库/私域，不租用小程序（避免"之前发的全白发"）。</li>
+          <li><strong>矩阵+团队</strong>：几百账号 + 外包写手 + 投流；选品/内容/账号/客服/数据分工。</li>
+          <li><strong>多变现</strong>：拉新+转存+会员+自有产品+广告+课程，不止赚那几块钱一单。</li>
+        </ol>
+        <blockquote class="editable" data-key="sec6-quote">
+          → 你现在该做的：把上面框架跑通一个<strong>最小闭环</strong>（1个垂直领域 + 1-2渠道 + 本地跟踪表），别追数字。
+        </blockquote>
+        <a class="back-to-top" href="#top">↑ 返回顶部</a>
+      </section>
+
+      <section id="sec7" data-key="sec7">
+        <h2 class="editable" data-key="sec7-h">七、隐私与合规（你的铁律）</h2>
+        <ul class="editable" data-key="sec7-list">
+          <li><strong>第三方短链/公私域小程序</strong>：会把你的链接、点击、用户来源、失效引导（加微信）交给第三方 SaaS。<strong>慎用</strong>。</li>
+          <li><strong>优先本地方案</strong>：资源管理用你已有的 <code>quark-rec</code>（本地、无遥测）；日常数据用本手册配套的 <code>网盘推广跟踪表.html</code>（数据存你本地浏览器，不上传任何服务器）。</li>
+          <li><strong>多平台授权需实名绑 UID</strong> 属必要步骤；但<strong>日常运营数据留在本地表</strong>，不交 SaaS。</li>
+          <li>盗版/露骨资源：轻则封号扣佣，重则法律风险。坚持合规资源。</li>
+        </ul>
+        <a class="back-to-top" href="#top">↑ 返回顶部</a>
+      </section>
+
+    </main>
+
+    <footer>
+      配套文件：<code>网盘推广跟踪表.html</code>（本地跟踪工具）｜ 前序分析：<code>知乎回答价值分析.md</code>
+    </footer>
+  </div>
+
+  <script>
+  (function() {
+    'use strict';
+    const STORAGE_KEY = 'wangpan_zuozhan_manual_v2';
+    const ORIGINAL_KEY = 'wangpan_zuozhan_manual_v2_original';
+    const body = document.body;
+    const content = document.getElementById('content');
+    const status = document.getElementById('status');
+
+    function setStatus(msg, type) {
+      status.textContent = msg;
+      status.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    // 进入编辑
+    function enterEdit() {
+      body.classList.add('edit-mode');
+      document.querySelectorAll('[contenteditable]').forEach(function(el) {
+        el.setAttribute('contenteditable', 'true');
+      });
+      setStatus('✏️ 编辑中：直接点文字改', '');
+    }
+    // 退出编辑
+    function exitEdit() {
+      body.classList.remove('edit-mode');
+      document.querySelectorAll('[contenteditable]').forEach(function(el) {
+        el.setAttribute('contenteditable', 'false');
+      });
+      setStatus('👁 预览模式', '');
+    }
+
+    // 收集所有可编辑节点的 innerHTML（按 data-key 索引）
+    function collectState() {
+      const state = { ts: Date.now() };
+      document.querySelectorAll('.editable').forEach(function(el) {
+        const key = el.getAttribute('data-key');
+        if (key) state[key] = el.innerHTML;
+      });
+      return state;
+    }
+
+    // 应用状态
+    function applyState(state) {
+      if (!state) return;
+      Object.keys(state).forEach(function(key) {
+        if (key === 'ts') return;
+        const el = document.querySelector('[data-key="' + key + '"]');
+        if (el) el.innerHTML = state[key];
+      });
+    }
+
+    // 保存到 localStorage
+    function save() {
+      try {
+        const state = collectState();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        setStatus('💾 已保存到浏览器本地 ' + new Date().toLocaleTimeString(), 'saved');
+      } catch (e) {
+        setStatus('❌ 保存失败：' + e.message, 'error');
+      }
+    }
+
+    // 加载 localStorage
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        const state = JSON.parse(raw);
+        applyState(state);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // 保存初始版本（首次进入时）
+    function ensureOriginal() {
+      if (!localStorage.getItem(ORIGINAL_KEY)) {
+        const state = collectState();
+        localStorage.setItem(ORIGINAL_KEY, JSON.stringify(state));
+      }
+    }
+
+    // 恢复初始
+    function restore() {
+      if (!confirm('确定要恢复初始版本吗？当前的修改会被覆盖。')) return;
+      try {
+        const raw = localStorage.getItem(ORIGINAL_KEY);
+        if (!raw) { setStatus('⚠ 没找到初始版本', 'error'); return; }
+        const state = JSON.parse(raw);
+        applyState(state);
+        localStorage.removeItem(STORAGE_KEY);
+        setStatus('↩ 已恢复初始', 'saved');
+      } catch (e) {
+        setStatus('❌ 恢复失败：' + e.message, 'error');
+      }
+    }
+
+    // 导出 HTML 文件
+    function exportHTML() {
+      // 取整个文档序列化（含当前编辑结果），保存为新文件
+      const clone = document.documentElement.cloneNode(true);
+      // 把编辑工具栏和状态从克隆里去掉，只保留可读内容
+      const tb = clone.querySelector('#toolbar');
+      if (tb) tb.remove();
+      // 把 contenteditable 标记全部清掉
+      clone.querySelectorAll('[contenteditable]').forEach(function(el) {
+        el.removeAttribute('contenteditable');
+      });
+      const doctype = '<!DOCTYPE html>\n';
+      const html = doctype + clone.outerHTML;
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const ts = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      a.href = url;
+      a.download = '网盘推广完整作战手册_可编辑版_' + ts + '.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+      setStatus('📤 已导出 ' + a.download, 'saved');
+    }
+
+    // 表格加行 / 删行
+    function bindTableButtons() {
+      document.querySelectorAll('.add-row-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const targetKey = btn.getAttribute('data-target');
+          const table = document.querySelector('table[data-key="' + targetKey + '"]');
+          if (!table) return;
+          const tbody = table.tBodies[0];
+          if (!tbody) return;
+          const cols = table.tHead.rows[0].cells.length;
+          const tr = document.createElement('tr');
+          for (let i = 0; i < cols; i++) {
+            const td = document.createElement('td');
+            td.innerHTML = '<span style="color:#9ca3af">新内容</span>';
+            tr.appendChild(td);
+          }
+          tbody.appendChild(tr);
+          // 给新行加个临时"删除"按钮（仅编辑模式可见）
+          tr.addEventListener('contextmenu', function(e) {
+            if (!body.classList.contains('edit-mode')) return;
+            e.preventDefault();
+            if (confirm('删除这一行？')) tr.remove();
+          });
+        });
+      });
+    }
+
+    // 绑定事件
+    document.getElementById('btnEdit').addEventListener('click', enterEdit);
+    document.getElementById('btnEditOff').addEventListener('click', exitEdit);
+    document.getElementById('btnSave').addEventListener('click', save);
+    document.getElementById('btnRestore').addEventListener('click', restore);
+    document.getElementById('btnExport').addEventListener('click', exportHTML);
+
+    // 编辑中 1.5 秒静默自动保存（去抖）
+    let autoSaveTimer = null;
+    document.addEventListener('input', function() {
+      if (!body.classList.contains('edit-mode')) return;
+      clearTimeout(autoSaveTimer);
+      setStatus('✏️ 编辑中（自动保存中…）', '');
+      autoSaveTimer = setTimeout(function() {
+        save();
+      }, 1500);
+    });
+
+    // 快捷键：Ctrl/Cmd + S 手动保存
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        save();
+      }
+    });
+
+    // 启动：先存初始，再尝试加载已保存版本
+    ensureOriginal();
+    const loaded = load();
+    bindTableButtons();
+    if (loaded) {
+      setStatus('✅ 已恢复上次编辑 ' + new Date().toLocaleString(), 'saved');
+    } else {
+      setStatus('已加载初始版本（点 ✏️ 进入编辑）', '');
+    }
+  })();
+  </script>
+</body>
+</html>

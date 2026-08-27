@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>申论评分 · 求是申论素材库</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; margin: 0; background: #f4f6fb; color: #1f2430; }
+  header { background: linear-gradient(135deg,#c0392b,#e74c3c); color:#fff; padding:14px 18px; }
+  header h1 { margin:0; font-size:19px; }
+  header p { margin:4px 0 0; font-size:12px; opacity:.9; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 14px; }
+  .card { background:#fff; border-radius:10px; padding:14px; margin-bottom:14px; box-shadow:0 1px 4px rgba(0,0,0,.06); }
+  .card h2 { margin:0 0 10px; font-size:15px; color:#c0392b; }
+  label { display:block; font-size:13px; margin:8px 0 4px; color:#444; }
+  input[type=text], textarea, select { width:100%; padding:8px; border:1px solid #d6dae2; border-radius:6px; font-size:13px; font-family:inherit; }
+  textarea { min-height:70px; resize:vertical; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; }
+  .row > div { flex:1; min-width:160px; }
+  button { cursor:pointer; border:none; border-radius:6px; padding:8px 14px; font-size:13px; background:#c0392b; color:#fff; }
+  button.sec { background:#7f8c9a; }
+  button.ghost { background:#eef1f6; color:#333; }
+  button:hover { opacity:.9; }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .chip { background:#fdecea; color:#c0392b; border:1px solid #f5c6c0; padding:5px 10px; border-radius:16px; font-size:13px; cursor:pointer; }
+  .chip.on { background:#c0392b; color:#fff; }
+  .chip .x { margin-left:6px; opacity:.7; }
+  .rec { border:1px solid #e6e9ef; border-radius:8px; padding:10px; margin-top:10px; }
+  .rec .top { display:flex; justify-content:space-between; align-items:center; }
+  .rec .meta { font-size:12px; color:#888; }
+  .rec .body { font-size:13px; white-space:pre-wrap; margin-top:6px; }
+  .pill { display:inline-block; background:#eef1f6; border-radius:10px; padding:2px 8px; font-size:12px; margin:2px 4px 2px 0; }
+  .scorebar { height:8px; background:#eee; border-radius:4px; overflow:hidden; margin-top:4px; }
+  .scorebar > i { display:block; height:100%; background:#27ae60; }
+  img.shot { max-width:120px; max-height:120px; border-radius:6px; border:1px solid #ddd; margin:4px 4px 0 0; }
+  .hint { font-size:12px; color:#999; margin-top:6px; }
+  .hidden { display:none; }
+  .tabbtns { display:flex; gap:6px; margin-bottom:10px; }
+  .tabbtns button { background:#eef1f6; color:#333; }
+  .tabbtns button.on { background:#c0392b; color:#fff; }
+</style>
+</head>
+<body>
+<header>
+  <h1>申论评分 · 求是申论素材库</h1>
+  <p>写答案 / 拍照上传 / 录各家答案 → 导出发 WorkBuddy 分析 → 粘回 AI 分析。同套题多次练习独立留痕、可对比。</p>
+</header>
+<div class="wrap">
+
+  <div class="card">
+    <h2>① 选择 / 新增 套题</h2>
+    <div class="row">
+      <div><input type="text" id="taotiInput" placeholder="如：国考2024副省级 / 黑龙江省考2025执法"></div>
+      <div style="flex:0 0 auto"><button onclick="addTaoti()">+ 新增套题</button></div>
+    </div>
+    <div class="chips" id="taotiChips"></div>
+    <p class="hint">提示：套题名建议和「真题库」里的卷名一致，方便对应。点套题名即可选中，下方录入该题的练习。</p>
+  </div>
+
+  <div class="card hidden" id="practiceCard">
+    <h2>② 新增练习记录（<span id="curTaoti"></span>）</h2>
+    <div class="row">
+      <div><label>题号 / 题型</label><input type="text" id="seq" placeholder="如：题1 概括归纳"></div>
+      <div><label>自评得分（可选）</label><input type="text" id="selfScore" placeholder="0-100 或 X/分"></div>
+    </div>
+    <label>我的答案（可手打要点，或拍照后转写）</label>
+    <textarea id="myAnswer" placeholder="在这里写你的答案……"></textarea>
+    <label>拍照上传（手写卷 / 答题纸，存证用）</label>
+    <input type="file" id="photo" accept="image/*" multiple>
+    <div id="photoPrev"></div>
+
+    <label>各家答案（综合评分时参考）</label>
+    <div class="row">
+      <div><label>中公</label><textarea id="aZg" placeholder="中公答案要点"></textarea></div>
+      <div><label>华图</label><textarea id="aHt" placeholder="华图答案要点"></textarea></div>
+    </div>
+    <div class="row">
+      <div><label>粉笔</label><textarea id="aFb" placeholder="粉笔答案要点"></textarea></div>
+      <div><label>AI综合答案</label><textarea id="aAi" placeholder="素材库里的 AI 综合答案"></textarea></div>
+    </div>
+
+    <label>AI 分析（把 WorkBuddy 给的评分/优劣势/建议粘这里，永久留存）</label>
+    <textarea id="aiAnalysis" placeholder="导出发 WorkBuddy 分析后，把结论粘回来"></textarea>
+
+    <div style="margin-top:10px; display:flex; gap:8px;">
+      <button onclick="saveRecord()">保存这条练习</button>
+      <button class="sec" onclick="exportOne()">导出发 WorkBuddy 分析</button>
+      <button class="ghost" onclick="clearForm()">清空表单</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="listCard">
+    <h2>③ 本题套练习记录（<span id="curTaoti2"></span>）</h2>
+    <div id="scoreTrend"></div>
+    <div id="recList"></div>
+    <p class="hint">同一套题做了多次会全部保留，可展开对比；点「导出」生成 txt 发给 WorkBuddy 要评分。</p>
+  </div>
+
+  <div class="card">
+    <h2>数据</h2>
+    <div class="row">
+      <button class="ghost" onclick="exportAll()">导出全部（发给 WorkBuddy / 备份）</button>
+      <button class="ghost" onclick="importFile()">导入备份</button>
+      <input type="file" id="importInput" accept=".json" class="hidden">
+    </div>
+    <p class="hint">数据自动存到本文件夹 data.json。要手机也能看：把 data.json 放进夸克网盘同步目录即可。</p>
+  </div>
+
+</div>
+
+<script>
+let state = { taoti: [], records: [] };
+let active = null;
+let photos = [];
+
+const $ = id => document.getElementById(id);
+
+async function load() {
+  try {
+    const r = await fetch("/api/load");
+    state = await r.json();
+  } catch (e) { console.log("load fail", e); }
+  if (!state.records) state.records = [];
+  if (!state.taoti) state.taoti = [];
+  renderTaoti();
+  if (!active && state.taoti.length) selectTaoti(state.taoti[0]);
+}
+async function save() {
+  try {
+    await fetch("/api/save", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(state) });
+  } catch (e) { alert("保存失败：" + e); }
+}
+function renderTaoti() {
+  const c = $("taotiChips"); c.innerHTML = "";
+  state.taoti.forEach(t => {
+    const el = document.createElement("span");
+    el.className = "chip" + (t === active ? " on" : "");
+    el.innerHTML = t + ' <span class="x" onclick="delTaoti(event,\'' + t.replace(/'/g,"\\'") + '\')">×</span>';
+    el.onclick = (e) => { if (e.target.className !== "x") selectTaoti(t); };
+    c.appendChild(el);
+  });
+}
+function addTaoti() {
+  const v = $("taotiInput").value.trim();
+  if (!v) return;
+  if (!state.taoti.includes(v)) { state.taoti.push(v); save(); }
+  $("taotiInput").value = "";
+  selectTaoti(v);
+}
+function delTaoti(e, t) {
+  e.stopPropagation();
+  if (!confirm("删除套题「" + t + "」？其下练习记录也会一起删。")) return;
+  state.taoti = state.taoti.filter(x => x !== t);
+  state.records = state.records.filter(r => r.taoti !== t);
+  if (active === t) active = null;
+  save(); renderTaoti();
+  $("practiceCard").classList.add("hidden"); $("listCard").classList.add("hidden");
+}
+function selectTaoti(t) {
+  active = t;
+  renderTaoti();
+  $("practiceCard").classList.remove("hidden");
+  $("listCard").classList.remove("hidden");
+  $("curTaoti").textContent = t; $("curTaoti2").textContent = t;
+  clearForm();
+  renderList();
+}
+function clearForm() {
+  ["seq","selfScore","myAnswer","aZg","aHt","aFb","aAi","aiAnalysis"].forEach(id => $(id).value = "");
+  photos = []; $("photoPrev").innerHTML = "";
+}
+$("photo").addEventListener("change", e => {
+  [...e.target.files].forEach(f => {
+    const rd = new FileReader();
+    rd.onload = ev => {
+      photos.push(ev.target.result);
+      const img = document.createElement("img");
+      img.className = "shot"; img.src = ev.target.result;
+      $("photoPrev").appendChild(img);
+    };
+    rd.readAsDataURL(f);
+  });
+});
+function saveRecord() {
+  if (!active) { alert("请先选择套题"); return; }
+  const rec = {
+    id: Date.now() + "_" + Math.random().toString(36).slice(2,7),
+    taoti: active,
+    seq: $("seq").value.trim(),
+    myAnswer: $("myAnswer").value.trim(),
+    photos: photos.slice(),
+    answers: { 中公:$("aZg").value.trim(), 华图:$("aHt").value.trim(), 粉笔:$("aFb").value.trim(), AI:$("aAi").value.trim() },
+    selfScore: $("selfScore").value.trim(),
+    aiAnalysis: $("aiAnalysis").value.trim(),
+    ts: new Date().toISOString()
+  };
+  state.records.push(rec);
+  save();
+  clearForm();
+  renderList();
+  alert("已保存。同一套题可多次练习，全部留痕。");
+}
+function renderList() {
+  const recs = state.records.filter(r => r.taoti === active).sort((a,b)=>b.ts.localeCompare(a.ts));
+  // trend
+  const trend = $("scoreTrend"); trend.innerHTML = "";
+  const scored = recs.filter(r => r.selfScore && !isNaN(parseFloat(r.selfScore)));
+  if (scored.length) {
+    const title = document.createElement("div");
+    title.style.fontSize = "12px"; title.style.color = "#888"; title.style.margin = "6px 0";
+    title.textContent = "得分趋势（" + scored.length + " 次）";
+    trend.appendChild(title);
+    scored.forEach(r => {
+      const v = parseFloat(r.selfScore);
+      const bar = document.createElement("div"); bar.className = "scorebar";
+      bar.innerHTML = '<i style="width:' + Math.max(0,Math.min(100,v)) + '%"></i>';
+      const lab = document.createElement("div"); lab.style.fontSize="11px"; lab.style.color="#666";
+      lab.textContent = (r.seq||"未命名") + " · " + r.selfScore + " · " + r.ts.slice(0,10);
+      trend.appendChild(lab); trend.appendChild(bar);
+    });
+  }
+  const list = $("recList"); list.innerHTML = "";
+  recs.forEach(r => {
+    const d = document.createElement("div"); d.className = "rec";
+    const top = document.createElement("div"); top.className = "top";
+    top.innerHTML = '<b>' + (r.seq||"未命名") + '</b><span class="meta">' + r.ts.slice(0,16).replace("T"," ") + (r.selfScore?' · 自评 '+r.selfScore:'') + '</span>';
+    d.appendChild(top);
+    if (r.photos && r.photos.length) {
+      const pg = document.createElement("div");
+      r.photos.forEach(p => { const i=document.createElement("img"); i.className="shot"; i.src=p; pg.appendChild(i); });
+      d.appendChild(pg);
+    }
+    const b = document.createElement("div"); b.className="body";
+    b.textContent = "我的答案：" + (r.myAnswer || "（无）");
+    d.appendChild(b);
+    if (r.aiAnalysis) {
+      const a = document.createElement("div"); a.className="body"; a.style.background="#f0f7ff"; padding="8px"; borderRadius="6px";
+      a.innerHTML = "<b>AI 分析：</b><br>" + escapeHtml(r.aiAnalysis);
+      d.appendChild(a);
+    }
+    const ops = document.createElement("div"); ops.style.marginTop="8px";
+    ops.innerHTML = '<button class="ghost" onclick="exportOne(\''+r.id+'\')">导出</button> <button class="sec" onclick="delRec(\''+r.id+'\')">删除</button>';
+    d.appendChild(ops);
+    list.appendChild(d);
+  });
+}
+function escapeHtml(s){ return s.replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+function delRec(id) {
+  if (!confirm("删除这条练习？")) return;
+  state.records = state.records.filter(r => r.id !== id);
+  save(); renderList();
+}
+function buildText(rec) {
+  let s = "【套题】" + rec.taoti + "\n【题号/题型】" + (rec.seq||"") + "\n【我的答案】\n" + (rec.myAnswer||"") + "\n";
+  s += "\n【各家答案】\n中公：\n" + (rec.answers.中公||"") + "\n华图：\n" + (rec.answers.华图||"") + "\n粉笔：\n" + (rec.answers.粉笔||"") + "\nAI综合：\n" + (rec.answers.AI||"") + "\n";
+  s += "\n【之前 AI 分析（如有）】\n" + (rec.aiAnalysis||"（无）") + "\n";
+  s += "\n---\n请基于以上信息，对我的答案评分（百分制或按分值），指出优势、劣势、所处水平档位，并给出后续提升建议。";
+  return s;
+}
+function download(name, text) {
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = name; a.click();
+}
+function exportOne(id) {
+  let recs = state.records.filter(r => r.taoti === active);
+  if (id) recs = recs.filter(r => r.id === id);
+  if (!recs.length) { alert("没有可导出的记录"); return; }
+  const txt = recs.map(buildText).join("\n\n==========\n\n");
+  download((active||"申论") + "_发给WorkBuddy分析.txt", txt);
+}
+function exportAll() {
+  download("申论评分全部记录.json", JSON.stringify(state, null, 2));
+}
+function importFile() {
+  $("importInput").click();
+}
+$("importInput").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = ev => {
+    try {
+      const d = JSON.parse(ev.target.result);
+      if (d.records) { state = d; save(); renderTaoti(); if(active) selectTaoti(active); alert("导入成功"); }
+    } catch(err) { alert("导入失败：" + err); }
+  };
+  rd.readAsText(f);
+});
+
+load();
+</script>
+</body>
+</html>

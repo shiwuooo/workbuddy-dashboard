@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>行测 AI 一对一教练</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header>
+  <h1>行测 AI 一对一教练</h1>
+  <nav>
+    <button data-view="setup" class="navbtn active">组卷</button>
+    <button data-view="profile" class="navbtn">学情档案</button>
+  </nav>
+</header>
+
+<!-- 组卷 -->
+<section id="setup" class="view">
+  <h2>第一步：选怎么刷</h2>
+  <div class="mode">
+    <label><input type="radio" name="mode" value="paper" checked> 整套真题卷</label>
+    <label><input type="radio" name="mode" value="custom"> 自定义组卷（自己定题数 / 模块）</label>
+  </div>
+  <div id="paperBox">
+    <p>选一套真题卷：</p>
+    <select id="paperSel"></select>
+  </div>
+  <div id="customBox" style="display:none">
+    <p>选模块（可多选）：</p>
+    <div id="modBtns"></div>
+    <p>每组题数：<input type="number" id="nQ" value="20" min="5" max="300"> 题</p>
+  </div>
+  <button id="startBtn" class="primary">开始答题</button>
+  <p class="hint">做题时全程无 AI 打扰；交卷后 AI 统一复盘并建档。</p>
+</section>
+
+<!-- 答题 -->
+<section id="exam" class="view" style="display:none">
+  <div class="exambar">
+    <span id="timer">00:00</span>
+    <span id="progress">第 1 / 1 题</span>
+    <button id="submitBtn" class="primary">交卷</button>
+  </div>
+  <div id="qbox"></div>
+  <div class="navbtns">
+    <button id="prevBtn">上一题</button>
+    <button id="nextBtn">下一题</button>
+  </div>
+</section>
+
+<!-- 复盘 -->
+<section id="report" class="view" style="display:none">
+  <h2>复盘报告</h2>
+  <div id="reportBody"></div>
+  <hr>
+  <h3>AI 一对一教练（桥接 DeepSeek 免费模型）</h3>
+  <p class="hint">点"生成教练 Prompt"→ 复制去 OpenCode 问（已选 DeepSeek V4 Flash + High）→ 把回答贴回下方保存。</p>
+  <button id="genPromptBtn">生成教练 Prompt</button>
+  <textarea id="promptBox" placeholder="点击上方按钮生成"></textarea>
+  <button id="copyPromptBtn">复制 Prompt</button>
+  <textarea id="aiReply" placeholder="把 AI 的回答贴在这里"></textarea>
+  <button id="saveAiBtn">保存 AI 建议到档案</button>
+  <div id="aiSaved"></div>
+  <button id="backSetup" class="primary">再刷一套</button>
+</section>
+
+<!-- 学情档案 -->
+<section id="profile" class="view" style="display:none">
+  <h2>学情档案</h2>
+  <div id="profileBody"></div>
+</section>
+
+<script src="./app.js"></script>
+</body>
+</html>

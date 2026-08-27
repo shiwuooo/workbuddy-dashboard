@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自动化总控面板</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1f2933;--muted:#6b7280;--line:#e5e7eb;
+--accent:#2563eb;--accent2:#1e3a8a;--green:#16a34a;--red:#dc2626;--amber:#d97706;--violet:#7c3aed}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
+.top{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 18px}
+.top h1{font-size:18px;margin:0;color:var(--accent2);display:inline-block}
+.top .sub{color:var(--muted);font-size:12px;margin-left:8px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.bar input[type=text]{padding:7px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;width:220px}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 13px;font-size:13px;cursor:pointer;color:var(--ink)}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.primary:hover{background:#1d4ed8;color:#fff}
+.btn.danger{border-color:#fca5a5;color:var(--red)}
+.btn.sm{padding:4px 9px;font-size:12px}
+.stats{display:flex;gap:14px;flex-wrap:wrap;margin:14px 18px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:90px}
+.stat b{display:block;font-size:20px;color:var(--accent2)}
+.stat span{font-size:12px;color:var(--muted)}
+.wrap{padding:14px 18px 80px;max-width:1280px;margin:0 auto}
+.sec-title{font-size:15px;font-weight:700;color:var(--accent2);margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-title .badge{font-size:11px;background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe;padding:1px 8px;border-radius:999px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 15px;position:relative}
+.card .nm{font-weight:700;font-size:15px;color:var(--ink);word-break:break-all}
+.card .id{font-size:11px;color:#9ca3af;margin-top:1px;word-break:break-all}
+.card .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.tag{font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted);background:#f9fafb}
+.tag.green{background:#f0fdf4;color:var(--green);border-color:#bbf7d0}
+.tag.red{background:#fef2f2;color:var(--red);border-color:#fecaca}
+.tag.amber{background:#fffbeb;color:var(--amber);border-color:#fde68a}
+.tag.violet{background:#f5f3ff;color:var(--violet);border-color:#ddd6fe}
+.tag.blue{background:#eff6ff;color:var(--accent);border-color:#bfdbfe}
+.card .meta{font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.5}
+.card .acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.rep{margin-top:8px;font-size:12px;border-top:1px dashed var(--line);padding-top:7px;color:var(--muted)}
+.rep.ok{color:var(--green)} .rep.err{color:var(--red)} .rep.q{color:var(--violet)} .rep.run{color:var(--amber)}
+/* 透明文件夹 */
+.folder{border:2px dashed #cbd5e1;border-radius:14px;padding:12px;margin-bottom:14px;background:rgba(241,245,249,.35)}
+.folder .fh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.folder .fh .fn{font-weight:700;color:var(--accent2)}
+.folder .fh .cnt{font-size:12px;color:var(--muted)}
+.folder .grid{margin-top:4px}
+/* 启动区 */
+.startzone{background:linear-gradient(180deg,#eff6ff,#f8fafc);border:1px solid #bfdbfe;border-radius:14px;padding:14px;margin-bottom:8px}
+.startzone .zh{font-weight:700;color:var(--accent2);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.startzone .grid .card{border-color:#bfdbfe}
+/* 弹窗 */
+.modal{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:50;align-items:center;justify-content:center;padding:18px}
+.modal.open{display:flex}
+.mbox{background:#fff;border-radius:14px;max-width:560px;width:100%;max-height:88vh;overflow:auto;padding:20px 22px}
+.mbox h3{margin:0 0 14px;color:var(--accent2)}
+.mbox label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+.mbox input,.mbox textarea,.mbox select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit}
+.mbox textarea{height:70px;resize:vertical}
+.mbox .macts{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+pre.out{background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;max-height:320px;overflow:auto;font-size:12px;white-space:pre-wrap;word-break:break-all}
+.hint{font-size:12px;color:var(--muted);background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin:8px 18px}
+@media(max-width:640px){.bar input[type=text]{width:100%}.stat{flex:1}}
+</style>
+</head>
+<body>
+<div class="top">
+  <h1>🗂️ 自动化总控面板</h1><span class="sub">本机 WorkBuddy 自动化统一编排 · 双击启动面板.bat 使用</span>
+  <div class="bar">
+    <input type="text" id="search" placeholder="搜索名称/ID/用途…" oninput="render()">
+    <select id="filterCat" onchange="render()" class="btn"><option value="">全部分类</option></select>
+    <button class="btn" onclick="toggleDeleted()">显示已删除</button>
+    <button class="btn primary" onclick="runAll()">▶ 一键启动（启动区）</button>
+    <button class="btn primary" onclick="runSelected()">▶ 选择性启动</button>
+    <button class="btn" onclick="refresh()">↻ 刷新</button>
+    <button class="btn" onclick="addFolder()">＋ 新建文件夹</button>
+    <button class="btn" onclick="exportCfg()">⤓ 导出配置</button>
+    <button class="btn" onclick="importCfg()">⤒ 导入配置</button>
+  </div>
+</div>
+
+<div class="stats" id="stats"></div>
+<div class="hint" id="hint">提示：勾选卡片左上角复选框可选中，用「选择性启动」批量跑。AI 类自动化点运行后会进入 <b>queue/</b> 队列，由 WorkBuddy 内常驻「总控执行器」自动化取队列执行并回写报告。</div>
+
+<div class="wrap">
+  <div class="sec-title">🚀 一键启动区 <span class="badge" id="szCount">0</span></div>
+  <div class="startzone"><div class="zh"><span>放在这里的，点「一键启动」才会跑；移出去的不会跑</span><button class="btn sm" onclick="runAll()">▶ 启动本区全部</button></div>
+    <div class="grid" id="startzone"></div>
+  </div>
+
+  <div class="sec-title">📁 透明文件夹（手动归类，移入移出自由）</div>
+  <div id="folders"></div>
+
+  <div class="sec-title">📋 全部自动化 <span class="badge" id="allCount">0</span></div>
+  <div class="grid" id="all"></div>
+</div>
+
+<!-- 编辑弹窗 -->
+<div class="modal" id="editM"><div class="mbox">
+  <h3>编辑自动化</h3>
+  <label>显示名称</label><input id="e_name">
+  <label>备注 / 介绍</label><textarea id="e_notes"></textarea>
+  <label>分类标签</label><input id="e_cat">
+  <label>归入文件夹</label><select id="e_folder"><option value="">（不归类）</option></select>
+  <label>预约启动时间（如 2026-08-25 09:00，留空不预约）</label><input id="e_sch" placeholder="2026-08-25 09:00">
+  <label style="display:flex;align-items:center;gap:8px;margin-top:12px"><input type="checkbox" id="e_zone" style="width:auto"> 加入一键启动区</label>
+  <div class="macts"><button class="btn" onclick="closeM('editM')">取消</button><button class="btn primary" onclick="saveEdit()">保存</button></div>
+</div></div>
+
+<!-- 报告弹窗 -->
+<div class="modal" id="repM"><div class="mbox">
+  <h3 id="repTitle">运行报告</h3>
+  <div id="repBody"></div>
+  <div class="macts"><button class="btn primary" onclick="closeM('repM')">关闭</button></div>
+</div></div>
+
+<input type="file" id="impFile" accept=".json" style="display:none" onchange="doImport(this)">
+
+<script>
+let AUTOS=[], CONFIG={folders:[],items:{}}, showDel=false, editing=null, selected=new Set();
+
+async function api(u,m){const r=await fetch(u,{method:m||'GET',headers:{'Content-Type':'application/json'}});return r.json();}
+async function refresh(){AUTOS=await api('/api/automations');CONFIG=await api('/api/config');buildCatFilter();render();}
+function buildCatFilter(){const s=document.getElementById('filterCat');const cats=[...new Set(AUTOS.map(a=>a.category))].sort();s.innerHTML='<option value="">全部分类</option>'+cats.map(c=>`<option>${c}</option>`).join('');}
+
+function visible(){const q=(document.getElementById('search').value||'').toLowerCase();const cat=document.getElementById('filterCat').value;
+  return AUTOS.filter(a=>{
+    if(a.deleted&&!showDel)return false;
+    if(cat&&a.category!==cat)return false;
+    if(q&&!(a.displayName+a.id+a.purpose).toLowerCase().includes(q))return false;
+    return true;});}
+
+function gItem(id){return CONFIG.items[id]||{};}
+function conflictBadge(g){const m={io_heavy:['重IO互斥','red'],shenlun_site:['站点重建竞态','amber'],bank_write:['题库写竞态','amber'],sidechain:['依赖链','blue'],review:['低风险','green'],switch:['总闸·排除','red'],guard:['守护耦合','violet']};const x=m[g]||['其他',''];return `<span class="tag ${x[1]}">${x[0]}</span>`;}
+
+function cardHTML(a){
+  const it=gItem(a.id);const del=a.deleted?'<span class="tag red">已删除</span>':'';
+  const st=a.status==='ACTIVE'?'<span class="tag green">运行中</span>':a.status==='PAUSED'?'<span class="tag amber">已暂停</span>':`<span class="tag">${a.status||''}</span>`;
+  const r=a.report||{};let rep='';
+  if(r.status){const cls=r.status==='success'?'ok':r.status==='error'?'err':r.status==='queued'?'q':'run';
+    rep=`<div class="rep ${cls}">📊 ${r.status==='queued'?'已入队':r.status==='running'?'运行中…':'上次: '+r.status} · ${r.started_at||''} · ${r.duration_sec!=null?r.duration_sec+'s':''} ${r.additions!=null?'· 新增'+r.additions:''} ${r.deletions!=null?'· 删除'+r.deletions:''}</div>`;}
+  return `<div class="card">
+    <input type="checkbox" style="position:absolute;top:10px;right:10px" ${selected.has(a.id)?'checked':''} onchange="toggleSel('${a.id}',this.checked)">
+    <div class="nm">${a.displayName}</div><div class="id">${a.id}</div>
+    <div class="row">${st}${conflictBadge(a.conflict_group)}${del}<span class="tag blue">${a.category}</span></div>
+    <div class="meta">📁 ${a.workspace} · 🕓 创建 ${a.created_at}<br>🏃 最近 ${a.last_run_at||'无'} · 用途: ${(a.purpose||'').slice(0,80)}</div>
+    ${rep}
+    <div class="acts">
+      <button class="btn sm primary" onclick="runOne('${a.id}')">▶ 运行</button>
+      <button class="btn sm" onclick="openEdit('${a.id}')">✎ 编辑</button>
+      <button class="btn sm" onclick="openRep('${a.id}')">📊 报告</button>
+      <button class="btn sm" onclick="toggleZone('${a.id}')">${it.inStartZone?'移出启动区':'加入启动区'}</button>
+      <button class="btn sm" onclick="moveFolder('${a.id}')">📁 归组</button>
+    </div></div>`;
+}
+
+function render(){
+  const vis=visible();
+  // 统计
+  const live=AUTOS.filter(a=>!a.deleted).length;
+  const inzone=vis.filter(a=>gItem(a.id).inStartZone&&!a.deleted).length;
+  const errs=AUTOS.filter(a=>a.last_error).length;
+  document.getElementById('stats').innerHTML=
+    `<div class="stat"><b>${AUTOS.length}</b><span>总记录(含删除)</span></div>
+     <div class="stat"><b>${live}</b><span>存活</span></div>
+     <div class="stat"><b>${inzone}</b><span>在启动区</span></div>
+     <div class="stat"><b style="color:var(--red)">${errs}</b><span>有错误</span></div>`;
+  // 启动区
+  const sz=vis.filter(a=>gItem(a.id).inStartZone&&!a.deleted);
+  document.getElementById('szCount').textContent=sz.length;
+  document.getElementById('startzone').innerHTML=sz.length?sz.map(cardHTML).join(''):'<div class="meta">（空）把卡片「加入启动区」即可在这里一键启动</div>';
+  // 文件夹
+  const fc=document.getElementById('folders');const folders=CONFIG.folders||[];
+  let fh='';
+  folders.forEach(f=>{const mem=vis.filter(a=>gItem(a.id).folder===f.id&&!a.deleted);
+    fh+=`<div class="folder"><div class="fh"><span class="fn">📂 ${f.name}</span><span class="cnt">${mem.length} 个</span>
+      <button class="btn sm" onclick="delFolder('${f.id}')">删除组</button></div>
+      <div class="grid">${mem.length?mem.map(cardHTML).join(''):'<div class="meta">（空）点卡片「归组」选本组</div>'}</div></div>`;});
+  fc.innerHTML=fh||'<div class="meta">还没有文件夹，点「新建文件夹」。</div>';
+  // 全部
+  const all=vis.filter(a=>!gItem(a.id).inStartZone);
+  document.getElementById('allCount').textContent=all.length;
+  document.getElementById('all').innerHTML=all.map(cardHTML).join('')||'<div class="meta">无</div>';
+}
+
+function toggleDeleted(){showDel=!showDel;render();}
+function toggleSel(id,v){if(v)selected.add(id);else selected.delete(id);}
+async function runOne(id){await api('/api/run/'+id,'POST');refresh();pollRep(id);}
+function pollRep(id){let n=0;const t=setInterval(async()=>{const r=await api('/api/report/'+id);if(r&&r.status&&r.status!=='running'){clearInterval(t);refresh();}if(++n>40)clearInterval(t);},2000);}
+async function runAll(){const ids=AUTOS.filter(a=>gItem(a.id).inStartZone&&!a.deleted).map(a=>a.id);if(!ids.length){alert('启动区为空');return;}if(!confirm('将串行启动启动区内 '+ids.length+' 个自动化（AI类入队由执行器跑），确认？'))return;await api('/api/run_all','POST');refresh();ids.forEach(pollRep);}
+async function runSelected(){const ids=[...selected].filter(id=>!AUTOS.find(a=>a.id===id||0)?.deleted);if(!ids.length){alert('请先勾选卡片');return;}await api('/api/run_selected','POST',{ids});refresh();ids.forEach(pollRep);}
+async function apiPost(u,obj){return api(u,'POST',obj);}
+// 给 fetch POST 带 body
+async function api(u,m,body){const r=await fetch(u,{method:m,headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return r.json();}
+
+function toggleZone(id){const it=CONFIG.items[id]||(CONFIG.items[id]={});it.inStartZone=!it.inStartZone;saveCfg();}
+async function saveCfg(){await api('/api/config','POST',CONFIG);refresh();}
+
+function openEdit(id){editing=id;const a=AUTOS.find(x=>x.id===id);const it=gItem(id);
+  document.getElementById('e_name').value=it.displayName||a.displayName;
+  document.getElementById('e_notes').value=it.notes||'';
+  document.getElementById('e_cat').value=it.category||a.category;
+  const fs=document.getElementById('e_folder');fs.innerHTML='<option value="">（不归类）</option>'+(CONFIG.folders||[]).map(f=>`<option value="${f.id}">${f.name}</option>`).join('');
+  fs.value=it.folder||'';
+  document.getElementById('e_sch').value=it.schedule||'';
+  document.getElementById('e_zone').checked=!!it.inStartZone;
+  document.getElementById('editM').classList.add('open');}
+async function saveEdit(){const it=CONFIG.items[editing]||(CONFIG.items[editing]={});
+  it.displayName=document.getElementById('e_name').value;
+  it.notes=document.getElementById('e_notes').value;
+  it.category=document.getElementById('e_cat').value;
+  it.folder=document.getElementById('e_folder').value||null;
+  it.schedule=document.getElementById('e_sch').value||null;
+  it.inStartZone=document.getElementById('e_zone').checked;
+  closeM('editM');await saveCfg();}
+function moveFolder(id){const f=prompt('输入文件夹名（已有则填同名）:');if(!f)return;let fob=(CONFIG.folders||[]).find(x=>x.name===f);if(!fob){fob={id:'f'+Date.now(),name:f};CONFIG.folders=CONFIG.folders||[];CONFIG.folders.push(fob);}const it=CONFIG.items[id]||(CONFIG.items[id]={});it.folder=fob.id;saveCfg();}
+function addFolder(){const f=prompt('文件夹名称:');if(!f)return;CONFIG.folders=CONFIG.folders||[];CONFIG.folders.push({id:'f'+Date.now(),name:f});saveCfg();}
+function delFolder(fid){if(!confirm('删除该分组（成员回到全部列表）？'))return;CONFIG.folders=CONFIG.folders.filter(f=>f.id!==fid);for(const k in CONFIG.items)if(CONFIG.items[k].folder===fid)CONFIG.items[k].folder=null;saveCfg();}
+
+async function openRep(id){const r=await api('/api/report/'+id);const a=AUTOS.find(x=>x.id===id);
+  document.getElementById('repTitle').textContent='📊 '+a.displayName+' · 运行报告';
+  let h='';if(!r||!r.status){h='<div class="meta">暂无运行记录，点「运行」后这里显示本次结果。</div>';}
+  else{h=`<div class="rep ${r.status==='success'?'ok':r.status==='error'?'err':r.status==='queued'?'q':'run'}" style="border:0;padding:0;font-size:13px">
+    状态: <b>${r.status}</b> · 开始 ${r.started_at} · 结束 ${r.finished_at} · 用时 ${r.duration_sec}s<br>
+    退出码: ${r.exit_code??'-'} · 新增 ${r.additions??'-'} · 删除 ${r.deletions??'-'}<br>
+    摘要: ${r.summary}</div>`;
+    if(r.errors)h+=`<div style="margin-top:10px;font-size:12px;color:var(--red)">⚠️ 错误输出(末尾):<br><pre class="out">${esc(r.errors)}</pre></div>`;
+    if(r.output_excerpt)h+=`<div style="margin-top:10px;font-size:12px">输出摘要:<br><pre class="out">${esc(r.output_excerpt)}</pre></div>`;}
+  document.getElementById('repBody').innerHTML=h;document.getElementById('repM').classList.add('open');}
+function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function exportCfg(){const b=JSON.stringify(CONFIG,null,2);const u=URL.createObjectURL(new Blob([b],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download='自动化总控配置.json';a.click();}
+function importCfg(){document.getElementById('impFile').click();}
+async function doImport(inp){const f=inp.files[0];if(!f)return;const t=await f.text();try{CONFIG=JSON.parse(t);await saveCfg();alert('导入成功');}catch(e){alert('导入失败: '+e);}}
+
+refresh();
+</script>
+</body>
+</html>

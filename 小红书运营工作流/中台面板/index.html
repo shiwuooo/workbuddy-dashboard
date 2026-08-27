@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>爆款作战中台 · 上岸号</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f4f6fa;color:#1f2733;font-size:14px}
+.app{display:flex;min-height:100vh}
+.side{width:218px;background:#1f2733;color:#cfd6e0;padding:18px 0;position:fixed;height:100vh;overflow:auto}
+.side h1{font-size:15px;color:#fff;padding:0 18px;margin:0 0 4px}
+.side .sub{font-size:11px;color:#7c8794;padding:0 18px 14px;border-bottom:1px solid #2c3744}
+.nav{margin-top:10px}
+.nav button{display:block;width:100%;text-align:left;background:none;border:none;color:#cfd6e0;padding:11px 18px;font-size:13.5px;cursor:pointer;border-left:3px solid transparent}
+.nav button:hover{background:#2a3543;color:#fff}
+.nav button.active{background:#2a3543;color:#fff;border-left-color:#ff6a3d}
+.main{margin-left:218px;flex:1;padding:26px 32px;max-width:1100px}
+section{display:none} section.active{display:block}
+h2{font-size:20px;margin:0 0 6px}
+.lead{color:#6b7480;margin:0 0 18px;font-size:13px}
+.cards{display:flex;gap:14px;flex-wrap:wrap}
+.card{background:#fff;border:1px solid #e6eaf0;border-radius:10px;padding:14px 16px;flex:1;min-width:240px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card h4{margin:0 0 8px;color:#ff6a3d;font-size:14px}
+.cat{background:#fff;border:1px solid #e6eaf0;border-radius:10px;margin-bottom:10px;overflow:hidden}
+.cat-h{padding:12px 16px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.cat-h:hover{background:#fafbfc}
+.cat .cnt{background:#ff6a3d;color:#fff;border-radius:20px;padding:1px 9px;font-size:11px}
+.cat-b{display:none;padding:4px 18px 14px}
+.cat.open .cat-b{display:block}
+.cat-b ul{margin:0;padding-left:18px} .cat-b li{margin:6px 0;line-height:1.6}
+.tag{background:#e8f0ff;color:#2b6cff;padding:2px 8px;border-radius:5px;font-size:11px}
+.tag.warn{background:#fff0e8;color:#ff6a3d}
+.muted{color:#8a93a0;font-size:12px} .quote{color:#444;background:#f7f8fa;padding:4px 8px;border-radius:6px;display:inline-block;font-size:12.5px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+th,td{border:1px solid #eef1f5;padding:9px 11px;text-align:left;font-size:13px}
+th{background:#f7f9fc;color:#5a6470}
+.ok{color:#1a9d5a;font-weight:600} .fail{color:#e0492f;font-weight:600}
+.tabs{display:flex;gap:8px;margin-bottom:14px}
+.tabs button{background:#fff;border:1px solid #e0e5ec;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px}
+.tabs button.active{background:#ff6a3d;color:#fff;border-color:#ff6a3d}
+.doc{background:#fff;border:1px solid #e6eaf0;border-radius:10px;padding:20px 26px;line-height:1.75;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.doc h1,.doc h2,.doc h3{color:#1f2733} .doc h1{font-size:20px;border-bottom:2px solid #ff6a3d;padding-bottom:8px}
+.doc table{margin:12px 0} .doc code{background:#f1f3f7;padding:1px 6px;border-radius:4px;font-size:12.5px}
+.var-list{background:#fff;border:1px solid #e6eaf0;border-radius:10px;padding:10px;max-height:300px;overflow:auto;margin-bottom:14px}
+.var-item{padding:9px 12px;border-radius:7px;cursor:pointer} .var-item:hover{background:#f4f6fa}
+.var-panel{background:#fff;border:1px solid #e6eaf0;border-radius:10px;padding:20px 26px;line-height:1.75}
+.btn{background:#ff6a3d;color:#fff;border:none;border-radius:8px;padding:9px 16px;cursor:pointer;font-size:13px;margin:4px 6px 4px 0}
+.btn.ghost{background:#fff;color:#ff6a3d;border:1px solid #ff6a3d}
+.btnrow{margin-bottom:18px}
+.modal-mask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:50}
+.modal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:560px;max-width:92vw;background:#fff;border-radius:14px;padding:24px;max-height:86vh;overflow:auto}
+.modal h3{margin-top:0;color:#ff6a3d}
+.chk{display:block;margin:9px 0;font-size:13px} .chk input{margin-right:8px}
+#gateResult{margin-top:14px;font-weight:700;font-size:15px}
+textarea{width:100%;min-height:120px;border:1px solid #d8dee6;border-radius:8px;padding:10px;font-family:inherit;font-size:13px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1f2733;color:#fff;padding:10px 20px;border-radius:8px;opacity:0;transition:.3s;z-index:99}
+.toast.show{opacity:1}
+.missing{border:2px dashed #ff6a3d;border-radius:12px;padding:16px 18px;margin-top:14px;background:#fff8f5}
+.missing h3{color:#ff6a3d;margin-top:0}
+</style></head>
+<body><div class="app">
+<aside class="side">
+  <h1>爆款作战中台</h1>
+  <div class="sub">上岸号 · 公考网盘推广<br>素材→逻辑→生成→分析 闭环</div>
+  <nav class="nav">
+    <button class="active" data-t="cailiao">📥 素材库</button>
+    <button data-t="logic">🧠 爆款逻辑</button>
+    <button data-t="generated">🚀 生成物</button>
+    <button data-t="analysis">🔬 分析</button>
+    <button data-t="schedule">📆 发布排期</button>
+    <button data-t="review">🔄 复盘闭环</button>
+    <button data-t="assets">🗂 资产中心</button>
+  </nav>
+  <div style="padding:14px 18px"><button class="btn" onclick="openGate()" style="width:100%">🛡 合规风控闸门</button></div>
+</aside>
+<main class="main">
+  <section id="cailiao" class="active">
+    <h2>📥 素材库（你的 Inbox）</h2>
+    <p class="lead">不断往里放的raw素材，10大子库已结构化。点分类展开。要加新素材 → 复制下方指令发给我。</p>
+    <div class="btnrow"><button class="btn ghost" onclick="copy('add')">➕ 复制「添加素材」指令</button></div>
+    
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">📌 选题库 <span class="cnt">5</span></div>
+      <div class="cat-b"><ul><li><b>资料分析·花生十三速成四节</b><br><span class='muted'>[&#x27;资料分析&#x27;, &#x27;速成&#x27;, &#x27;花生十三&#x27;]</span></li><li><b>图形推理·蔡老三节冲刺</b><br><span class='muted'>[&#x27;图推&#x27;, &#x27;三节&#x27;, &#x27;蔡金龙&#x27;]</span></li><li><b>申论素材·老严神书(万精油)</b><br><span class='muted'>[&#x27;申论&#x27;, &#x27;素材&#x27;, &#x27;老严&#x27;]</span></li><li><b>言语理解·葛欣三节高频冲刺</b><br><span class='muted'>[&#x27;言语&#x27;, &#x27;三节&#x27;, &#x27;葛欣&#x27;]</span></li><li><b>判断推理·花生十三+程意融合版</b><br><span class='muted'>[&#x27;判断&#x27;, &#x27;融合&#x27;, &#x27;双神&#x27;]</span></li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">🔤 标题库 <span class="cnt">7</span></div>
+      <div class="cat-b"><ul><li><b>痛点+发现型</b><br><span class='muted'>好多考公人 X 做题慢的原因找到了，就是 X 不熟啊</span></li><li><b>我去+错题型</b><br><span class='muted'>我去，判断推理老是做不对题的！</span></li><li><b>资料分享型</b><br><span class='muted'>我被考公的朋友分享了个 X</span></li><li><b>效率型</b><br><span class='muted'>X 速成 / X 冲刺四节 / 几分钟就能刷完</span></li><li><b>融合版型⭐</b><br><span class='muted'>融合了 X+X 两位 X 大佬的拿手绝活</span></li><li><b>大白话疑问型</b><br><span class='muted'>之前有考公人问 X 有木有速成的捷径</span></li><li><b>答案互动型</b><br><span class='muted'>封面右上角设问题，引用户评论『答案是什么』</span></li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">🎨 封面模板库 <span class="cnt">4</span></div>
+      <div class="cat-b"><ul><li><b>大字报痛点型</b><br><span class='muted'>[&#x27;橙色手写圈&#x27;, &#x27;🍑×5-8&#x27;, &#x27;👿&#x27;]</span></li><li><b>融合版双神型</b><br><span class='muted'>[&#x27;绿色手写圈(去重)&#x27;, &#x27;真实书封面&#x27;, &#x27;🍑&#x27;]</span></li><li><b>设问互动型</b><br><span class='muted'>[&#x27;右上角红圈设问&#x27;, &#x27;🐱真实猫&#x27;, &#x27;👿&#x27;]</span></li><li><b>神书发现型</b><br><span class='muted'>[&#x27;真实书封面照片&#x27;, &#x27;🤓&#x27;, &#x27;黄色填充&#x27;]</span></li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">🔥 钩子金句库 <span class="cnt">5</span></div>
+      <div class="cat-b"><ul><li><b>有木有速成的捷径</b><br><span class='muted'>代理努力/捷径自我欺骗</span></li><li><b>此时不刷更待何时啊喂👿</b><br><span class='muted'>损失厌恶+稀缺</span></li><li><b>不愧是考公人选出来的</b><br><span class='muted'>社会证明/两级传播</span></li><li><b>之前有考公人问言语有没有速成，我替你们认个怂</b><br><span class='muted'>沉默解除/替受众认怂</span></li><li><b>经典就是经典🍑</b><br><span class='muted'>权威代理+群体共识</span></li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">💬 评论话术库 <span class="cnt">5</span></div>
+      <div class="cat-b"><ul><li><b>[A] 首评最常用(70%+)</b><br><span class='quote'>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 3 连 走啊🙆🙆🙆🙆</span></li><li><b>[B] 群聊引流(50%+)</b><br><span class='quote'>☞群聊·是 無償 但请礼貌自取</span></li><li><b>[C] 催促互动</b><br><span class='quote'>怎么全是领的，没人支持下啊啊啊，评论区留下你们的三连啊啊啊🙆🙆🙆🙆</span></li><li><b>[D] 直接说群新版</b><br><span class='quote'>废话说太多了，上面有群，已经上传了，自己申请。这么干脆直接的分享留下你们的 3 连 再走啊啊啊🙆🙆🙆🙆</span></li><li><b>[E] 答案互动型</b><br><span class='quote'>封面设问→用户评『答案是什么』→作者回『答案是好的（问题上就写了🙆）』+作者赞过</span></li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">🆚 竞品对标库 <span class="cnt">2</span></div>
+      <div class="cat-b"><ul><li><b>别人分享『数量关系』纯干货长文不火</b><br><span class='muted'>缺捷径钩子+低启动成本+表情包降维，像教材不像『说给我听的』</span></li><li><b>同行『资料分析』用大段文字+无图</b><br><span class='muted'>缺真实书封面/猫咪照等真实感元素，被判营销号</span></li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">🏆 爆款档案 <span class="cnt">12</span></div>
+      <div class="cat-b"><ul><li><b>高照fb资料分析冲刺四节</b> · 资料分析/高照+fb · <span class='muted'>捷径+倍速</span></li><li><b>花生十三龙飞图推融合版</b> · 图推/花生十三+龙飞 · <span class='muted'>融合版标志结构</span></li><li><b>高照20版数量关系特训</b> · 数量关系/高照 · <span class='muted'>考前冲刺</span></li><li><b>钟君申论不炫技本质</b> · 申论/钟君 · <span class='muted'>反套路真实感</span></li><li><b>郭熙言语理解重点梳理</b> · 言语/郭熙 · <span class='muted'>重点梳理降维</span></li><li><b>周永冈快速口算法</b> · 速算/周永冈 · <span class='muted'>邪修/秒算</span></li><li><b>袁东申论大作文纯背版</b> · 申论大作文/袁东 · <span class='muted'>纯背模板</span></li><li><b>杰伦哥判断推理</b> · 判断推理/杰伦哥 · <span class='muted'>口诀速通</span></li><li><b>花生十三资料分析速成四节</b> · 资料分析/花生十三 · <span class='muted'>速成捷径</span></li><li><b>蔡老图推三节冲刺</b> · 图推/蔡金龙 · <span class='muted'>三节开窍</span></li><li><b>老严申论素材神书</b> · 申论素材/老严 · <span class='muted'>一个顶N主题</span></li><li><b>葛欣三节高频冲刺(辩论合成)</b> · 言语/葛欣 · <span class='muted'>辩论修复版</span></li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">👤 人设声音档案 <span class="cnt">1</span></div>
+      <div class="cat-b"><ul><li>{&#x27;id&#x27;: &#x27;PERSONA&#x27;, &#x27;名称&#x27;: &#x27;上岸（重新起航版）&#x27;, &#x27;定位&#x27;: &#x27;公考全科资料分享号(行测5模块+申论)&#x27;, &#x27;头像&#x27;: &#x27;浅蓝桃子脸IP&#x27;, &#x27;地理&#x27;: &#x27;黑龙江(部分吉林)&#x27;, &#x27;口吻&#x27;: &#x27;口语化考生视角、像朋友随手分享、不书面&#x27;, &#x27;互推号&#x27;: &#x27;momo(好友标签配合引流)&#x27;}</li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">📅 热点日历 <span class="cnt">3</span></div>
+      <div class="cat-b"><ul><li><b>国考公告/报名</b><br><span class='muted'>提前2周铺资料分析+申论素材</span></li><li><b>省考笔试</b><br><span class='muted'>考前1月冲『速成/冲刺四节』钩子</span></li><li><b>事业单位联考</b><br><span class='muted'>通用公考干货轮换</span></li></ul></div>
+    </div>
+    <div class="cat">
+      <div class="cat-h" onclick="this.parentElement.classList.toggle('open')">⚠️ 违规限流案例库 <span class="cnt">2</span></div>
+      <div class="cat-b"><ul><li><b>旧号因笔记出现『网盘/夸克/加群』被限流，爆款截图数字全失效</b><br><span class='muted'>笔记正文绝不明写敏感词，改用『群聊·無償』暗号</span></li><li><b>「無償」异体字经Unicode归一化即『无偿』，规避动作本身加风控分</b><br><span class='muted'>降暗号密度，正文补足真实干货降低营销号判定</span></li></ul></div>
+    </div>
+  </section>
+
+  <section id="logic">
+    <h2>🧠 爆款逻辑（方法论大脑）</h2>
+    <p class="lead">三份核心文档即你的"共享大脑"，生成与分析都从这儿取规则。</p>
+    <div class="tabs">
+      <button class="active" data-d="爆款公式">爆款公式</button>
+      <button data-d="爆款判断逻辑">爆款判断逻辑</button>
+      <button data-d="爆款底层逻辑">爆款底层逻辑</button>
+    </div>
+    <div id="logic-爆款公式" class="doc"><h1 id="v21">我的爆款公式 v2.1（公考·上岸号·结构版）</h1>
+<p><em>基于「上岸（重新起航版）」历史爆款截图的风格分析 · 2026-08-05 修订</em>
+<em>根目录：<code>D:/workbuddy/小红书运营工作流/我的爆款截图/</code></em></p>
+<blockquote>
+<p>⚠️ <strong>数据脱敏声明（重要）</strong>
+这些截图是本人<strong>已删除的万赞/最高 2w+ 赞爆款笔记</strong>的仿制版。
+因账号违规被限流，截图上的赞/评/藏数字<strong>全部无效、不可参考</strong>。
+本公式<strong>只提取不受限流影响的方法论</strong>：结构、钩子、视觉、引流话术。
+全部样本一律按「万赞爆款」同等对待，不做任何数据排名。</p>
+</blockquote>
+<hr />
+<h2 id="_1">一、账号画像</h2>
+<ul>
+<li><strong>名称</strong>：「上岸（重新起航版）」</li>
+<li><strong>定位</strong>：公考全科资料分享号（行测 5 模块 + 申论）</li>
+<li><strong>头像</strong>：浅蓝色桃子脸 IP</li>
+<li><strong>地理标记</strong>：黑龙江（部分吉林）</li>
+<li><strong>底层变现（合规闭环）</strong>：</li>
+<li>笔记 = 公考干货诱饵（不出现任何网盘字眼）</li>
+<li>评论区 momo/作者 双账号发"群聊·無償"暗号</li>
+<li>用户进小红书群</li>
+<li>群内发夸克网盘分享口令</li>
+<li><strong>互推号</strong>：momo（"你的好友"标签，与作者配合发引流评论）</li>
+</ul>
+<h2 id="9">二、内容矩阵（9 大模块 + 真实老师背书）</h2>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th>老师/资料（真实出现）</th>
+<th>常用钩子词</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>资料分析</td>
+<td>花生十三、高照、大春、fb 冲刺、大佬总结版</td>
+<td>速成、冲刺四节、秒杀、21 绝版</td>
+</tr>
+<tr>
+<td>数量关系</td>
+<td>高照（fb 特训营、20 版）、fb、周永冈</td>
+<td>考前冲刺、特训四节、速成</td>
+</tr>
+<tr>
+<td>判断推理</td>
+<td>杰伦哥（公考正道是沧桑）、花生十三+程意（融合版）</td>
+<td>速通手册、口诀、双神版融合</td>
+</tr>
+<tr>
+<td>图形推理</td>
+<td>蔡老（蔡金龙）、龙飞、花生十三（重点整理版）、花生十三+龙飞融合</td>
+<td>三节冲刺、合集版、考前速成</td>
+</tr>
+<tr>
+<td>言语理解</td>
+<td>郭熙（重点梳理版、做题思路）</td>
+<td>重点梳理、做题思路</td>
+</tr>
+<tr>
+<td>申论大作文</td>
+<td>袁东（纯背版模板）、钟君（不炫技本质）</td>
+<td>万能模板、纯背版、申论高分</td>
+</tr>
+<tr>
+<td>申论素材</td>
+<td>万精油人物素材、老严（神书）</td>
+<td>万精油、多主题适用、神书</td>
+</tr>
+<tr>
+<td>申论速成</td>
+<td>大佬汇总（标题+开头+结尾+过渡句+模板）</td>
+<td>申论速成汇总</td>
+</tr>
+<tr>
+<td>速算</td>
+<td>周永冈《快速口算法》、邹田茂、农村简易速算</td>
+<td>5 秒速算、邪修、16 类口算</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>矩阵说明：这些是反复出现的稳定选题库，与数据无关——只要账号在发公考干货，就在这 9 个模块里轮换。</p>
+</blockquote>
+<h2 id="12">三、标题钩子 12 大模板（基于真实样本结构）</h2>
+<ol>
+<li><strong>痛点+发现型</strong>：「好多考公人 X 做题慢的原因找到了，就是 X 不熟啊」</li>
+<li><strong>我去+错题型</strong>：「我去，判断推理老是做不对题的！」</li>
+<li><strong>资料分享型</strong>：「我被考公的朋友分享了个 X」「刷到一个 X 大佬的 Y」</li>
+<li><strong>效率型</strong>：「X 速成」「X 冲刺四节」「几分钟就能刷完」</li>
+<li><strong>融合版型</strong>：「融合了 X+ X 两位 X 大佬的拿手绝活」⭐（本号标志性爆款结构）</li>
+<li><strong>朋友新分享型</strong>：「考公的朋友新分享了个小众的 X」</li>
+<li><strong>发现型</strong>：「我刚找到一本以前出版的 X 专项书」「我是不是发现了一本申论神书啊」</li>
+<li><strong>大白话疑问型</strong>：「之前有考公人问 X 有木有速成的捷径」</li>
+<li><strong>夸张情绪型</strong>：「这快速口算书简直活脱脱就是速算邪修啊」</li>
+<li><strong>之前刷到型</strong>：「之前刷到有考公人，问在职备考能不能一周跟完 X 老师的 X」</li>
+<li><strong>玩笑+强调型</strong>：「开玩笑！X 冲刺！那必须刷了！」</li>
+<li><strong>答案互动型</strong>：封面右上角设问题（数字/选项），引用户评论"答案是什么"</li>
+</ol>
+<h2 id="5">四、视觉模板（5 大要素）</h2>
+<h3 id="41-4">4.1 背景色（4 色轮换，无压倒性优势）</h3>
+<table>
+<thead>
+<tr>
+<th>颜色</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>浅蓝</td>
+<td>清爽理性，数资/申论常用</td>
+</tr>
+<tr>
+<td>浅黄</td>
+<td>温暖醒目，数量/言语常用</td>
+</tr>
+<tr>
+<td>浅粉</td>
+<td>亲和抓眼，图推/判断常用</td>
+</tr>
+<tr>
+<td>浅紫</td>
+<td>差异区隔，同类选题做区分用</td>
+</tr>
+<tr>
+<td>&gt; 避免深色/黑色/红色（视觉压迫感）。4 色本身无优劣，用于同模块多笔记轮换防重复。</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="42-5">4.2 关键词高亮（5 种手法叠加用，冲击力来自叠加）</h3>
+<ul>
+<li><strong>橙色手写圈</strong> + 黄色填充（最常见）</li>
+<li><strong>绿色手写圈</strong>（强调"去重/经典"时用）</li>
+<li><strong>红色手写圈</strong>（关键数字/结论）</li>
+<li><strong>橙色波浪下划线</strong>（强调句收尾利器）</li>
+<li><strong>浅蓝底色填充</strong>（关键词整体底色变蓝）</li>
+<li><strong>红色文字+红色感叹号</strong>（强调句）</li>
+</ul>
+<h3 id="43-emoji">4.3 Emoji 堆叠（核心情绪符号）</h3>
+<ul>
+<li>🍑 <strong>桃子脸</strong>（5-8 个堆叠）— "3 连走啊"的标志</li>
+<li>👿 <strong>红魔鬼</strong>（提速/拿下/认真/刷起来）</li>
+<li>🙌 举手加油 / ✌️ V 字手 / 🐶 狗 / 🐱 猫 / 🐰 兔子</li>
+<li>🤓 戴眼镜脸 / 🥵 热脸 / 🫰 捧奶茶</li>
+</ul>
+<h3 id="44">4.4 图片元素（增强真实感，优先真实素材）</h3>
+<ul>
+<li><strong>真实书籍封面照片</strong>（周永冈《快速口算法》、申论老书、神书）</li>
+<li><strong>真实人物表情包</strong>（举手、V 字手、捧奶茶）</li>
+<li><strong>真实动物照片</strong>（猫咪、狗洗澡、戴黄衣的猫）</li>
+<li>小红书内置插画（书本 emoji、读书小孩、橙色胶片相机）</li>
+<li><strong>绿色便利贴</strong>（Confidence 字样）<blockquote>
+<p>真实素材比纯 emoji 更有"实战派"质感，做笔记时优先放真实图。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="45">4.5 标题排版</h3>
+<ul>
+<li>句末 1-5 个感叹号</li>
+<li>段末 5-8 个相同 emoji 堆叠</li>
+<li>关键句首 + emoji</li>
+<li>"数字+汉字"组合："四节""三节""21 绝版"</li>
+</ul>
+<h2 id="3">五、正文结构（3 段式）</h2>
+<pre><code>【第 1 段·钩子+痛点】（50-100 字）
+开门见山说自己 X 不行 / 找到了原因
+
+【第 2 段·资料+反应】（100-200 字）
+被分享了 X 大佬的 Y，夸张反应，描述刷的过程
+- 必含：&quot;不愧是&quot;&quot;经典就是经典&quot;&quot;太好了&quot;&quot;真的猛&quot;
+- 必含倍速/几节/具体的描述
+
+【第 3 段·号召】（30-80 字）
+&quot;拿下了吗？&quot;&quot;速成！&quot;&quot;冲刺！&quot;&quot;赶紧的！&quot;
+&quot;此时不刷更待何时啊喂👿&quot;
+&quot;申论必须拿下👿👿👿👿👿&quot;
+</code></pre>
+<p>每段配 3-5 个 emoji，段末用堆叠表情包。
+文末 5-10 个 hashtag。</p>
+<h2 id="5_1">六、评论区引流引擎（5 版话术）</h2>
+<h3 id="a-70">A 版·首评·最常用（70%+ 笔记用）</h3>
+<blockquote>
+<p>「发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🙆🙆🙆🙆」</p>
+</blockquote>
+<h3 id="b-50">B 版·次条·群聊引流（50%+ 笔记用）</h3>
+<blockquote>
+<p>「☞<strong>群聊</strong>·是 <strong>無償</strong> 但请礼貌自取」
+- 「<strong>無償</strong>」用异体字「無」规避敏感词
+- 「<strong>群聊</strong>」= 小红书群入口暗号</p>
+</blockquote>
+<h3 id="c">C 版·催促互动·作者自评</h3>
+<blockquote>
+<p>「怎么全是领的，没人支持下啊啊啊，评论区留下你们的三连啊啊啊🙆🙆🙆🙆」</p>
+</blockquote>
+<h3 id="d">D 版·直接说群·新版</h3>
+<blockquote>
+<p>「废话说太多了，上面有群，已经上传了，自己申请。这么干脆直接的分享留下你们的 <strong>3 连</strong> 再走啊啊啊🙆🙆🙆🙆」</p>
+</blockquote>
+<h3 id="e">E 版·答案互动型（高互动机制）</h3>
+<blockquote>
+<p>笔记封面设问 → 用户评论"答案是什么" → 作者回复"答案是 好的（问题上就写了🙆）" + 作者赞过</p>
+</blockquote>
+<h3 id="_2">完整转化路径</h3>
+<pre><code>笔记（干货诱饵）→ 三连互动 → 评论区暗号&quot;群聊&quot; → 用户进小红书群 → 群内发夸克网盘分享口令
+</code></pre>
+<p><strong>笔记中绝不出现</strong>："网盘""夸克""加群""私信""免费"等敏感词</p>
+<h2 id="_3">七、批量变体规则（同公式不同表达）</h2>
+<ul>
+<li>✅ 换老师组合（花生十三 ↔ 高照 ↔ 龙飞 ↔ 郭熙 ↔ 袁东 ↔ 钟君 ↔ 杰伦哥 ↔ 蔡老 ↔ 程意 ↔ 周永冈）</li>
+<li>✅ 换科目（资料分析 ↔ 数量关系 ↔ 判断推理 ↔ 图形推理 ↔ 言语理解 ↔ 申论）</li>
+<li>✅ 换钩子模板（12 大模板轮换）</li>
+<li>✅ 换背景色（浅蓝/浅黄/浅粉/浅紫 4 色随机）</li>
+<li>✅ 换节数（三节 / 四节 / 速成 / 冲刺 / 神书）</li>
+<li>✅ 换图片元素（真实猫 / 真实书 / 真实人物 / 小红书插画）</li>
+<li>❌ 不洗稿老师原话</li>
+<li>❌ 不复制封面/正文字面</li>
+<li>❌ 不省评论引流钩子（A/B 版必发）</li>
+<li>❌ 不在笔记中暴露"网盘""夸克""加群"等敏感词</li>
+</ul>
+<h2 id="_4">八、本号爆款真实水位（仅作水位参考，非样本数据）</h2>
+<blockquote>
+<p>截图本身被限流、数字无效，以下为本人自述的真实水位，不对应任何单张截图：
+- 常规爆款：几千赞
+- 头部爆款：万赞级
+- 历史最高单篇：2w+ 赞（已删除）
+- 现截图样本 = 上述爆款的"风格仿制版"，提取其结构即可复用方法论。</p>
+</blockquote></div>
+    <div id="logic-爆款判断逻辑" class="doc" style="display:none"><h1 id="v21">小红书爆款判断逻辑（内容工作流共享依据）v2.1</h1>
+<blockquote>
+<p>本文件是「一个人的小红书运营组」12 个 skill 的共用判断依据。每个 skill 在产出内容时都应回头对照本逻辑。
+真实案例基础：<strong>上岸（重新起航版）账号历史爆款笔记的风格结构</strong>。</p>
+<p>⚠️ <strong>数据脱敏声明（重要）</strong>
+提供的截图是本人已删除的万赞/最高 2w+ 赞爆款笔记的仿制版，因账号违规被限流，截图上的赞/评/藏数字<strong>全部无效、不可参考</strong>。
+本逻辑<strong>只提取不受限流影响的方法论</strong>：钩子、结构、视觉、引流话术。
+所有样本一律按「万赞爆款」同等对待，不做任何数据排名。</p>
+</blockquote>
+<p>适用赛道：<strong>公考备考干货（行测 5 模块 + 申论）+ 隐藏合规网盘引流</strong>
+适用人群：单人多账号、想稳定出爆款的小红书博主（纯小白也能用）。</p>
+<hr />
+<h2 id="_1">一、平台算法底层（决定内容怎么被看到）</h2>
+<ul>
+<li><strong>流量池机制</strong>：新笔记先进小流量池（约 200–500 曝光），CTR 与互动率达标才进下一池，逐层放大。</li>
+<li><strong>核心指标权重（高→低）</strong>：点击率(CTR) &gt; 互动率(赞+藏+评) &gt; 收藏率 &gt; 完播/停留 &gt; 转粉率。</li>
+<li><strong>收藏率 &gt; 点赞率是干货内容的命脉</strong>：收藏="值得回头看"，算法视为高价值，优先推。</li>
+<li><strong>原创率 / 真诚分</strong>：照搬抄号会降权；对标模仿 70% + 用自己的话重构才安全。</li>
+<li><strong>用户思维反推算法</strong>：先想"谁会看、为什么看完、为什么互动"，算法只是放大真实需求。</li>
+</ul>
+<hr />
+<h2 id="_2">二、赛道判断（公考+隐藏合规网盘引流）</h2>
+<ul>
+<li><strong>主赛道</strong>：公考备考干货（资料分析/数量关系/判断推理/图形推理/言语理解/申论）。</li>
+<li><strong>用户意图强</strong>：来找速成资料、找解题技巧、要免费分享，转化路径短。</li>
+<li><strong>变现闭环（合规！）</strong>：</li>
+<li>笔记（干货诱饵）</li>
+<li>→ 评论区"群聊"暗号（用异体字「無償」+「群聊」规避敏感词）</li>
+<li>→ 用户进小红书群</li>
+<li>→ 群内发夸克网盘分享口令</li>
+<li><strong>笔记中绝不出现</strong>："网盘""夸克""加群""私信""免费"等敏感词</li>
+<li><strong>替代词</strong>：「無償」（异体字"無"替换"免"）、「群聊」替代"加群"、"上面有群"代替"私信我"</li>
+<li><strong>对标打法</strong>：本号「上岸（重新起航版）」的爆款风格就是最好的对标（只看结构，不看数据）。</li>
+</ul>
+<hr />
+<h2 id="_3">三、爆款内容通用骨架</h2>
+<ol>
+<li><strong>封面</strong>：大字钩子，关键词高亮（橙/绿/红圈 + 波浪线 + 浅蓝底色），3 秒内让用户觉得"这篇和我有关"。</li>
+<li><strong>标题</strong>：前 13 字定生死（信息流只露前 13 字左右）。老师名 + 节数 + 痛点前置。</li>
+<li><strong>开头</strong>：痛点共鸣 或 资料分享叙事 或 老师背书，留人。</li>
+<li><strong>正文</strong>：3 段式（钩子→资料+反应→号召），emoji 堆叠收尾。</li>
+<li><strong>结尾</strong>：5-10 个 hashtag（#考公考编 #公考 #考公人 #26考公 #XX技巧）。</li>
+<li><strong>评论区</strong>：作者发两条置顶评论（A 版首评 + B 版群聊暗号）。</li>
+</ol>
+<hr />
+<h2 id="_4">四、钩子类型库（基于爆款风格结构）</h2>
+<h3 id="41">4.1 痛点共鸣型（最常见）</h3>
+<ul>
+<li>「好多考公人 X 做题慢的原因找到了，就是 X 不熟啊」</li>
+<li>「我去，X 老是做不对题的！」</li>
+<li>「之前有考公人问 X 有木有速成的捷径」</li>
+</ul>
+<h3 id="42">4.2 资料分享型</h3>
+<ul>
+<li>「我被考公的朋友分享了个 X」</li>
+<li>「刷到一个 X 大佬的 Y」</li>
+<li>「考公的朋友新分享了个小众的 X」</li>
+<li>「刚被考公人分享了一个，全是大佬们总结好的 X 合集版」</li>
+</ul>
+<h3 id="43">4.3 效率型（流量密码）</h3>
+<ul>
+<li>「X 速成」「X 冲刺四节」「几分钟就能刷完」</li>
+<li>「这不就是考公人都在找的 X 速成么」</li>
+<li>「想极速通关 X 的！」</li>
+<li>「考前这两天…好多考公人好像都开始冲 X 了啊啊啊👿」</li>
+</ul>
+<h3 id="44">4.4 老师背书型（最核心，标题/封面/正文必有老师名）</h3>
+<ul>
+<li><strong>资料分析</strong>：花生十三、高照、大春、fb冲刺</li>
+<li><strong>数量关系</strong>：高照（fb特训营、20版）、周永冈</li>
+<li><strong>判断推理</strong>：杰伦哥（公考正道是沧桑）、花生十三+程意（融合版）</li>
+<li><strong>图形推理</strong>：蔡老（蔡金龙）、龙飞、花生十三、花生十三+龙飞融合</li>
+<li><strong>言语理解</strong>：郭熙（重点梳理版、做题思路）</li>
+<li><strong>申论</strong>：袁东（大作文纯背版）、钟君（不炫技）、老严（神书）</li>
+<li><strong>速算</strong>：周永冈《快速口算法》、邹田茂</li>
+</ul>
+<p>强调稀缺感：
+- "老师早就不讲课了"
+- "老师之前 fb 那会儿的特训"
+- "老师 20 版的特训营"
+- "经典中的经典"</p>
+<h3 id="45">4.5 融合版型（本号标志性爆款结构）</h3>
+<ul>
+<li>「融合了花生十三+龙飞两位图推大佬的拿手绝活」</li>
+<li>「高照+fb+花生十三数量界的名师笔记合版」</li>
+<li>「直接把 X 和 X 大佬的 X 思路融合到了一起」</li>
+<li>强调"去重融合最经典版"<blockquote>
+<p>融合版是本人反复验证的招牌结构，出爆款概率最高，优先复用。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="46">4.6 神书型（稀缺感路线）</h3>
+<ul>
+<li>「我是不是发现了一本申论神书啊」</li>
+<li>「以前的考公人吃的这么好吗 还有这种教材」</li>
+<li>「数量白痴更要看，考前突击！！！」</li>
+<li>推荐用真实书封面照（红框高亮关键章节）</li>
+</ul>
+<h3 id="47">4.7 万精油型（申论专属）</h3>
+<ul>
+<li>「万精油式人物素材」「多主题适用」</li>
+</ul>
+<h3 id="48">4.8 夸张情绪型（情绪锚点）</h3>
+<ul>
+<li>句末"啊啊啊""！！"反复（1-5 个）</li>
+<li>"咔咔猛""咔咔乱杀""咔咔快""咔咔顺"</li>
+<li>"醍醐灌顶""绝活儿""邪修""水灵灵""一把刷完"</li>
+<li>"省事儿""干脆""拼了""猛啊"</li>
+</ul>
+<h3 id="49">4.9 答案互动型（高互动机制）</h3>
+<p>笔记封面/正文设置问题（数字/选项）→ 用户评论"答案是什么" → 作者回复+赞</p>
+<hr />
+<h2 id="emoji">五、视觉模板（封面色 + 关键词高亮 + emoji 堆叠 + 图片）</h2>
+<h3 id="51-4">5.1 背景色（4 色轮换）</h3>
+<ul>
+<li><strong>浅蓝 / 浅黄 / 浅粉 / 浅紫</strong>（4 色都出过爆款，无压倒性优势，用于同模块多笔记防重复）</li>
+<li>避免深色/黑色/红色（视觉压迫感）</li>
+</ul>
+<h3 id="52">5.2 关键词高亮（核心视觉冲击）</h3>
+<ul>
+<li><strong>橙色手写圈</strong>（最常见）+ 黄色填充</li>
+<li><strong>绿色手写圈</strong></li>
+<li><strong>红色手写圈</strong></li>
+<li><strong>橙色波浪下划线</strong>（强调句收尾利器）</li>
+<li><strong>浅蓝底色填充</strong>（关键词整体底色变蓝）</li>
+<li><strong>红色文字+红色感叹号</strong>（强调句收尾）</li>
+<li>多种叠加使用（同时 2-3 种）冲击力最强</li>
+</ul>
+<h3 id="53-emoji">5.3 Emoji 堆叠（核心情绪符号）</h3>
+<ul>
+<li>🍑/🙆 <strong>桃子脸</strong>（5-8 个堆叠）— "3 连走啊"的标志符号，最具辨识度</li>
+<li>👿 <strong>红魔鬼</strong>（提速/拿下/认真/刷起来）</li>
+<li>🙌 举手加油</li>
+<li>✌️ V 字手（粉红色）</li>
+<li>🐶 狗（"考公人努力"）</li>
+<li>🐱 猫（"实战派"，真实照片尤佳）</li>
+<li>🐰 兔子</li>
+<li>🤓 戴眼镜脸</li>
+<li>🥵 热脸</li>
+<li>🫰 捧奶茶/咖啡</li>
+</ul>
+<h3 id="54">5.4 图片元素</h3>
+<ul>
+<li><strong>真实书籍封面照片</strong>（周永冈《快速口算法》、申论老书、神书）— 比纯 emoji 更"实战派"</li>
+<li><strong>真实人物表情包</strong>（举手、V 字手、捧奶茶）</li>
+<li><strong>真实动物照片</strong>（猫咪、狗洗澡、戴黄衣的猫）</li>
+<li>小红书内置插画（书本 emoji、读书小孩、橙色胶片相机）</li>
+<li><strong>绿色便利贴</strong>（Confidence 字样）</li>
+</ul>
+<h3 id="55">5.5 标题排版</h3>
+<ul>
+<li>句末 1-5 个感叹号</li>
+<li>段末 5-8 个相同 emoji 堆叠</li>
+<li>关键句首 + emoji</li>
+<li>老师名+节数+具体内容前置</li>
+<li>"数字+汉字"组合："四节""三节""21 绝版"</li>
+</ul>
+<hr />
+<h2 id="3">六、正文结构（3 段式）</h2>
+<pre><code>【第 1 段·钩子+痛点】（50-100 字）
+开门见山说自己 X 不行 / 找到了原因
+举例：
+  &quot;好多考公人资料分析做题慢的原因找到了，就是公式不熟啊🙆🙆🙆&quot;
+  &quot;我去，判断推理老是做不对题的！&quot;
+
+【第 2 段·资料+反应】（100-200 字）
+被分享了 X 大佬的 Y，夸张反应，描述刷的过程
+举例：
+  &quot;不愧是考公人选出来的冲刺版资料分析&quot;
+  &quot;资料分析这四节我已经快速过一遍了（我还开的倍速🙆这样更快了）&quot;
+  &quot;不得不说，不愧是当时的冲刺专题，经典就是经典&quot;
+
+【第 3 段·号召】（30-80 字）
+再次强调&quot;速成&quot;&quot;冲刺&quot;&quot;拿下了吗&quot;&quot;刷起来啊&quot;
+举例：
+  &quot;拿下了吗？&quot;&quot;速成！&quot;&quot;冲刺！&quot;&quot;赶紧的！&quot;
+  &quot;此时不刷更待何时啊喂👿&quot;
+  &quot;申论必须拿下👿👿👿👿👿&quot;
+</code></pre>
+<p>每段配 3-5 个 emoji，段末用堆叠表情包。
+文末 5-10 个 hashtag：#考公考编 #公考 #考公 #考公人 #26考公 #国考备考 #XX #XX技巧</p>
+<hr />
+<h2 id="_5">七、评论区引流引擎（核心！变现路径）</h2>
+<h3 id="71">7.1 两条置顶评论（作者自己或互推号发）</h3>
+<p><strong>A 版·首评·最常用（出现 70%+ 笔记）</strong></p>
+<blockquote>
+<p>「发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🙆🙆🙆🙆」</p>
+</blockquote>
+<p><strong>B 版·次条·群聊引流（出现 50%+ 笔记）</strong></p>
+<blockquote>
+<p>「☞<strong>群聊</strong>·是 <strong>無償</strong> 但请礼貌自取」
+- 「<strong>無償</strong>」用异体字「無」规避敏感词检测，灰色显示
+- 「<strong>群聊</strong>」= 小红书群入口暗号（不写"加群""私信"）</p>
+</blockquote>
+<p><strong>C 版·催促互动·作者自评</strong></p>
+<blockquote>
+<p>「怎么全是领的，没人支持下啊啊啊，评论区留下你们的三连啊啊啊🙆🙆🙆🙆」</p>
+</blockquote>
+<p><strong>D 版·直接说群·新版</strong></p>
+<blockquote>
+<p>「废话说太多了，上面有群，已经上传了，自己申请。这么干脆直接的分享留下你们的 <strong>3 连</strong> 再走啊啊啊🙆🙆🙆🙆」</p>
+</blockquote>
+<p><strong>E 版·答案互动型（高互动机制）</strong></p>
+<blockquote>
+<p>笔记封面/正文设置问题（数字/选项） → 用户评论"答案是什么" → 作者回复"答案是 好的（问题上就写了🙆）" + 作者赞过</p>
+</blockquote>
+<h3 id="72">7.2 用户回复模板</h3>
+<ul>
+<li>「已三连 求资料/求分享/求领取」</li>
+<li>「礼貌自取🍑」</li>
+<li>「求分享」「求领取」</li>
+</ul>
+<h3 id="73">7.3 互推号机制</h3>
+<ul>
+<li><strong>momo（你的好友）</strong> 是该账号的互推号，标签"你的好友"而非"作者"</li>
+<li>momo 会复制同样的引流评论，形成"评论区里两个不同账号都分享"的氛围</li>
+<li>关键：作者本人对 momo 的评论"赞过" — 形成社交证明</li>
+</ul>
+<h3 id="74">7.4 完整转化路径</h3>
+<pre><code>笔记（干货诱饵） → 三连互动 → 评论区暗号&quot;群聊&quot; → 用户进小红书群 → 群内发夸克网盘分享口令
+</code></pre>
+<p><strong>笔记中绝不出现</strong>："网盘""夸克""加群""私信""免费"等敏感词</p>
+<hr />
+<h2 id="_6">八、本号爆款真实水位（仅水位参考，非样本数据）</h2>
+<blockquote>
+<p>截图被限流、数字无效，以下为本人自述的真实水位，不对应任何单张截图：
+- 常规爆款：几千赞
+- 头部爆款：万赞级
+- 历史最高单篇：2w+ 赞（已删除）
+- 现截图样本 = 上述爆款的"风格仿制版"，提取其结构即可复用方法论。</p>
+</blockquote>
+<hr />
+<h2 id="_7">九、你的数据结论（自己跑出来后补这里）</h2>
+<ul>
+<li>标题哪种结构 CTR 最高：<strong>老师名+节数+问句/感叹</strong>（如"考公人都在冲 X 老师的 X 节"）</li>
+<li>哪种钩子类型收藏率最高：<strong>融合版+速成汇总+具体节数</strong>（最易"截图存起来"）</li>
+<li>哪个时段发量最大：_____（待回填）</li>
+<li>哪类选题最容易转粉：<strong>资料分析/数量关系/图推融合版</strong>（最大公约数）</li>
+<li>违规词 / 限流踩坑记录：<strong>"无偿""加群""网盘""私信""免费"</strong>必须用异体字或变体词</li>
+</ul>
+<blockquote>
+<p>用法：每次 xhs-weekly-retro 复盘后，把结论回填到这里，其他 skill 会自动参考。</p>
+</blockquote></div>
+    <div id="logic-爆款底层逻辑" class="doc" style="display:none"><h1 id="dontbesilent">爆款底层逻辑：人性 + 小沈 + dontbesilent 融合分析</h1>
+<blockquote>
+<p>配套文件：<code>我的爆款公式 v1.0.md</code>（结构层）、<code>爆款判断逻辑.md</code>（方法论层）
+本文件补上<strong>最容易缺的一层：为什么人愿意看、愿意信、愿意三连、愿意进群</strong>。
+框架来源：dbs-spread（传播心理5理论）、dbs-content（内容诊断）、dbs-benchmark（对标）、xhs-shen-ops（种草心理/平台规则/养号/群聊私域）。</p>
+</blockquote>
+<hr />
+<h2 id="_1">一句话总论</h2>
+<p>你那些"几节冲刺课"笔记能成，不是因为内容多好，是因为它<strong>用最低的认知门槛 + 最强的捷径暗示 + 稀缺恐慌 + 群体共识，给焦虑的考公人递了一剂"我已经在努力了"的情绪麻醉剂</strong>——而别人发同类内容，缺的是这剂麻醉剂，或者死在账号权重、限流、模仿颗粒度这些运营变量上。</p>
+<hr />
+<h2 id="_2">第一章：人性七定律（为什么"几节冲刺课"爆）</h2>
+<h3 id="1">① 认知吝啬（趋易避难）</h3>
+<p>人脑是认知吝啬鬼。一条笔记把"学完资料分析"这个恐怖任务，压缩成"4节、倍速、几天刷完"，等于<strong>把心理启动成本打到接近0</strong>。
+受众买的不是知识，是"我也能看完"的松弛感。标题在这里是情绪止痛药，不是课程介绍。</p>
+<h3 id="2">② 代理努力（捷径 = 自我欺骗许可）</h3>
+<p>"速成/冲刺/秒杀/捷径"满足的是<strong>"我在努力"的错觉</strong>，不用真去学。
+更深一层：考公人最怕的不是"考不上"，是"我努力了还是考不上"。捷径叙事送了一条退路——"我没努力所以考不上是合理的"。这是防御性消费，比真学习卖得好。</p>
+<h3 id="3">③ 损失厌恶 + 稀缺</h3>
+<p>"老师早就不讲课了""fb那会儿的特训""20版"制造<strong>"错过即永失"的可得性恐慌</strong>。
+人对"即将失去"的敏感是"获得"的2-3倍（卡尼曼）。"20版"暗示"现在不存以后没了"，受众先藏为敬。</p>
+<h3 id="4">④ 即时满足偷换</h3>
+<p>考公是典型的延迟满足（苦几年换编制），人性要即时反馈。"几分钟刷完""倍速看一遍"把延迟满足偷换成<strong>刷完当下的爽感</strong>。受众在划走前就得到"我掌握了"的幻觉。</p>
+<h3 id="5">⑤ 社会证明 / 两级传播</h3>
+<p>"考公人选出来的""民间大佬""不愧是考公人选出来的"把个人推荐包装成<strong>群体共识</strong>。
+受众信的不是"这个老师好"，是"这么多人都在冲"——决策风险感被摊薄（拉扎斯菲尔德，1944）。</p>
+<h3 id="6-1974">⑥ 沉默解除（沉默的螺旋，诺依曼1974）</h3>
+<p>考公人私下都想要捷径、都怕学不会、都偷偷找"速成"，但公开不好意思说"我不想努力"。
+你的笔记替他们把这句话说出口，<strong>沉默被解除 → 疯狂三连</strong>（dbs-spread 理论①）。这是情绪宣泄需求，不是信息需求。</p>
+<h3 id="7-1993">⑦ 立场代言（框架理论，恩特曼1993）</h3>
+<p>内容始终站在"被资料分析虐过的考公人"那边，不是站在"老师/机构/说教者"那边。
+受众感到"这人说出了我的处境"→ 防御放下 → 接受度拉满（dbs-spread 理论③）。一旦立场漂到"教育者"，就会从被代言变成被说教。</p>
+<blockquote>
+<p>小结：爆款笔记的本质是<strong>情绪产品</strong>。结构（大字报/橙圈/emoji）是外壳，人性七定律是发动机。</p>
+</blockquote>
+<hr />
+<h2 id="_3">第二章：对照拆解（为什么别人发"数量关系"不火，你这个火了）</h2>
+<p>"内容火不火"不是单变量。用运营 + 商业框架逐层拆：</p>
+<h3 id="1_1">角度1：痛点强度不同（选题的恐惧层级）</h3>
+<p>数量关系是考公里<strong>公认最劝退</strong>的模块，多数人直接放弃。
+- 别人发：可能是"教你方法" → 受众解读为"你要我学"。
+- 你发："极速通关数量关系" → 受众解读为"你帮我绕过难点"。
+言语/判断这类"还能啃"的模块，捷径叙事杀伤力弱，因为受众本就不那么怕。恐惧越强，捷径越值钱。</p>
+<h3 id="2_1">角度2：表达降维（认知负荷可视化）</h3>
+<p>真实猫照 + emoji 堆叠 + 手写圈 = 把硬核数学<strong>萌化、可爱化、可消费化</strong>。
+别人发数量关系可能是干巴巴公式图/题，认知负荷高，受众3秒划走。你的是"可爱猫 + 大佬总结"，门槛极低。封面是认知劫持（dbs-content 原则2），你的封面在情绪接管，不是信息传递。</p>
+<h3 id="3ip-vs">角度3：权威代理（老师IP vs 无名干货）</h3>
+<p>高照/花生十三 = 已被验证的"考公人选出来的"权威。
+别人发可能是自己整理的"干货"，缺信任背书，受众本能防御；你用大佬背书，防备降低。框架理论：你站在"民间大佬"立场，受众感到被代言。</p>
+<h3 id="4-0209">角度4：账号权重与运营变量（小沈 02/09 模块）</h3>
+<p>别人不火，常见死因：
+- 新号没养（前8篇不动正常）、原创率&lt;60%、垂直度不够、真诚分低；
+- <strong>评论区没做互动</strong>——而评论权重高于赞藏（小沈平台规则）；
+- 48h 没过互动阈值被停推，小眼睛变两位数。
+你的号当时能火 = <strong>账号权重 × 内容 × 评论区互动节奏 × 发布节奏</strong>的乘积。你的引流评论（A/B版 + momo互推 + 作者赞过）人为拉高评论权重 → 触发二次推流。单看内容不够。</p>
+<h3 id="5dontbesilent-3">角度5：模仿颗粒度（dontbesilent 对标信条3）</h3>
+<p>别人可能是"参考了一下"，你是<strong>像素级对齐爆款结构</strong>：大字报+橙圈+emoji+3段式+老师名+节数+真实图。
+对标到"袜子线头"级别。模仿颗粒度决定爆款质量——大部分人连"抄"都做不到位。</p>
+<h3 id="6-02">角度6：合规生存力（小沈 02 模块·限流）</h3>
+<p>别人可能直接写"加群/免费/网盘"→ 警告两次，第三次<strong>小眼睛直接变两位数，基本不可逆</strong>（粉丝多少无关）。
+你用「無償」异体字 + 「群聊」暗号 + 评论区钩子 → 在平台打压商广（举报+40%）的环境里活下来。
+能活 = 能持续发 = 能跑出爆款。很多"别人不火"其实是<strong>被限流干掉了</strong>，不是内容不行。</p>
+<h3 id="7dontbesilent-dbs-content-4">角度7：产品导向（dontbesilent dbs-content 原则4）</h3>
+<p>你的笔记不是"分享"，是<strong>带转化钩子的产品页</strong>：每篇导向群聊→夸克口令→变现。
+别人发数量关系可能纯分享、无闭环，即使有流量也转不出。从商业看：<strong>火不火和赚不赚钱是两件事</strong>，你的笔记"火"是因为它同时完成了引流。</p>
+<hr />
+<h2 id="_4">第三章：数字街坊信任 + 内容形式匹配</h2>
+<h3 id="04">数字街坊（小沈 04 模块）</h3>
+<p>小红书是"数字街坊"，称谓"大佬/老师/姐妹/宝子"。你的笔记用"考公人""大佬""咱"构建邻里无条件分享氛围 → 信任。
+别人用"教学腔/机构腔"破坏街坊感 → 不被信任，内容再对也划走。</p>
+<h3 id="dbs-content-phase-2">内容形式匹配（dbs-content Phase 2）</h3>
+<p>公考资料 = 工具清单/操作教程 → <strong>最适合小红书大字报图文</strong>（受众要保存反复看）。
+你正好用大字报。别人若用错形式（如发长视频讲方法），装不下，价值丢失。</p>
+<h3 id="02">真诚分与原创率（小沈 02 模块）</h3>
+<p>新算法原创度≥60%、字数&gt;100字才吃流量；长笔记&gt;600字拉高观看时长。
+你的笔记"说清楚大佬资料 + 真实反应叙事"天然满足原创+字数；纯搬运/拼凑会掉真诚分，进不了推荐池。</p>
+<hr />
+<h2 id="skill">第四章：喂给 skill 的"人性检查清单"</h2>
+<p>让 <code>xhs-viral-clone</code> 和 12 个 xhs skill 在生成每篇笔记时自检：</p>
+<ul>
+<li>[ ] <strong>捷径钩子</strong>：标题/封面有没有给出"不用苦学就能过"的退路感？（代理努力）</li>
+<li>[ ] <strong>低启动成本</strong>：任务有没有被压缩成"几节/几分钟/倍速"？（认知吝啬）</li>
+<li>[ ] <strong>稀缺紧迫</strong>：有没有"早就不讲/老版/限时"的失去感？（损失厌恶）</li>
+<li>[ ] <strong>群体共识</strong>：有没有"考公人选出来的/都在冲"的社会证明？（两级传播）</li>
+<li>[ ] <strong>沉默解除</strong>：有没有替受众说出"我不想努力/我怕学不会"这句不敢公开的话？（沉默的螺旋）</li>
+<li>[ ] <strong>立场锁定</strong>：整篇是不是只站在"被虐的考公人"这边，没漂到教育者？（框架理论）</li>
+<li>[ ] <strong>表达降维</strong>：硬内容有没有用真实图/emoji/手写圈萌化降认知负荷？（认知劫持）</li>
+<li>[ ] <strong>权威代理</strong>：有没有具体老师IP背书，而非无名干货？（信任背书）</li>
+<li>[ ] <strong>评论区设计</strong>：A/B版引流 + momo互推 + 作者赞过有没有齐？（拉评论权重→二次推流）</li>
+<li>[ ] <strong>合规暗号</strong>：「無償」异体字 + 「群聊」暗号是否就位，无任何"网盘/加群/免费"裸词？（限流生存）</li>
+<li>[ ] <strong>产品闭环</strong>：每篇是否导向群聊→夸克口令，不是纯自嗨？（先有产品后有内容）</li>
+</ul>
+<hr />
+<h2 id="_5">一个反直觉结论</h2>
+<p>爆款不是"内容好"，是<strong>内容恰好击中了人性某一处脆弱 + 运营变量全部就位 + 在限流环境里活下来</strong>。
+你之前账号被限流、截图数据失真，恰好说明：能活下来的内容（合规暗号 + 持续发）比"内容多惊艳"重要。下一阶段的核心是<strong>复制"人性发动机 + 生存力"，而不是复制"某篇长什么样"</strong>。</p></div>
+  </section>
+
+  <section id="generated">
+    <h2>🚀 生成物（根据素材/公式产出）</h2>
+    <p class="lead">12篇变体，点列表查看。生成时已过 11项人性自检 + 批判关。</p>
+    <div class="btnrow">
+      <button class="btn" onclick="copy('gen')">🚀 复制「生成新变体」指令</button>
+      <button class="btn" onclick="copy('debate')">⚔ 复制「辩论生成」指令</button>
+    </div>
+    <div class="var-list"><ul style="list-style:none;margin:0;padding:0"><li class="var-item" onclick="showVar(0)">变体 01 - 高照fb资料分析冲刺四节</li><li class="var-item" onclick="showVar(1)">变体 02 - 花生十三龙飞图推融合版</li><li class="var-item" onclick="showVar(2)">变体 03 - 高照20版数量关系特训</li><li class="var-item" onclick="showVar(3)">变体 04 - 钟君申论不炫技本质</li><li class="var-item" onclick="showVar(4)">变体 05 - 郭熙言语理解重点梳理</li><li class="var-item" onclick="showVar(5)">变体 06 - 周永冈快速口算法</li><li class="var-item" onclick="showVar(6)">变体 07 - 袁东申论大作文纯背版</li><li class="var-item" onclick="showVar(7)">变体 08 - 杰伦哥判断推理</li><li class="var-item" onclick="showVar(8)">变体 09 - 花生十三资料分析速成四节</li><li class="var-item" onclick="showVar(9)">变体 10 - 蔡金龙图推三节冲刺</li><li class="var-item" onclick="showVar(10)">变体 11 - 老严申论素材神书</li><li class="var-item" onclick="showVar(11)">变体 12 - 言语理解葛欣三节冲刺（辩论合成版）</li></ul></div>
+    <div class="var-panel" id="var0" style="display:none"><h1 id="01-fb">变体 01 - 高照 fb 资料分析冲刺四节</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏：截图被限流，赞评藏无效，一律按万赞爆款对待）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅黄色（#FFF9DB 一类）</li>
+<li><strong>顶部</strong>：可加白色线笔记本横线（仿手写质感）</li>
+</ul>
+<h3 id="_3">关键词高亮（多重叠加）</h3>
+<ul>
+<li><strong>橙色波浪下划线</strong>：覆盖关键词"考公人/fb那会儿的资料分析冲刺四节/精简"</li>
+<li><strong>浅蓝底色填充</strong>：关键词"资料分析""冲刺""四节"</li>
+<li><strong>红色文字+感叹号</strong>：强调句"速刷！"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 6-8 个</strong>：封面右上角集中堆叠</li>
+<li><strong>✌️ V 字手势</strong>：封面下方居中（粉红色皮肤版）</li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>最近好多考公人又在刷
+高照老师在fb那会儿的
+资料分析冲刺四节了，
+只有四节啊，真的是
+很精简了，资料分析想
+快速学一遍的，速刷！
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>这不就是考公人都在找的资料分析速成么</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>这不就是考公人都在找的资料分析速成么</strong></p>
+<p>没啥好说的了，冲刺就完了！我刚看完高照老师前几年的经典版冲刺四节👿👿👿👿👿嫌慢的就倍速，但这已经够快的了，因为拢共才四节！！！#公考 #国考备考 #考公人 #资料分析 #资料分析提速 #资料分析技巧</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">公考 #考公考编 #考公 #考公人 #26考公 #国考备考 #资料分析 #资料分析技巧 #资料分析提速 #资料分析公式 #资料分析秒杀 #行测干货 #行测 #考公打卡</h1>
+<h2 id="_7">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a-momo">首评（A 版·作者自评 或 momo 互推号）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复</p>
+</blockquote>
+<h3 id="b">次条（B 版·群聊引流）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词检测，灰色显示</p>
+</blockquote>
+<h2 id="_8">六、发布策略</h2>
+<ul>
+<li><strong>时段</strong>：12:00-13:00 / 19:00-22:00</li>
+<li><strong>新账号首测</strong>：先发本篇观察 24h 数据，再决定是否矩阵铺开</li>
+<li><strong>多账号变体</strong>：换个老师（花生十三/大春）同样的结构重发</li>
+</ul>
+<hr />
+<p><em>模板化复用：换老师组合（花生十三/大春）+ 换背景色（蓝/粉/紫）+ 换节数（三节/四节/速成） → 立即出新变体</em></p></div><div class="var-panel" id="var1" style="display:none"><h1 id="02-">变体 02 - 花生十三+龙飞图推融合版</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（融合版=本号招牌结构）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅粉色（#FFE5E5 一类）</li>
+</ul>
+<h3 id="_3">关键词高亮（核心：橙色波浪下划线）</h3>
+<ul>
+<li><strong>橙色波浪下划线</strong>：覆盖"图推总结/花生十三/龙飞/图推总结重点"</li>
+<li><strong>橙色圈</strong>：圈出"融合""拿手绝活""太省事儿"等关键词</li>
+<li><strong>浅蓝底色填充</strong>：数字/节数</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 5-8 个</strong>：句末堆叠</li>
+<li><strong>🤓 戴眼镜脸</strong>：封面下方（"学者感"）</li>
+</ul>
+<h3 id="_4">图片元素（真实素材优先）</h3>
+<ul>
+<li><strong>罗布小黄狗 emoji</strong>（小红书内置插画，戴绿帽的小黄）：封面下方居中</li>
+<li>或真实猫咪照片（更佳）</li>
+</ul>
+<h3 id="_5">标题文字（封面大字）</h3>
+<pre><code>我刚被分享了一个大佬
+融合版的图推总结！
+厉害在哪儿呢，直接融合了
+花生十三 龙飞还有几个图推
+大佬的图推总结重点！
+这看一次直接就把图推
+大佬们的拿手绝活儿给
+全学了吗🙆🙆
+太省事儿了，那必然得翻一遍
+看看啊👿👿👿👿
+</code></pre>
+<h2 id="_6">二、标题</h2>
+<p><strong>这一回就把图推大佬们的技巧给看完了啊</strong></p>
+<h2 id="_7">三、正文</h2>
+<p><strong>这一回就把图推大佬们的技巧给看完了啊</strong></p>
+<p>图形推理大佬们那么多，但是很多讲的有重复，现在直接融合去重了花生十三 龙飞还有几个图推大佬的图推总结重点🙆🙆 相当于留下的都是被考公人验证过的实用做题方法了，这看一次直接就把图推大佬们的拿手绝活儿给全学了吗🙆🙆🙆🙆 太省事儿了，那必然得翻一遍看看啊👿👿👿👿 #考公考编 #公考 #考公 #26考公 #考公人 #图形推理 #图形推理技巧 #图形推理规律 #图推刷题 #图推 #图推技巧</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">公考 #考公考编 #考公 #考公人 #26考公 #国考备考 #图形推理 #图形推理技巧 #图形推理规律 #图形推理口诀 #图推 #图推刷题 #图推技巧 #图推打卡</h1>
+<h2 id="_8">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a">首评（A 版·作者置顶评论）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复
+<strong>置顶评论</strong></p>
+</blockquote>
+<h3 id="b-momo">次条（B 版·momo 互推号 + 作者赞过）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词
+- 作者本人对 momo 的这条评论"赞过" — 形成社交证明</p>
+</blockquote>
+<h2 id="_9">六、发布策略</h2>
+<ul>
+<li><strong>这是重点变体（融合版招牌结构）</strong>：优先投入测试</li>
+<li><strong>多账号变体组合</strong>：</li>
+<li>换老师组合：花生十三+蔡老 / 花生十三+程意 / 高照+龙飞</li>
+<li>换科目：判断推理融合 / 言语理解融合 / 申论模板融合</li>
+<li><strong>图片素材</strong>：用真实罗布小黄狗或真实猫咪照（增强实战派质感）</li>
+</ul>
+<hr />
+<p><em>融合版型是本号招牌爆款结构，每账号每月至少 2 篇融合版笔记</em></p></div><div class="var-panel" id="var2" style="display:none"><h1 id="03-20">变体 03 - 高照20版数量关系特训</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅黄色（#FFF9DB 一类）</li>
+</ul>
+<h3 id="5">关键词高亮（5 重叠加）</h3>
+<ul>
+<li><strong>绿色圈</strong>：圈出"极速通关数量关系的"</li>
+<li><strong>黄色填充+橙色圈</strong>：圈出"考公人都在冲/高照老师20版的数量特训"</li>
+<li><strong>橙色圈</strong>：圈出"才四节啊"</li>
+<li><strong>浅蓝底色填充</strong>："国考小专题冲刺"</li>
+<li><strong>红色文字</strong>：感叹号收尾</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 6-8 个</strong>：句末堆叠（关键数字前后）</li>
+<li><strong>🥵 热脸</strong>：封面中间（"学完很爽"表情）</li>
+</ul>
+<h3 id="_3">图片元素（真实素材优先）</h3>
+<ul>
+<li><strong>真实猫咪照</strong>：封面下方 1/3 区域（首选，增强真实感）</li>
+<li>或铅笔 emoji</li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>想极速通关数量关系的！
+考公人都在冲高照老师
+20版的数量特训！才
+四节啊🙆🙆🙆 什么概念啊
+这是！不用一天就
+刷完了！🙆
+（而且我才知道这是
+国考小专题冲刺！！！！）
+等啥啊，势必
+通关数量！👿👿👿👿
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>数量关系！极速通关了！！！</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>数量关系！极速通关了！！！</strong></p>
+<p>我只能说这简直是瞌睡送枕头啊🙆🙆🙆 毕竟真没时间每个模块都复习了，数量关系跟别的不一样，想速成还真的可以一试。而且我才知道这是国考小专题冲刺！！！之前只知道内容不多，很精简，适合冲刺，现在没想到还是这个专题的🙆🙆🙆 等啥啊，势必通关数量！👿👿👿👿👿 #考公考编 #考公 #数量关系 #国考 #国考备考 #高照 #考公人 #考公备考 #公考小白 #公考打卡</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">公考 #考公考编 #考公 #考公人 #26考公 #国考备考 #数量关系 #数量关系笔记 #数量关系秒杀技 #数量关系技巧 #高照 #公考小白 #公考打卡</h1>
+<h2 id="_7">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a">首评（A 版·作者置顶评论）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复
+<strong>置顶评论</strong></p>
+</blockquote>
+<h3 id="b-momo">次条（B 版·momo 互推号）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 15
+- 「<strong>無償</strong>」用异体字「無」规避敏感词
+- 作者本人对 momo 的这条评论"赞过"</p>
+</blockquote>
+<h2 id="_8">六、发布策略</h2>
+<ul>
+<li><strong>重点变体（招牌结构）</strong>：优先投入</li>
+<li><strong>真实猫咪照增强质感</strong>：用真实猫咪照替代纯 emoji</li>
+<li><strong>变体组合</strong>：</li>
+<li>换背景色：浅蓝 / 浅粉 / 浅紫</li>
+<li>换老师：高照 fb / 周永冈 / 花生十三数量</li>
+<li>换节数：三节 / 四节 / 速成 / 特训</li>
+</ul>
+<hr />
+<p><em>真实图片素材是这一变体的风格优势（本号偏好真实猫照增强实战感）</em></p></div><div class="var-panel" id="var3" style="display:none"><h1 id="04-">变体 04 - 钟君申论不炫技本质</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅黄色（#FFF9DB 一类）— 申论专属推荐色</li>
+<li><strong>顶部</strong>：黄色便利贴（"Confidence"字样，斜贴）</li>
+</ul>
+<h3 id="3">关键词高亮（3 重叠加）</h3>
+<ul>
+<li><strong>黄色填充+橙色圈</strong>：覆盖"申论菜鸟都来刷/申论大佬钟君的课"</li>
+<li><strong>黄色填充</strong>：覆盖"考公人发自肺腑的/不炫技"</li>
+<li><strong>黄色填充</strong>：覆盖"申论高分/直截了当剖析申论本质"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 4-6 个</strong>：句末堆叠</li>
+<li><strong>🤓 戴眼镜脸</strong>：封面开头（"考公人认真"）</li>
+</ul>
+<h3 id="_3">图片元素</h3>
+<ul>
+<li><strong>书本 emoji</strong>（小红书内置）：封面右下角</li>
+<li>或浅色绿框笔记背景</li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>申论菜鸟都来刷申论大佬钟君的课！（他
+现在已经是咱们不能企及的高度了🙆🙆）
+考公人发自肺腑的！不炫技！原来
+不用背那么多花里胡哨🙆 技巧也可以
+申论高分🙆🙆🙆 直截了当剖析申论
+本质！几个半天就全刷完了！申论质
+的变化🙆🙆🙆🙆
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>替你们试过了！这是申论大佬啊啊啊</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>替你们试过了！这是申论大佬啊啊啊</strong></p>
+<p>大佬早就不讲课了，已经是新的高度了，这可能就是为啥那么多考公人都认可的原因吧，凭实力说话啊。考公人发自肺腑的！不炫技！原来不用背那么多花里胡哨🙆 的技巧也可以申论高分🙆🙆🙆 直截了当剖析申论本质！几个半天就全刷完了！申论质的变化🙆🙆🙆🙆 #公考 #考公考编 #考公 #考公人 #国考 #国考省考 #申论 #申论学习 #申论备考 #26考公</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">公考 #考公考编 #考公 #考公人 #26考公 #国考 #国考省考 #申论 #申论学习 #申论备考 #申论技巧 #申论模板 #申论素材</h1>
+<h2 id="_7">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a">首评（A 版·作者置顶评论）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复
+<strong>置顶评论</strong></p>
+</blockquote>
+<h3 id="b-momo">次条（B 版·momo 互推号）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词
+- 作者本人对 momo 的这条评论"赞过"</p>
+</blockquote>
+<h2 id="_8">六、发布策略</h2>
+<ul>
+<li><strong>申论类笔记受众精准</strong>，目标用户付费意愿更强</li>
+<li><strong>重点放在评论引流</strong>：申论用户付费意愿更强</li>
+<li><strong>变体组合</strong>：</li>
+<li>换老师：袁东（大作文纯背版）/ 老严（神书）/ 大佬速成汇总</li>
+<li>换素材：万精油人物素材 / 申论模板 / 申论范文</li>
+<li>换背景色：浅蓝 / 浅粉 / 浅紫</li>
+</ul>
+<hr />
+<p><em>申论笔记重点在精准转化（付费意愿更强的用户）</em></p></div><div class="var-panel" id="var4" style="display:none"><h1 id="05-">变体 05 - 郭熙言语理解重点梳理</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅黄色（#FFF9DB 一类）</li>
+</ul>
+<h3 id="3">关键词高亮（3 重叠加）</h3>
+<ul>
+<li><strong>橙色圈</strong>：圈出"郭熙/很多考公人都在刷的言语老师/言语理解做题思路"</li>
+<li><strong>绿色圈</strong>：圈出"重点梳理版"</li>
+<li><strong>橙色圈</strong>：圈出"语感上来之后"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 4-6 个</strong>：句末堆叠</li>
+<li><strong>🙌 举手 emoji × 2</strong>：封面中间（"认真"）</li>
+</ul>
+<h3 id="_3">图片元素</h3>
+<ul>
+<li><strong>真实狗在浴缸图</strong>（小红书内置插画版本）：封面下方居中</li>
+<li>或戴眼镜的帅哥美女 emoji</li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>言语理解不行的
+刷到有大佬把郭熙（很多
+考公人都在刷的言语老师）
+言语理解做题思路
+简化成了一个重点梳理版
+笔记！
+很快就能过一遍，不用
+死记硬背，语感上来之后做题
+真的一气呵成🙆🙆🙆🙆
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>言语理解不用死记硬背，直接跟大佬学！！</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>言语理解不用死记硬背，直接跟大佬学！！</strong></p>
+<p>郭×老师就不用说了，好多考公人都平时刷他的，反正言语理解不行的，这种重点梳理版的就更省事儿啦，就很快时间过一遍就行，很快就能过一遍，不用死记硬背，语感上来之后做题真的一气呵成🙆🙆🙆🙆🙆 #考公考编 #公考 #考公 #考公人 #国考备考 #言语理解 #言语理解技巧 #言语理解刷题 #言语理解提升 #言语理解笔记</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">公考 #考公考编 #考公 #考公人 #26考公 #国考备考 #言语理解 #言语理解技巧 #言语理解刷题 #言语理解提升 #言语理解笔记 #言语理解干货</h1>
+<h2 id="_7">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a">首评（A 版·作者置顶评论）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复
+<strong>置顶评论</strong></p>
+</blockquote>
+<h3 id="b-momo">次条（B 版·momo 互推号）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词
+- 作者本人对 momo 的这条评论"赞过"</p>
+</blockquote>
+<h2 id="_8">六、发布策略</h2>
+<ul>
+<li><strong>目标精准用户</strong>，申论言语类转化价值高</li>
+<li><strong>变体组合</strong>：</li>
+<li>换老师：花生十三言语 / 袁东言语 / 程意言语</li>
+<li>换主题：言语理解做题思路 / 言语理解速记口诀 / 言语成语辨析</li>
+<li>换图片：狗在浴缸 / 真实小狗 / 戴眼镜学生</li>
+<li><strong>可作为矩阵批量笔记</strong>：每账号 2-3 篇言语类笔记</li>
+</ul>
+<hr />
+<p><em>言语类笔记适合作为"补全型"内容（行测 5 模块全覆盖）+ 精准转化</em></p></div><div class="var-panel" id="var5" style="display:none"><h1 id="06-">变体 06 - 周永冈《快速口算法》</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（神书型=真实书封面结构）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅蓝色或浅黄色（#FFF9DB 一类）</li>
+<li><strong>可加</strong>：白色线笔记本横线（仿手写质感）</li>
+</ul>
+<h3 id="2-3">关键词高亮（2-3 重叠加）</h3>
+<ul>
+<li><strong>黄色填充</strong>：覆盖"快速口算书/活脱脱就是速算邪修"</li>
+<li><strong>绿色圈</strong>：圈出"周永冈/5秒内任意两个四位数相乘"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 6-8 个</strong>：句末堆叠</li>
+<li><strong>🥵 热脸</strong>：封面中间（"学完很爽"）</li>
+</ul>
+<h3 id="_3">图片元素（神书型·真实书封面）</h3>
+<ul>
+<li><strong>真实书籍封面照片</strong>：周永冈《快速口算法》— 蓝色封皮 + 飞机 + 算式 + 红色星球</li>
+<li>这是本号神书型的核心视觉资产，<strong>真实书封面增强信任感</strong></li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>这快速口算书简直
+活脱脱就是速算邪修啊
+光前面随便看了几页，
+真是开眼了🙆🙆🙆🙆
+全是口诀
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>这快速口算书简直活脱脱就是速算邪修啊</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>这快速口算书简直活脱脱就是速算邪修啊</strong></p>
+<p>光前面随便看了几页，真是开眼了🙆🙆🙆🙆 全是口诀，我怎么觉得这以前的书更像是邪修啊，就是为了让你学会，直接各种技巧手段，硬生生让你算得快🙆🙆🙆 反而现在的书都要"循规蹈矩""按部就班"🙆🙆 #口算速算 #口算 #速算技巧 #速算 #考公考编</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="_7">口算速算 #口算 #速算技巧 #速算 #考公考编 #公考 #考公 #考公人 #数量关系 #数学学习</h1>
+<h2 id="_8">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a">首评（A 版·作者置顶评论）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复
+<strong>置顶评论</strong></p>
+</blockquote>
+<h3 id="b-momo">次条（B 版·momo 互推号）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词</p>
+</blockquote>
+<h2 id="_9">六、发布策略</h2>
+<ul>
+<li><strong>神书型特殊路线</strong>：用真实书封面照片 + 红框高亮关键章节目录页</li>
+<li><strong>目标用户精准 + 转化率高</strong>，速算类实用性强</li>
+<li><strong>配套图片</strong>：除了封面，还要上传 2-3 张书的内页目录（红框高亮关键章节）</li>
+<li><strong>变体组合</strong>：</li>
+<li>换神书：老严《申论技巧》、申论范文集、神书目录</li>
+<li>换主题：速算 / 数量关系 / 判断推理 / 申论</li>
+<li>换封面：浅蓝 / 浅黄 / 浅粉</li>
+</ul>
+<h3 id="_10">配套笔记（多图笔记·神书目录展示）</h3>
+<p><strong>第 1 张图</strong>：真实书封面照片（必备）
+<strong>第 2-3 张图</strong>：书的目录页（红框高亮关键章节）
+<strong>第 4 张图</strong>：书的内页内容（红框高亮重点段落）</p>
+<hr />
+<p><em>神书型 = 真实书封面 + 多图目录展示 + 红框高亮 = 真实感强 + 高转化路线</em></p></div><div class="var-panel" id="var6" style="display:none"><h1 id="07-">变体 07 - 袁东申论大作文纯背版</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅粉色（#FFE5E5 一类）</li>
+</ul>
+<h3 id="_3">关键词高亮（多重叠加）</h3>
+<ul>
+<li><strong>橙色圈</strong>：圈出"申论不会写的/有速成办法啦"</li>
+<li><strong>橙色圈</strong>：圈出"考公的朋友分享给我大佬整理的/袁东大作文纯背版模板"</li>
+<li><strong>黄色填充</strong>：覆盖"现成的模板素材/考场上直接就能用得上啊"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 4 个</strong>：句末堆叠</li>
+<li><strong>👿 红魔鬼 × 6-8 个</strong>：封面底端堆叠（"考场上直接拿下"）</li>
+</ul>
+<h3 id="_4">图片元素</h3>
+<ul>
+<li><strong>书本 emoji</strong>（小红书内置）：封面右上角</li>
+<li>或小手交叉 emoji（"这就拿下了"）</li>
+</ul>
+<h3 id="_5">标题文字（封面大字）</h3>
+<pre><code>申论不会写的
+有速成
+办法啦！
+考公的朋友分享给我
+大佬整理的
+袁东大作文纯背版
+模板！！
+都是现成的模板素材，这
+考场上直接就能用得上啊
+👿👿👿👿👿👿👿👿👿👿
+</code></pre>
+<h2 id="_6">二、标题</h2>
+<p><strong>申论的捷径其实就是直接复制大佬！</strong></p>
+<h2 id="_7">三、正文</h2>
+<p><strong>申论的捷径其实就是直接复制大佬！</strong></p>
+<p>我知道好多考公人都在找什么申论速成了，什么万能模板，开头结尾，过渡句，金句，分论点，有好多学霸都在整理袁东老师的模板🙆🙆🙆🙆 我其实有找了好几版，这一版整理的比较清晰，好吧，其实就是我感觉更好记🙆🙆 一切为了考试嘛🙆🙆 都是现成的模板素材，这考场上直接就能用得上啊👿👿👿👿👿 而且这次还不考试的，平时就没事儿看看这种大佬整理的模板素材，到你真正写的时候，会发现下笔如有神助🙆🙆🙆🙆 #考公考编 #公考 #考公 #26考公 #省考 #申论 #申论速成</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">考公考编 #公考 #考公 #26考公 #省考 #申论 #申论速成 #申论素材 #申论作文 #申论模板 #申论模板万能 #申论万能模板 #申论万能开头结尾 #申论人物素材 #申论人物素材积累</h1>
+<h2 id="_8">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a">首评（A 版·作者置顶评论）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复
+<strong>置顶评论</strong></p>
+</blockquote>
+<h3 id="b-momo">次条（B 版·momo 互推号）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词</p>
+</blockquote>
+<h2 id="_9">六、发布策略</h2>
+<ul>
+<li><strong>申论类笔记重点在精准转化</strong>（付费意愿更强的用户）</li>
+<li><strong>目标用户</strong>：申论不会写 / 找模板 / 找速成</li>
+<li><strong>变体组合</strong>：</li>
+<li>换老师：钟君 / 大佬汇总 / 老严</li>
+<li>换素材：袁东模板 / 万能开头结尾 / 万精油人物素材</li>
+<li>换主题：大作文 / 应用文 / 申论范文</li>
+<li><strong>配套笔记</strong>：每账号申论类笔记占比 20-30%</li>
+</ul>
+<hr />
+<p><em>申论笔记重点不在爆款数据，而在精准转化（付费意愿更强的用户）</em></p></div><div class="var-panel" id="var7" style="display:none"><h1 id="08-">变体 08 - 杰伦哥判断推理</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅黄色（#FFF9DB 一类）</li>
+</ul>
+<h3 id="3">关键词高亮（3 重叠加）</h3>
+<ul>
+<li><strong>黄色填充</strong>：覆盖"我去，判断推理老是做不对题的"</li>
+<li><strong>橙色圈</strong>：圈出"杰伦哥（公考正道是沧桑）的判断推理笔记"</li>
+<li><strong>橙色圈</strong>：圈出"做题思路真的不一样"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 4-6 个</strong>：句末堆叠</li>
+<li><strong>🙆 桃子脸 × 6-8 个</strong>：封面中间堆叠</li>
+</ul>
+<h3 id="_3">图片元素</h3>
+<ul>
+<li>可选：戴眼镜小孩 / 戴眼镜学生 emoji</li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>我去，判断推理老是
+做不对题的！我刷到一个
+杰伦哥（公考正道是沧桑）
+的判断推理笔记，这大佬
+不愧是考公人选出来的民间
+大佬，做题思路真的
+不一样，大概看一看
+再刷题，真的能体会一下
+什么叫事半功倍🙆🙆🙆🙆
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>判断推理看看大佬的做题思路 提分咔咔猛</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>判断推理看看大佬的做题思路 提分咔咔猛</strong></p>
+<p>我不知道大家有没有这个感觉，就是判断推理反反复复就是做不对，关键是选的时候真的很自信🙆 判断推理题分可以试试看看大佬的思路 反正刷下杰伦哥得试试吧，他早就退了，的确是经过实战跑出来的公考大佬。尤其是判断推理这块儿，没得说。做题思路真的不一样，大概看一看再刷题，真的能体会一下什么叫事半功倍🙆🙆🙆🙆 再说了一遍，不行觉得不适合自己就不看了，看肯定没坏处🙆🙆🙆 #考公考编 #公考 #考公 #考公人 #26考公 #判断推理 #判断推理技巧 #判断推理笔记 #判断推理提分 #判断推理考点</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">考公考编 #公考 #考公 #考公人 #26考公 #判断推理 #判断推理技巧 #判断推理笔记 #判断推理提分 #判断推理考点 #判断推理口诀</h1>
+<h2 id="_7">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a">首评（A 版·作者置顶评论）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复
+<strong>置顶评论</strong></p>
+</blockquote>
+<h3 id="b-momo">次条（B 版·momo 互推号 + 作者赞过）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词
+- 作者本人对 momo 的这条评论"赞过" — 形成社交证明</p>
+</blockquote>
+<h2 id="_8">六、发布策略</h2>
+<ul>
+<li><strong>目标精准用户</strong>，判断推理类转化价值高</li>
+<li><strong>"民间大佬""公考正道是沧桑"等定位词提升稀缺感</strong></li>
+<li><strong>变体组合</strong>：</li>
+<li>换老师：花生十三判断 / 蔡老判断 / 龙飞判断 / 程意判断</li>
+<li>换主题：图推 / 类比 / 定义 / 逻辑</li>
+<li>换背景色：浅蓝 / 浅粉 / 浅紫</li>
+</ul>
+<hr />
+<p><em>判断推理类笔记适合"民间大佬"等稀缺感定位词</em></p></div><div class="var-panel" id="var8" style="display:none"><h1 id="09-">变体 09 - 花生十三 资料分析 速成四节</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏：截图被限流，赞评藏无效，一律按万赞爆款对待）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code> · 人性自检依据 <code>爆款底层逻辑（人性+小沈+dontbesilent 融合）.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅蓝色（#E7F0FF 一类）</li>
+<li><strong>顶部</strong>：白色线笔记本横线（仿手写质感）</li>
+</ul>
+<h3 id="_3">关键词高亮（多重叠加）</h3>
+<ul>
+<li><strong>橙色波浪下划线</strong>：覆盖"考公人 / 花生十三资料分析速成四节 / 精简"</li>
+<li><strong>浅蓝底色填充</strong>：关键词"资料分析""速成""四节"</li>
+<li><strong>红色文字+感叹号</strong>：强调句"速刷！"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 6-8 个</strong>：封面右上角集中堆叠</li>
+<li><strong>👿 红魔鬼 × 3-4 个</strong>：封面下方（提速/拿下）</li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>之前有考公人问
+资料分析有木有
+速成的捷径
+这不就是么！花生十三
+速成四节，拢共四节
+倍速看一遍就完事，速刷！
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>之前有考公人问资料分析有木有速成的捷径，这不就是么</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>之前有考公人问资料分析有木有速成的捷径</strong></p>
+<p>没啥好说的了，冲就完了！我刚刷完花生十三的速成四节👿👿👿👿👿 不愧是考公人选出来的，经典就是经典。嫌慢就倍速，拢共才四节！！！资料分析想快速过一遍的，这不正合适么，此时不刷更待何时啊喂👿</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">公考 #考公考编 #考公 #考公人 #26考公 #国考备考 #资料分析 #资料分析速成 #资料分析技巧 #资料分析提速 #资料分析公式 #行测干货 #行测 #花生十三 #考公打卡</h1>
+<h2 id="_7">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a-momo">首评（A 版·作者自评 或 momo 互推号）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复</p>
+</blockquote>
+<h3 id="b">次条（B 版·群聊引流）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词检测，灰色显示</p>
+</blockquote>
+<h2 id="_8">六、发布策略</h2>
+<ul>
+<li><strong>时段</strong>：12:00-13:00 / 19:00-22:00</li>
+<li><strong>新账号首测</strong>：先发本篇观察 24h 数据，再决定是否矩阵铺开</li>
+<li><strong>多账号变体</strong>：换老师（高照/大春）同样结构重发，换背景色（黄/粉/紫）</li>
+</ul>
+<hr />
+<h3 id="1111">人性自检（11/11 ✅）</h3>
+<ul>
+<li>[x] 捷径钩子：封面"速成的捷径"+ 正文"想快速过一遍"给退路感（代理努力）</li>
+<li>[x] 低启动成本："拢共四节/倍速看一遍"启动成本≈0（认知吝啬）</li>
+<li>[x] 稀缺紧迫："经典就是经典"暗示老版难再得（损失厌恶）</li>
+<li>[x] 群体共识："考公人选出来的"（两级传播）</li>
+<li>[x] 沉默解除：替受众问出"有木有速成的捷径"（沉默的螺旋）</li>
+<li>[x] 立场锁定：全程站"被资料分析虐的考公人"，无说教（框架理论）</li>
+<li>[x] 表达降维：桃子脸+红魔鬼 emoji 堆叠萌化硬核（认知劫持）</li>
+<li>[x] 权威代理：花生十三 IP 背书（信任背书）</li>
+<li>[x] 评论区设计：A 版首评 + B 版群聊暗号 + momo 互推（拉评论权重）</li>
+<li>[x] 合规暗号：無償 + 群聊，无网盘/加群/免费裸词</li>
+<li>[x] 产品闭环：评论区导向群聊 → 夸克口令</li>
+</ul>
+<p><em>模板化复用：换老师（高照/大春）+ 换背景色 + 换节数（三节/速成） → 立即出新变体</em></p></div><div class="var-panel" id="var9" style="display:none"><h1 id="10-">变体 10 - 蔡金龙（蔡老）图形推理 三节冲刺</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏：截图被限流，赞评藏无效，一律按万赞爆款对待）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code> · 人性自检依据 <code>爆款底层逻辑（人性+小沈+dontbesilent 融合）.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅粉色（#FFE9F2 一类）</li>
+<li><strong>顶部</strong>：白色线笔记本横线（仿手写质感）</li>
+</ul>
+<h3 id="_3">关键词高亮（多重叠加）</h3>
+<ul>
+<li><strong>橙色波浪下划线</strong>：覆盖"图形推理 / 蔡老三节冲刺 / 规律讲明白"</li>
+<li><strong>浅蓝底色填充</strong>：关键词"图形推理""三节""冲刺"</li>
+<li><strong>红色文字+感叹号</strong>：强调句"开窍！"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 6-8 个</strong>：封面右上角集中堆叠</li>
+<li><strong>🐱 猫咪照</strong>：封面中部（真实动物照片增强"实战派"质感）</li>
+<li><strong>👿 红魔鬼 × 3-4 个</strong>：封面下方</li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>图形推理老是
+看不出规律
+蔡老那三节冲刺
+真的把规律讲明白了
+就三节！倍速刷完
+图推直接开窍👿
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>图形推理老是看不出规律？蔡老这三节冲刺真的把规律讲明白了</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>图形推理老是看不出规律？</strong></p>
+<p>图推是不是一看就头大👿👿👿👿👿 我之前也是，后来刷了蔡金龙老师（考公人都喊蔡老）的三节冲刺，不愧是民间大佬，经典就是经典。就三节，倍速看一遍，规律全串起来了，图推想快速开窍的，冲就完了！此时不刷更待何时啊喂👿</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">公考 #考公考编 #考公 #考公人 #26考公 #国考备考 #图形推理 #图推 #行测 #行测干货 #蔡金龙 #图推规律 #考公打卡</h1>
+<h2 id="_7">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a-momo">首评（A 版·作者自评 或 momo 互推号）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复</p>
+</blockquote>
+<h3 id="b">次条（B 版·群聊引流）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词检测，灰色显示</p>
+</blockquote>
+<h2 id="_8">六、发布策略</h2>
+<ul>
+<li><strong>时段</strong>：12:00-13:00 / 19:00-22:00</li>
+<li><strong>新账号首测</strong>：先发本篇观察 24h 数据，再决定是否矩阵铺开</li>
+<li><strong>多账号变体</strong>：换老师（龙飞/花生十三）同样结构重发，换背景色（蓝/黄/紫）</li>
+</ul>
+<hr />
+<h3 id="1111">人性自检（11/11 ✅）</h3>
+<ul>
+<li>[x] 捷径钩子："想快速开窍"给不退而求其次的退路（代理努力）</li>
+<li>[x] 低启动成本："就三节/倍速看一遍"启动成本≈0（认知吝啬）</li>
+<li>[x] 稀缺紧迫："经典就是经典"暗示老版难再得（损失厌恶）</li>
+<li>[x] 群体共识："考公人都喊蔡老/民间大佬"（两级传播）</li>
+<li>[x] 沉默解除：替受众说出"一看就头大/看不出规律"的挫败（沉默的螺旋）</li>
+<li>[x] 立场锁定：站"被图推虐的考公人"，无说教（框架理论）</li>
+<li>[x] 表达降维：真实猫咪照 + emoji 萌化硬核图推（认知劫持）</li>
+<li>[x] 权威代理：蔡金龙（蔡老）IP 背书（信任背书）</li>
+<li>[x] 评论区设计：A 版首评 + B 版群聊暗号 + momo 互推（拉评论权重）</li>
+<li>[x] 合规暗号：無償 + 群聊，无网盘/加群/免费裸词</li>
+<li>[x] 产品闭环：评论区导向群聊 → 夸克口令</li>
+</ul>
+<p><em>模板化复用：换老师（龙飞/花生十三）+ 换背景色 + 换节数（三节/合集版） → 立即出新变体</em></p></div><div class="var-panel" id="var10" style="display:none"><h1 id="11-">变体 11 - 老严 申论素材 神书（万精油）</h1>
+<p><em>基于本人万赞级爆款笔记的仿制样本复刻（数据脱敏：截图被限流，赞评藏无效，一律按万赞爆款对待）</em>
+<em>公式来源：<code>我的爆款公式 v1.0.md</code> · 人性自检依据 <code>爆款底层逻辑（人性+小沈+dontbesilent 融合）.md</code></em></p>
+<hr />
+<h2 id="_1">一、封面设计</h2>
+<h3 id="_2">背景</h3>
+<ul>
+<li><strong>底色</strong>：浅黄色（#FFF9DB 一类）</li>
+<li><strong>顶部</strong>：白色线笔记本横线（仿手写质感）</li>
+</ul>
+<h3 id="_3">关键词高亮（多重叠加）</h3>
+<ul>
+<li><strong>橙色波浪下划线</strong>：覆盖"申论神书 / 老严素材 / 万精油"</li>
+<li><strong>浅蓝底色填充</strong>：关键词"申论素材""神书""万精油"</li>
+<li><strong>红色文字+感叹号</strong>：强调句"背这一本就够！"</li>
+</ul>
+<h3 id="emoji">Emoji 堆叠</h3>
+<ul>
+<li><strong>🍑 桃子脸 × 6-8 个</strong>：封面右上角集中堆叠</li>
+<li><strong>📚 书本 emoji</strong>：封面中部（或真实老书封面照，增强实战感）</li>
+<li><strong>👿 红魔鬼 × 3-4 个</strong>：封面下方</li>
+</ul>
+<h3 id="_4">标题文字（封面大字）</h3>
+<pre><code>我是不是发现了
+一本申论神书啊！
+老严的素材居然万精油
+一个顶 N 个主题
+考前翻一遍就够👿
+</code></pre>
+<h2 id="_5">二、标题</h2>
+<p><strong>我是不是发现了一本申论神书啊，老严的素材居然万精油，一个顶 N 个主题</strong></p>
+<h2 id="_6">三、正文</h2>
+<p><strong>我是不是发现了一本申论神书啊</strong></p>
+<p>老严那本素材，不愧是考公人选出来的，经典就是经典👿👿👿👿👿 最狠的是它万精油——一个人物素材能套 N 个主题，考前翻一遍直接能用，不用再东拼西凑。申论想走捷径背这一本就够，冲就完了！此时不背更待何时啊喂👿</p>
+<h2 id="hashtag">四、Hashtag</h2>
+<h1 id="26">公考 #考公考编 #考公 #考公人 #26考公 #国考备考 #申论 #申论素材 #申论大作文 #申论笔记 #老严 #万精油素材 #考公打卡</h1>
+<h2 id="_7">五、评论区引流话术（推荐组合）</h2>
+<h3 id="a-momo">首评（A 版·作者自评 或 momo 互推号）</h3>
+<blockquote>
+<p>发出来就是要分享的，上面有群，已经上传了，这么干脆的分享留下你们的 <strong>3 连</strong> 走啊🍑🍑🍑🍑🍑
+📅 2026-XX-XX 黑龙江 回复</p>
+</blockquote>
+<h3 id="b">次条（B 版·群聊引流）</h3>
+<blockquote>
+<p>☞<strong>群聊</strong> · 是 <strong>無償</strong> 但请礼貌自取 🍑
+- 「<strong>無償</strong>」用异体字「無」规避敏感词检测，灰色显示</p>
+</blockquote>
+<h2 id="_8">六、发布策略</h2>
+<ul>
+<li><strong>时段</strong>：12:00-13:00 / 19:00-22:00</li>
+<li><strong>新账号首测</strong>：先发本篇观察 24h 数据，再决定是否矩阵铺开</li>
+<li><strong>多账号变体</strong>：换钩子（"神书/万精油/多主题适用"）同样结构重发，换背景色（粉/蓝/紫）</li>
+</ul>
+<hr />
+<h3 id="1111">人性自检（11/11 ✅）</h3>
+<ul>
+<li>[x] 捷径钩子："想走捷径背这一本就够"给退路感（代理努力）</li>
+<li>[x] 低启动成本："考前翻一遍"启动成本≈0（认知吝啬）</li>
+<li>[x] 稀缺紧迫："神书/经典"暗示难再得、错过即失（损失厌恶）</li>
+<li>[x] 群体共识："考公人选出来的"（两级传播）</li>
+<li>[x] 沉默解除：替受众说出"不想东拼西凑/想走捷径"（沉默的螺旋）</li>
+<li>[x] 立场锁定：站"被申论背诵虐的考公人"，无说教（框架理论）</li>
+<li>[x] 表达降维：真实老书封面 + emoji 萌化硬核背诵（认知劫持）</li>
+<li>[x] 权威代理：老严 IP 背书（信任背书）</li>
+<li>[x] 评论区设计：A 版首评 + B 版群聊暗号 + momo 互推（拉评论权重）</li>
+<li>[x] 合规暗号：無償 + 群聊，无网盘/加群/免费裸词</li>
+<li>[x] 产品闭环：评论区导向群聊 → 夸克口令</li>
+</ul>
+<p><em>模板化复用：换钩子（神书/万精油/多主题）+ 换背景色 + 换老师（万精油人物素材） → 立即出新变体</em></p></div><div class="var-panel" id="var11" style="display:none"><h1 id="12-xhs-debate">变体 12 · 言语理解·葛欣三节冲刺（xhs-debate 辩论合成版）</h1>
+<blockquote>
+<p>生成方式：xhs-debate 多 Agent 对打（生成 Agent 出稿 → 批判 Agent 挑刺 → 主 Agent 合成）。
+批判关击中 3 条致命线，已全部修复。基于本人万赞级爆款结构复刻（数据脱敏）。</p>
+</blockquote>
+<h2 id="_1">封面描述</h2>
+<ul>
+<li>背景：浅黄（言语常用色）</li>
+<li>居中大字（手写橙圈）：「言语逻辑填空总错？葛欣这三节专治」</li>
+<li>真实猫咪托腮照（左下角，降维萌化）</li>
+<li>关键词「三节」「高频」「专治」分别红/绿/橙圈</li>
+<li>emoji 极简：🍑×1（不再堆码）</li>
+</ul>
+<h2 id="3">标题 3 版（差异化，不虚构稀缺）</h2>
+<ol>
+<li>言语逻辑填空一错再错？葛欣三节把高频考点讲透了</li>
+<li>被言语虐哭的进：葛欣三节冲刺，专讲最常考的那几个坑</li>
+<li>我言语从错一半到稳，靠的就是葛欣这三节（附笔记）</li>
+</ol>
+<h2 id="_2">正文（含真实干货，破"零价值"）</h2>
+<p>逻辑填空永远在"差不多"里选错？葛欣三节里最有用的一招先记牢：<strong>先看感情色彩（褒/贬），再卡搭配对象（是人还是物）</strong>，两步一排就能砍掉一半错项。我按这个刷完三节，言语正确率明显上来了🍑 笔记我整理好了，需要自取～</p>
+<h2 id="hashtag">Hashtag</h2>
+<h1 id="_3">考公 #言语理解 #葛欣 #行测逻辑填空 #公考资料</h1>
+<h2 id="a-e">评论区引流话术（A-E，合规暗号保留但降密度）</h2>
+<ul>
+<li>A（首评）：笔记我整理在群了，進群自取🙆</li>
+<li>B（群聊暗号）：群聊里是 無償 的，礼貌自取就好</li>
+<li>C（催互动）：全是领的没人支持，评论区留个三连啊🙆</li>
+<li>D（直接）：废话不多说，上面有群已经传了，自己申请🙆</li>
+<li>E（答案互动）：封面设问"专治哪类错"→ 用户评具体错法 → 作者回"就是感情色彩那步，群里有笔记" + 作者赞过</li>
+</ul>
+<h2 id="11">11 项人性自检（辩论后重测）</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>项</th>
+<th>结果</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>捷径钩子</td>
+<td>✅</td>
+<td>"三步一排砍一半错项"给退路</td>
+</tr>
+<tr>
+<td>2</td>
+<td>低启动成本</td>
+<td>✅</td>
+<td>三节+一招，接近 0 门槛</td>
+</tr>
+<tr>
+<td>3</td>
+<td>稀缺紧迫</td>
+<td>✅</td>
+<td>弱化版，不虚构"停更"（避虚假宣传）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>群体共识</td>
+<td>✅</td>
+<td>"被言语虐哭的进"=同病相怜</td>
+</tr>
+<tr>
+<td>5</td>
+<td>沉默解除</td>
+<td>✅</td>
+<td>替受众说出"错一半"的尴尬</td>
+</tr>
+<tr>
+<td>6</td>
+<td>立场锁定</td>
+<td>✅</td>
+<td>站考生视角，无说教</td>
+</tr>
+<tr>
+<td>7</td>
+<td>表达降维</td>
+<td>✅</td>
+<td>猫咪照+具体两步法，不抽象</td>
+</tr>
+<tr>
+<td>8</td>
+<td>权威代理</td>
+<td>✅</td>
+<td>葛欣 IP 背书</td>
+</tr>
+<tr>
+<td>9</td>
+<td>评论区设计</td>
+<td>✅</td>
+<td>A/B/C/D/E 齐，E 真互动非剧本</td>
+</tr>
+<tr>
+<td>10</td>
+<td>合规暗号</td>
+<td>⚠️</td>
+<td>保留「無償」+「群聊」，但密度降至 1 次，去 ☞ 箭头</td>
+</tr>
+<tr>
+<td>11</td>
+<td>产品闭环</td>
+<td>✅</td>
+<td>导向群→夸克口令</td>
+</tr>
+</tbody>
+</table>
+<h2 id="xhs-debate">批判 → 修复 对照表（xhs-debate 产出）</h2>
+<table>
+<thead>
+<tr>
+<th>批判 Agent 致命攻击</th>
+<th>修复动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 评论B「無償+☞群聊」= 自杀式规避，归一化可识别且加红</td>
+<td>去掉 ☞ 箭头，暗号降至 1 次，保留用户既定模型待定夺</td>
+</tr>
+<tr>
+<td>② 标题2「早就不常讲/再不存真没了」= 无依据虚假稀缺</td>
+<td>删除该标题，三版均不虚构停更/稀缺</td>
+</tr>
+<tr>
+<td>③ 正文零干货=纯引流壳被判垃圾</td>
+<td>加入"感情色彩+搭配对象"具体两招，拉内容价值分</td>
+</tr>
+<tr>
+<td>④ 评论E 自曝剧本</td>
+<td>改为真实互动话术，不写"自导自演"流程</td>
+</tr>
+<tr>
+<td>⑤ 🍑👿 暗号簇 spam 信号</td>
+<td>emoji 降至 🍑×1，去 👿</td>
+</tr>
+</tbody>
+</table>
+<h2 id="agent">待你定夺（批判 Agent 的合规警告）</h2>
+<p>批判 Agent 认为「無償」经 Unicode 归一化即「无偿」，规避动作本身反而加风控分；建议彻底去掉异体字、改用更软的"无偿分享"或纯社群运营话术。这和用户既定「無償+群聊」存活模型冲突——<strong>由你决定保留还是切换</strong>。本变体已按"保留但降密度"处理。</p></div>
+  </section>
+
+  <section id="analysis">
+    <h2>🔬 分析（对生成物/竞品的多角度透视）</h2>
+    <p class="lead">不是泛泛拆解，而是强制多透镜 + 自我批判 + 辩论挑刺。</p>
+    <div class="doc">
+<h3>① 深度分析元技能 · xhs-deep-analysis</h3>
+<p>强制四步法，杜绝泛泛：</p>
+<ol>
+<li><b>列视角（≥5个）</b>：人性透镜 / 传播学透镜 / 平台算法透镜 / 商业闭环透镜 / 合规生存透镜 / 竞品对照透镜</li>
+<li><b>多透镜拆解</b>：每透镜给"为什么成立/不成立"的具体机制 + 至少1条可验证洞察</li>
+<li><b>自我批判（反对者视角）</b>：挑"站不住/结果倒推/漏维度"的论点，不过关降级或删除</li>
+<li><b>改写合成</b>：每条结论标视角来源 <code>[人性·代理努力]</code>，末尾给3个可执行动作</li>
+</ol>
+<p><span class="tag">铁律</span>禁止"内容优质/踩中痛点"等空话；每条结论必须落到具体心理/平台机制或动作。</p>
+<h3>② 多Agent辩论 · xhs-debate</h3>
+<p>生成Agent出稿 → 批判Agent挑刺"为什么不会火/像硬广/触发限流"（≥3条具体攻击）→ 主Agent合成终稿，附"批判→修复"对照表。两Agent独立上下文，防自我合理化。</p>
+<p><span class="tag warn">实测</span>变体12（葛欣三节）经辩论合成，批判关抓出3条致命线（自杀式暗号/虚假稀缺/零干货）并已修复。</p>
+<h3>③ 一键触发</h3>
+<p>在对话里说对应口令即可调用：<code>用 xhs-deep-analysis 拆解</code> · <code>用 xhs-debate 生成</code></p>
+</div>
+    <div class="missing">
+      <h3>⚠️ 你之前缺的分析维度（现已补齐）</h3>
+      <p>① 批判复核关（反对者+平台审核双视角挑刺）— 由 xhs-debate 提供<br>
+      ② 结果回灌闭环（真实火/没火→回写公式）— 由复盘回写SOP提供<br>
+      这俩是"分析得透"和"越用越准"的关键缺口。</p>
+    </div>
+  </section>
+
+  <section id="schedule">
+    <h2>📆 发布排期 / 多账号矩阵</h2>
+    <p class="lead">生成完到发布的断层。合规闸门"未过"的笔记不允许发。</p>
+    <table><thead><tr><th>日期</th><th>账号</th><th>模块</th><th>变体</th><th>状态</th><th>合规闸门</th></tr></thead><tbody><tr><td>2026-08-06</td><td>上岸(主号)</td><td>资料分析</td><td>V09花生十三速成</td><td>待发</td><td class='fail'>未过</td></tr><tr><td>2026-08-07</td><td>上岸(主号)</td><td>图推</td><td>V10蔡老三节</td><td>待发</td><td class='fail'>未过</td></tr><tr><td>2026-08-08</td><td>momo(互推)</td><td>言语</td><td>V12葛欣三节</td><td>待发</td><td class='fail'>未过</td></tr></tbody></table>
+  </section>
+
+  <section id="review">
+    <h2>🔄 复盘闭环（让AI从真实胜负进化）</h2>
+    <p class="lead">发完一篇告诉我火/没火+原因，我回写进《爆款判断逻辑》。这是第6层（结果回灌）。</p>
+    <div class="btnrow"><button class="btn ghost" onclick="copy('review')">🔄 复制「复盘回写」指令</button>
+    <button class="btn ghost" onclick="copy('deep')">🔬 复制「深度分析」指令</button></div>
+    <div class="doc"><h1 id="sop">复盘回写 SOP（真实胜负回灌共享大脑）</h1>
+<blockquote>
+<p>目的：你的爆款数据已删，AI 无法从赞评藏学习。替代方案——你每发一篇，把"火 / 没火 + 原因"告诉我，我回写进《爆款判断逻辑》，让公式从真实结果进化。</p>
+</blockquote>
+<h2 id="_1">触发</h2>
+<ul>
+<li>你发完一篇笔记后，说"这期满 / 这期没爆 / 数据一般"或给我截图</li>
+<li>每周固定用 <code>xhs-weekly-retro</code> 复盘时一并回灌</li>
+</ul>
+<h2 id="_2">你只需填这几项（极简）</h2>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>你填什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标题/主题</td>
+<td>哪篇</td>
+</tr>
+<tr>
+<td>结果</td>
+<td>火(千赞+) / 一般 / 没爆</td>
+</tr>
+<tr>
+<td>你的判断原因</td>
+<td>为什么（直觉也行）</td>
+</tr>
+<tr>
+<td>异常信号</td>
+<td>小眼睛卡住? 评论少? 收藏高赞低?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_3">我做的回写</h2>
+<ol>
+<li>把该篇的"钩子 / 视觉 / 结构 / 评论话术"对照《公式》标记 命中/偏离</li>
+<li>若火：强化对应要素在公式里的权重</li>
+<li>若没火：定位偏离项，写入"避坑清单"</li>
+<li>更新 <code>爆款判断逻辑.md</code> 的「数据结论回填区」+「避坑清单」</li>
+<li>同步进 Obsidian 双链（若已双推）</li>
+</ol>
+<h2 id="_4">复盘记录表</h2>
+<p>见同目录 <code>复盘记录表.md</code>（追加式，不覆盖）</p>
+<h2 id="_5">红线</h2>
+<ul>
+<li>不编造数据：你没说的数字我不填</li>
+<li>不结果倒推：没火不能硬说"结构错"，要标"待验证"</li>
+<li>一次只回写一个变量：尽量让你能归因"到底是哪点导致火/没火"</li>
+</ul></div>
+    <h3 style="margin-top:18px">复盘记录表</h3>
+    <table><thead><tr><th>日期</th><th>标题</th><th>结果</th><th>原因</th><th>异常信号</th><th>回写结论</th></tr></thead><tbody><tr><td></td><td></td><td>火/一般/没爆</td><td></td><td></td><td></td></tr></tbody></table>
+    <div class="doc" style="margin-top:14px"><h1 id="_1">复盘记录表（追加式，不覆盖）</h1>
+<table>
+<thead>
+<tr>
+<th>日期</th>
+<th>标题/主题</th>
+<th>结果</th>
+<th>我的判断原因</th>
+<th>异常信号</th>
+<th>回写结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td>火/一般/没爆</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">填写说明</h2>
+<ul>
+<li>结果三档：火(千赞+) / 一般 / 没爆</li>
+<li>异常信号：小眼睛卡住 / 评论少 / 收藏高赞低 / 被限流</li>
+<li>回写结论由 AI 填：强化项（写进公式权重）/ 避坑项（写进避坑清单）</li>
+<li>每次新增一行，不改动历史行</li>
+</ul></div>
+  </section>
+
+  <section id="assets">
+    <h2>🗂 资产中心（一致性保障）</h2>
+    <p class="lead">人设卡/封面模板/图片库，保证跨账号跨笔记风格统一。</p>
+    
+<div class="cards">
+  <div class="card"><h4>人设卡</h4><p>{&#x27;名称&#x27;: &#x27;上岸（重新起航版）&#x27;, &#x27;定位&#x27;: &#x27;公考全科资料分享&#x27;, &#x27;头像&#x27;: &#x27;浅蓝桃子脸&#x27;, &#x27;口吻准则&#x27;: &#x27;口语化/考生视角/不书面/像朋友分享&#x27;}</p></div>
+  <div class="card"><h4>封面模板</h4><p>C01大字报痛点型、C02融合版双神型、C03设问互动型、C04神书发现型</p></div>
+  <div class="card"><h4>图片库</h4><p>真实书封面照、真实猫咪照、真实人物表情包、绿色便利贴Confidence、小红书内置插画</p></div>
+</div>
+  </section>
+</main></div>
+
+<div class="modal-mask" id="gateMask" onclick="if(event.target===this)closeGate()">
+  <div class="modal">
+    <h3>🛡 合规风控闸门 · 11项人性自检</h3>
+    <p style="font-size:12.5px;color:#6b7480">把待发笔记正文粘到下方，逐项勾选。11项全过才允许发布。</p>
+    <textarea id="gateText" placeholder="粘贴待发笔记正文..."></textarea>
+    <div style="margin-top:12px"><label class="chk"><input type="checkbox" onchange="checkGate()"> 捷径钩子（代理努力/走捷径自我欺骗许可）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 低启动成本（几节/倍速/几分钟，认知吝啬）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 稀缺紧迫（损失厌恶+怕错过）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 群体共识（别人都在冲/考公人选出来）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 沉默解除（替受众认怂/我替你问）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 立场锁定（框架理论把&#x27;学不会&#x27;归外因）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 表达降维（大字报/口语/真实图，降认知负荷）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 权威代理（老师IP背书，把羞耻外包）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 评论区设计（A/B版暗号+互动钩子）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 合规暗号（無償/群聊，且无明写敏感词）</label><label class="chk"><input type="checkbox" onchange="checkGate()"> 产品闭环（诱饵→群聊→网盘口令链路清晰）</label></div>
+    <div id="gateResult"></div>
+    <div style="margin-top:14px;text-align:right">
+      <button class="btn ghost" onclick="closeGate()">关闭</button>
+      <button class="btn" onclick="copy('gen')">据此生成新变体</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const PROMPTS = {"gen": "用爆款公式生成新变体（主题：__，模块：__，老师：__）", "deep": "用 xhs-deep-analysis 拆解：[链接或主题]", "debate": "用 xhs-debate 生成：[主题]（高命中率不翻车）", "add": "把这条素材加入素材库：[内容]，分类：[选题库/标题库/钩子金句库/...]", "review": "复盘回写：标题__ 结果(火/一般/没爆)__ 原因__ 异常信号__"};
+function copy(k){navigator.clipboard.writeText(PROMPTS[k]).then(()=>toast('已复制指令，去对话里粘贴发送'));}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+// nav
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  b.classList.add('active');document.getElementById(b.dataset.t).classList.add('active');
+});
+// logic tabs
+document.querySelectorAll('#logic .tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#logic .tabs button').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('#logic .doc').forEach(d=>d.style.display='none');
+  b.classList.add('active');document.getElementById('logic-'+b.dataset.d).style.display='block';
+});
+// variant
+function showVar(i){document.querySelectorAll('.var-panel').forEach(p=>p.style.display='none');document.getElementById('var'+i).style.display='block';window.scrollTo({top:document.getElementById('var'+i).offsetTop-20,behavior:'smooth'});}
+// gate
+function openGate(){document.getElementById('gateMask').style.display='block';}
+function closeGate(){document.getElementById('gateMask').style.display='none';}
+function checkGate(){const boxes=document.querySelectorAll('#gateMask input[type=checkbox]');const n=boxes.length,done=[...boxes].filter(b=>b.checked).length;const r=document.getElementById('gateResult');if(done===n){r.style.color='#1a9d5a';r.textContent='✅ 11/11 全过 — 可以发布';}else{r.style.color='#e0492f';r.textContent=`❌ ${done}/11 已过 — 还差 ${n-done} 项，未过闸门不准发`;}}
+</script></body></html>

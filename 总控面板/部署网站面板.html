@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>部署网站总览（可编辑）</title>
+<style>
+  :root{--bg:#f5f6f8;--card:#fff;--bd:#e2e5ea;--tx:#1f2329;--mut:#8a909c;--b:#2f6fed;--gp:#1a8f4c;--lo:#c9821a;--rd:#d9534f;}
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.6 -apple-system,"Microsoft YaHei",sans-serif;background:var(--bg);color:var(--tx)}
+  header{padding:18px 22px;background:#fff;border-bottom:1px solid var(--bd)}
+  h1{margin:0;font-size:20px}
+  .sub{color:var(--mut);font-size:12px;margin-top:4px}
+  .wrap{max-width:1080px;margin:0 auto;padding:18px 16px 60px}
+  .grp{margin:22px 0 6px;font-size:13px;font-weight:700;color:var(--mut);letter-spacing:.5px}
+  .card{background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:14px 16px;margin-bottom:12px;position:relative}
+  .top{display:flex;align-items:flex-start;gap:10px;justify-content:space-between}
+  .nm{font-size:16px;font-weight:700}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+  .tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#eef2fb;color:var(--b)}
+  .tag.gp{background:#e7f6ec;color:var(--gp)}
+  .tag.lo{background:#fbf0dc;color:var(--lo)}
+  .tag.rd{background:#fbeaea;color:var(--rd)}
+  .url{font-size:12px;word-break:break-all}
+  .url a{color:var(--b);text-decoration:none}
+  .url a:hover{text-decoration:underline}
+  .meta{font-size:12px;color:var(--mut);margin:6px 0}
+  .desc{font-size:13px;margin:6px 0}
+  .note{font-size:12px;background:#fff8e6;border-left:3px solid var(--lo);padding:6px 10px;margin-top:8px;border-radius:4px;display:none}
+  .note.show{display:block}
+  .ops{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  button{font:12px sans-serif;border:1px solid var(--bd);background:#fff;color:var(--tx);border-radius:6px;padding:4px 10px;cursor:pointer}
+  button:hover{background:#f0f2f5}
+  button.dg{color:var(--rd);border-color:#f0c9c7}
+  .mv{display:flex;flex-direction:column;gap:2px}
+  .mv button{padding:1px 7px;line-height:1.2}
+  .restore{margin-top:20px;font-size:12px;color:var(--mut)}
+  .restore a{color:var(--rd);cursor:pointer}
+  .stat{font-size:12px;color:var(--mut);margin:10px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>部署网站总览</h1>
+  <div class="sub">WorkBuddy 使用以来所有公网部署的网站 · 可备注 / 重命名 / 删除 / 排序 · 编辑自动存浏览器</div>
+</header>
+<div class="wrap">
+  <div class="stat" id="stat"></div>
+  <div id="list"></div>
+  <div class="restore" id="restore"></div>
+</div>
+<script>
+const BASE=[
+ {id:"xiangqu-qingdan",name:"xiangqu-qingdan",url:"https://shiwuooo.github.io/xiangqu-qingdan/",plat:"GitHub Pages",status:"已上线",date:"2026-08-24",session:"2026-08-16",desc:"GitHub Pages 部署"},
+ {id:"daqing-travel",name:"daqing-travel",url:"https://shiwuooo.github.io/daqing-travel/",plat:"GitHub Pages",status:"已上线",date:"2026-08-21",session:"2026-08-16",desc:"GitHub Pages 部署"},
+ {id:"shangantong-papers-v4-shared",name:"shangantong-papers-v4-shared",url:"https://shiwuooo.github.io/shangantong-papers-v4-shared/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"v4 全量 shared 框架"},
+ {id:"shangantong-papers-v4-c1",name:"shangantong-papers-v4-c1",url:"https://shiwuooo.github.io/shangantong-papers-v4-c1/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"全部卷子(全量) 内容分片1"},
+ {id:"shangantong-papers-v1-c1",name:"shangantong-papers-v1-c1",url:"https://shiwuooo.github.io/shangantong-papers-v1-c1/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"国考真题+国考模拟题 内容分片1"},
+ {id:"shangantong-papers-v4-c5",name:"shangantong-papers-v4-c5",url:"https://shiwuooo.github.io/shangantong-papers-v4-c5/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"全部卷子(全量) 内容分片5"},
+ {id:"shangantong-papers-v4-c4",name:"shangantong-papers-v4-c4",url:"https://shiwuooo.github.io/shangantong-papers-v4-c4/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"全部卷子(全量) 内容分片4"},
+ {id:"shangantong-papers-v4-c3",name:"shangantong-papers-v4-c3",url:"https://shiwuooo.github.io/shangantong-papers-v4-c3/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"全部卷子(全量) 内容分片3"},
+ {id:"shangantong-papers-v4-c2",name:"shangantong-papers-v4-c2",url:"https://shiwuooo.github.io/shangantong-papers-v4-c2/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"全部卷子(全量) 内容分片2"},
+ {id:"shangantong-papers-v3-c3",name:"shangantong-papers-v3-c3",url:"https://shiwuooo.github.io/shangantong-papers-v3-c3/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"国考模考+省考模考 内容分片3"},
+ {id:"shangantong-papers-v3",name:"shangantong-papers-v3",url:"https://shiwuooo.github.io/shangantong-papers-v3/",plat:"GitHub Pages",status:"已上线",date:"2026-08-21",session:"未关联",desc:"国考模考+省考模考 目录(主站)"},
+ {id:"shangantong-papers-v3-c2",name:"shangantong-papers-v3-c2",url:"https://shiwuooo.github.io/shangantong-papers-v3-c2/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"国考模考+省考模考 内容分片2"},
+ {id:"shangantong-papers-v3-c1",name:"shangantong-papers-v3-c1",url:"https://shiwuooo.github.io/shangantong-papers-v3-c1/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"国考模考+省考模考 内容分片1"},
+ {id:"shangantong-papers-v2",name:"shangantong-papers-v2",url:"https://shiwuooo.github.io/shangantong-papers-v2/",plat:"GitHub Pages",status:"已上线",date:"2026-08-21",session:"未关联",desc:"国考真题+省考真题 目录(主站)"},
+ {id:"shangantong-papers-v2-c2",name:"shangantong-papers-v2-c2",url:"https://shiwuooo.github.io/shangantong-papers-v2-c2/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"国考真题+省考真题 内容分片2"},
+ {id:"shangantong-papers-v2-c1",name:"shangantong-papers-v2-c1",url:"https://shiwuooo.github.io/shangantong-papers-v2-c1/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"国考真题+省考真题 内容分片1"},
+ {id:"shangantong-papers-v1-c2",name:"shangantong-papers-v1-c2",url:"https://shiwuooo.github.io/shangantong-papers-v1-c2/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-21",session:"未关联",desc:"国考真题+国考模拟题 内容分片2"},
+ {id:"shangantong-papers-v1",name:"shangantong-papers-v1",url:"https://shiwuooo.github.io/shangantong-papers-v1/",plat:"GitHub Pages",status:"已上线",date:"2026-08-21",session:"未关联",desc:"国考真题+国考模拟题 目录(主站)"},
+ {id:"workbuddy-dashboard",name:"workbuddy-dashboard",url:"https://shiwuooo.github.io/workbuddy-dashboard/",plat:"GitHub Pages",status:"已上线",date:"2026-08-19",session:"2026-07-29,2026-08-01",desc:"总控面板 + 所有小面板聚合入口"},
+ {id:"xingce-ai-coach",name:"xingce-ai-coach",url:"https://shiwuooo.github.io/xingce-ai-coach/",plat:"GitHub Pages",status:"已上线",date:"2026-08-18",session:"2026-08-01",desc:"行测AI陪练-教练版 (391MB)"},
+ {id:"zimeiti-hub",name:"zimeiti-hub",url:"https://shiwuooo.github.io/zimeiti-hub/",plat:"GitHub Pages",status:"未开启Pages",date:"2026-08-18",session:"未关联",desc:"自媒体总控面板 + 万能素材库工具"},
+ {id:"shangantong",name:"shangantong",url:"https://shiwuooo.github.io/shangantong/",plat:"GitHub Pages",status:"errored",date:"2026-08-17",session:"2026-07-26,2026-07-30,2026-07-31,2026-08-01,2026-08-14,2026-08-16,2026-08-17,2026-08-20",desc:"上岸通行测刷题网站"},
+ {id:"qiushi-shenlun",name:"qiushi-shenlun",url:"https://shiwuooo.github.io/qiushi-shenlun/",plat:"GitHub Pages",status:"已上线",date:"2026-08-17",session:"2026-07-26,2026-07-30,2026-08-01,2026-08-06,2026-08-14,2026-08-16,2026-08-17",desc:"求是申论素材库 - 离线单文件申论备考工具（真题库+求是时评七段式拆解+限时模考+自动评分）"},
+ {id:"shangantong-papers",name:"shangantong-papers",url:"https://shiwuooo.github.io/shangantong-papers/",plat:"GitHub Pages",status:"已上线",date:"2026-08-16",session:"2026-08-14,2026-08-16",desc:"上岸通·历年试卷板块（粉笔国考/省考真题 1:1 复刻，纯静态站）"},
+ {id:"yidongyunpan",name:"yidongyunpan",url:"https://shiwuooo.github.io/yidongyunpan/",plat:"GitHub Pages",status:"已上线",date:"2025-10-31",session:"未关联",desc:"GitHub Pages 部署"},
+ {id:"yidongxin",name:"yidongxin",url:"https://shiwuooo.github.io/yidongxin/",plat:"GitHub Pages",status:"已上线",date:"2025-10-31",session:"未关联",desc:"GitHub Pages 部署"},
+ {id:"yidongyun",name:"yidongyun",url:"https://shiwuooo.github.io/yidongyun/",plat:"GitHub Pages",status:"已上线",date:"2025-10-31",session:"未关联",desc:"GitHub Pages 部署"},
+ {id:"yidong",name:"yidong",url:"https://shiwuooo.github.io/yidong/",plat:"GitHub Pages",status:"未开启Pages",date:"2025-10-31",session:"2026-08-16",desc:"GitHub Pages 部署"},
+ {id:"shiyan",name:"shiyan",url:"https://shiwuooo.github.io/shiyan/",plat:"GitHub Pages",status:"已上线",date:"2025-10-16",session:"2026-08-16",desc:"GitHub Pages 部署"},
+ {id:"-",name:"-",url:"https://shiwuooo.github.io/-/",plat:"GitHub Pages",status:"未开启Pages",date:"2025-10-16",session:"2026-07-26,2026-07-29,2026-07-30,2026-07-31,2026-08-01,2026-08-06,2026-08-07,2026-08-09,2026-08-13,2026-08-14,2026-08-15,2026-08-16,2026-08-17,2026-08-19,2026-08-20",desc:"GitHub Pages 部署"},
+ {id:"quark",name:"quark",url:"https://shiwuooo.github.io/quark/",plat:"GitHub Pages",status:"已上线",date:"2025-04-30",session:"2026-07-29,2026-07-30,2026-07-31,2026-08-01,2026-08-16",desc:"GitHub Pages 部署"},
+ {id:"quark-page",name:"quark-page",url:"https://shiwuooo.github.io/quark-page/",plat:"GitHub Pages",status:"已上线",date:"2025-04-30",session:"未关联",desc:"GitHub Pages 部署"},
+ {id:"1dfee52d08f5a985",name:"考公刷题网站",url:"https://fb50785a780044e7960a619e41e3f039.app.codebuddy.work",plat:"CloudStudio",status:"已上线",date:"2026-07-27",session:"2026-07-26,2026-07-30,2026-07-31,2026-08-01,2026-08-06,2026-08-13,2026-08-14,2026-08-16,2026-08-17,2026-08-20",desc:"CloudStudio 部署：考公刷题网站"},
+ {id:"deploy_site",name:"deploy_site",url:"https://2881813db08b44c688d193d291e6a621.bj6.agentos-app.net",plat:"CloudStudio",status:"已上线",date:"2026-08-02",session:"2026-07-26,2026-08-01,2026-08-14,2026-08-15,2026-08-16",desc:"CloudStudio 部署：deploy_site"},
+ {id:"5ecc3cdfb2edeee6",name:"guangya-gate",url:"https://baa118371fe94b5cb1809051e7ada539.app.codebuddy.work",plat:"CloudStudio",status:"已上线",date:"2026-07-27",session:"2026-08-15,2026-08-16",desc:"CloudStudio 部署：guangya-gate"},
+ {id:"deploy",name:"_deploy",url:"https://9ae8b0238edb41a691c95077d921ae3a.sh1.agentos-app.net",plat:"CloudStudio",status:"已上线",date:"2026-08-06",session:"2026-07-26,2026-07-29,2026-07-30,2026-07-31,2026-08-01,2026-08-06,2026-08-14,2026-08-15,2026-08-16,2026-08-17",desc:"CloudStudio 部署：_deploy"},
+ {id:"考公刷题网站_cloud",name:"考公刷题网站_cloud",url:"https://0728090e123a45a88d68a6c9c7e5661b.gz3.agentos-app.net",plat:"CloudStudio",status:"已上线",date:"2026-08-04",session:"2026-07-31,2026-08-16",desc:"CloudStudio 部署：考公刷题网站_cloud"},
+ {id:"考公刷题网站_deploy",name:"考公刷题网站_deploy",url:"https://5ab64fcc764146029e95b5a4b3261245.sh1.agentos-app.net",plat:"CloudStudio",status:"已上线",date:"2026-08-02",session:"2026-07-31,2026-08-06,2026-08-16",desc:"CloudStudio 部署：考公刷题网站_deploy"},
+ {id:"deploy_a1f143",name:"deploy",url:"https://e3075c6bb420424db6ae2fe6f73b2fe2.app.workbuddy.link",plat:"CloudStudio",status:"已上线",date:"2026-08-16",session:"2026-07-26,2026-07-29,2026-07-30,2026-07-31,2026-08-01,2026-08-06,2026-08-14,2026-08-15,2026-08-16,2026-08-17",desc:"CloudStudio 部署：deploy"},
+];
+const GP_LIVE=["xiangqu-qingdan","daqing-travel","shangantong-papers-v4-shared","shangantong-papers-v4-c1","shangantong-papers-v1-c1","shangantong-papers-v4-c5","shangantong-papers-v4-c4","shangantong-papers-v4-c3","shangantong-papers-v4-c2","shangantong-papers-v3-c3","shangantong-papers-v3","shangantong-papers-v3-c2","shangantong-papers-v3-c1","shangantong-papers-v2","shangantong-papers-v2-c2","shangantong-papers-v2-c1","shangantong-papers-v1-c2","shangantong-papers-v1","workbuddy-dashboard","xingce-ai-coach","zimeiti-hub","shangantong","qiushi-shenlun","shangantong-papers","yidongyunpan","yidongxin","yidongyun","yidong","shiyan","-","quark","quark-page","1dfee52d08f5a985","deploy_site","5ecc3cdfb2edeee6","deploy","考公刷题网站_cloud","考公刷题网站_deploy","deploy_a1f143"];
+const KEY="deploy_websites_v1";
+let S=load();
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return{}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+S.order=S.order||BASE.map(b=>b.id);
+S.renames=S.renames||{};S.notes=S.notes||{};S.deleted=S.deleted||[];
+function byId(id){return BASE.find(b=>b.id===id)}
+function statusCls(b){if(S.deleted.includes(b.id))return"";if(GP_LIVE.includes(b.id))return b.status.indexOf("异常")>=0?"lo":"gp";return"lo"}
+function render(){
+ let html="",liveN=0;
+ const vis=S.order.filter(id=>!S.deleted.includes(id));
+ // 公网组
+ html+='<div class="grp">公网部署（GitHub Pages / CloudStudio）</div>';
+ vis.forEach((id,i)=>{
+   const b=byId(id);if(!b||!GP_LIVE.includes(id))return;liveN++;
+   html+=card(b,i,vis,GP_LIVE.includes(id));
+ });
+ html+='<div class="grp">仓库 / 本地（未确认公网部署）</div>';
+ vis.forEach((id,i)=>{
+   const b=byId(id);if(!b||GP_LIVE.includes(id))return;
+   html+=card(b,i,vis,false);
+ });
+ document.getElementById("list").innerHTML=html;
+ document.getElementById("stat").textContent="共 "+BASE.length+" 个 · 已显示 "+(BASE.length-S.deleted.length)+" 个 · 公网 "+liveN+" 个 · 编辑仅存本机浏览器";
+ // 恢复区
+ const del=S.deleted.map(id=>'<a onclick="restore(\''+id+'\')">'+byId(id).name+'</a>').join(" 、 ");
+ document.getElementById("restore").innerHTML=S.deleted.length?'<div>已删除：'+del+' （点击恢复）</div>':'';
+}
+function card(b,i,vis,live){
+ const nm=S.renames[b.id]||b.name;
+ const note=S.notes[b.id]||"";
+ const cls=statusCls(b);
+ const up=i>0?'<button onclick="mv('+i+',-1)">↑</button>':'<button disabled>↑</button>';
+ const dn=i<vis.length-1?'<button onclick="mv('+i+',1)">↓</button>':'<button disabled>↓</button>';
+ const isRepo=/^https:\/\/github\.com/.test(b.url);
+ const link=isRepo?'<a href="'+b.url+'" target="_blank">'+b.url+'</a>':'<a href="'+b.url+'" target="_blank">'+b.url+'</a>';
+ return '<div class="card">'+
+   '<div class="top"><div><div class="nm">'+nm+'</div>'+
+   '<div class="tags"><span class="tag '+(live?'gp':'lo')+'">'+b.plat+'</span><span class="tag '+cls+'">'+b.status+'</span></div></div>'+
+   '<div class="mv">'+up+dn+'</div></div>'+
+   '<div class="url">'+link+'</div>'+
+   '<div class="meta">部署：'+b.date+' ｜ 来源会话：'+b.session+'</div>'+
+   '<div class="desc">'+b.desc+'</div>'+
+   '<div class="note '+(note?'show':'')+'" id="note_'+b.id+'">'+(note?('📝 '+note):'')+'</div>'+
+   '<div class="ops"><button onclick="rn(\''+b.id+'\')">重命名</button>'+
+   '<button onclick="nt(\''+b.id+'\')">备注</button>'+
+   '<button class="dg" onclick="del(\''+b.id+'\')">删除</button></div>'+
+   '</div>';
+}
+function rn(id){const v=prompt("重命名为：",S.renames[id]||byId(id).name);if(v!==null){S.renames[id]=v.trim()||byId(id).name;save();render()}}
+function nt(id){const v=prompt("添加备注：",S.notes[id]||"");if(v!==null){S.notes[id]=v.trim();save();render()}}
+function del(id){if(confirm("删除「"+byId(id).name+'」？可在底部恢复')){S.deleted.push(id);save();render()}}
+function restore(id){S.deleted=S.deleted.filter(x=>x!==id);save();render()}
+function mv(i,d){const a=S.order.slice();const j=i+d;if(j<0||j>=a.length)return;const t=a[i];a[i]=a[j];a[j]=t;S.order=a;save();render()}
+render();
+</script>
+</body>
+</html>

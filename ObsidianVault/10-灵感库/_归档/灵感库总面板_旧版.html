@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>灵感库 · 总面板</title>
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#fff; --ink:#1f2329; --sub:#6b7280; --line:#e5e7eb;
+    --growth:#10b981; --values:#3b82f6; --idea:#f59e0b; --hold:#9ca3af; --cardc:#8b5cf6;
+    --accent:#3b82f6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);padding:0 0 60px}
+  /* 顶栏 */
+  header{background:linear-gradient(120deg,#1f2937,#334155);color:#fff;padding:20px 24px}
+  header h1{margin:0;font-size:22px}
+  header .sub{font-size:13px;opacity:.8;margin-top:4px;line-height:1.6}
+  .kpis{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+  .kpi{background:rgba(255,255,255,.12);border-radius:10px;padding:8px 14px;font-size:13px}
+  .kpi b{font-size:18px;display:block}
+  /* 标签导航 */
+  nav{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);
+    display:flex;gap:4px;padding:10px 16px;overflow-x:auto;z-index:20}
+  nav button{border:none;background:none;color:var(--sub);padding:8px 14px;font-size:14px;
+    cursor:pointer;border-radius:8px;white-space:nowrap}
+  nav button.active{background:var(--accent);color:#fff}
+  .page{display:none;padding:22px;max-width:1080px;margin:0 auto}
+  .page.active{display:block}
+  h2.sec{font-size:18px;margin:0 0 4px}
+  .desc{color:var(--sub);font-size:13px;margin-bottom:16px;line-height:1.6}
+  /* 通用卡片 */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+  .c{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--card);display:flex;flex-direction:column}
+  .c h3{margin:0 0 8px;font-size:15px}
+  .badge{font-size:11px;padding:2px 9px;border-radius:10px;color:#fff;margin-right:5px;vertical-align:1px}
+  .b-练{background:var(--growth)} .b-想{background:var(--values)} .b-用{background:var(--idea)}
+  .b-存{background:var(--hold)} .b-卡{background:var(--cardc)}
+  .tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+  .tag{background:#eef2ff;color:#4338ca;font-size:11px;padding:2px 8px;border-radius:10px}
+  .topic{background:#ecfdf5;color:#047857;font-size:11px;padding:2px 8px;border-radius:10px}
+  .sum{color:var(--sub);font-size:13px;line-height:1.6;flex:1}
+  .foot{display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:var(--sub)}
+  .rate{color:var(--idea);letter-spacing:1px}
+  .c a{color:var(--accent);text-decoration:none;font-size:12px}
+  /* 筛选条 */
+  .flabel{font-size:12px;color:var(--sub);margin:12px 0 6px}
+  .filters{display:flex;gap:7px;flex-wrap:wrap}
+  .filters button{border:1px solid var(--line);background:#fff;color:var(--ink);padding:6px 13px;border-radius:18px;cursor:pointer;font-size:13px}
+  .filters button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+  /* 捕获箱 */
+  textarea{width:100%;height:120px;border:1px solid var(--line);border-radius:10px;padding:12px;
+    font-size:14px;font-family:inherit;resize:vertical;background:#fff}
+  .row{display:flex;gap:10px;margin:10px 0;flex-wrap:wrap}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 15px;border-radius:8px;font-size:13px;cursor:pointer}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.ghost{background:transparent}
+  .inbox{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .item{border:1px solid var(--line);border-left:4px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff}
+  .item.growth{border-left-color:var(--growth)} .item.values{border-left-color:var(--values)}
+  .item.idea{border-left-color:var(--idea)} .item.hold{border-left-color:var(--hold)}
+  .item .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px}
+  .item .meta{font-size:12px;color:var(--sub)}
+  .item .txt{font-size:13.5px;line-height:1.6;color:#374151;white-space:pre-wrap;max-height:130px;overflow:auto}
+  .item .del{font-size:12px;color:#ef4444;background:none;border:none;cursor:pointer;padding:0}
+  .empty{border:1px dashed var(--line);border-radius:10px;color:var(--sub);padding:30px;text-align:center}
+  details.warnbox{margin-top:14px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:12px 14px}
+  details.warnbox summary{cursor:pointer;font-size:13px;font-weight:600}
+  details.warnbox .warn{color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:8px 10px;font-size:12px;margin-top:10px;line-height:1.6}
+  details.warnbox ul{font-size:12px;color:var(--sub);line-height:1.7;margin:8px 0 0;padding-left:20px}
+  /* 地图 */
+  svg#svg{width:100%;height:auto;background:#fff;border:1px solid var(--line);border-radius:12px}
+  .node rect{fill:#fff;stroke:var(--line);stroke-width:1.5}
+  .node.growth rect{stroke:var(--growth)} .node.values rect{stroke:var(--values)}
+  .node.idea rect{stroke:var(--idea)} .node.card rect{stroke:var(--cardc);stroke-width:2.5}
+  .node text{font-size:12px;fill:var(--ink)}
+  .node .t{font-size:10px;fill:var(--sub)}
+  .lane{fill:#fafafa;stroke:#eef0f3}
+  .llabel{font-size:13px;font-weight:700;fill:var(--sub)}
+  .edge{stroke:#cbd5e1;stroke-width:1.5;fill:none}
+  .edge.cross{stroke:#94a3b8;stroke-width:2;stroke-dasharray:5 4}
+  .edge.hi{stroke:var(--accent);stroke-width:3}
+  .node.hi rect{stroke-width:3}
+  .node.dim{opacity:.16} .edge.dim{opacity:.1}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--sub)}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  /* 整理分析片段 */
+  .frag{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;margin-bottom:12px}
+  .frag .h{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+  .frag .num{font-weight:700;font-size:13px;color:var(--sub)}
+  .frag .why{font-size:12.5px;color:#475569;line-height:1.6;margin:6px 0}
+  .frag .why b{color:var(--ink)}
+  .frag .do{font-size:12px;color:#9a3412;background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:6px 9px;display:inline-block}
+  .quote{font-size:13px;line-height:1.7;color:#1f2937;background:#f8fafc;border-left:3px solid var(--line);padding:8px 12px;border-radius:6px;white-space:pre-wrap}
+  /* 复习卡 */
+  .rev{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;margin-bottom:12px}
+  .rev h3{margin:0 0 8px;font-size:15px}
+  .qa{font-size:13px;line-height:1.7;padding:6px 0;border-bottom:1px dashed var(--line)}
+  .qa:last-child{border-bottom:none}
+  .qa .q{color:var(--ink);font-weight:600}
+  .qa .a{color:var(--sub);margin-top:2px}
+  /* 分类体系 */
+  .axis{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;margin-bottom:14px}
+  .axis h3{margin:0 0 6px;font-size:15px}
+  .axis p{font-size:13px;color:var(--sub);line-height:1.7;margin:0}
+  .axis ul{margin:8px 0 0;padding-left:20px;font-size:13px;color:#374151;line-height:1.7}
+  .flow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--ink)}
+  .flow .step{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;padding:6px 12px}
+  .flow .arr{color:var(--sub)}
+  .note{font-size:12px;color:var(--sub);line-height:1.6;background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;margin-top:16px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🧠 灵感库 · 总面板</h1>
+  <div class="sub">把你散在微信 / 备忘录 / 石墨的碎片，统一捕获 → AI 智能分类（多轴）→ 精炼成卡 → 关联成网 → 间隔复习。你只管"翻"和"每周挑一条练"。<br>
+  分类体系融合 PARA（按用途）+ Zettelkasten（链接成网）：分类轻、链接重，结构靠网不靠文件夹。</div>
+  <div class="kpis" id="kpis"></div>
+</header>
+
+<nav>
+  <button class="active" onclick="tab('capture')">① 捕获箱</button>
+  <button onclick="tab('cards')">② 灵感卡片</button>
+  <button onclick="tab('map')">③ 关联地图</button>
+  <button onclick="tab('fragments')">④ 整理分析</button>
+  <button onclick="tab('review')">⑤ 复习卡</button>
+  <button onclick="tab('system')">⑥ 分类体系</button>
+</nav>
+
+<!-- ① 捕获箱 -->
+<section class="page active" id="capture">
+  <h2 class="sec">① 统一捕获箱</h2>
+  <div class="desc">把所有想存的内容粘这里（一次可粘多段，空行自动拆分）。自动记存入时间 + 粗分用途/主题。攒一批点「复制给助手」发对话喊「整理」，我来做 AI 精修。</div>
+  <textarea id="ta" placeholder="把想存的内容粘进来（可一次粘多段，用空行隔开会自动拆成多条）…"></textarea>
+  <div class="row">
+    <button class="btn primary" onclick="addIn()">＋ 存入捕获箱</button>
+    <button class="btn ghost" onclick="clearTa()">清空输入框</button>
+  </div>
+  <div class="filters" id="capFilters"></div>
+  <div class="inbox" id="capList"></div>
+  <div class="row" style="margin-top:16px">
+    <button class="btn primary" onclick="copyAll()">📋 复制给助手（带时间戳）</button>
+    <button class="btn" onclick="exportMd()">⬇️ 导出时间戳备份.md</button>
+    <button class="btn ghost" onclick="clearAll()">🗑️ 清空全部</button>
+  </div>
+  <details class="warnbox">
+    <summary>📅 备份记录（本机存了什么、什么时间）</summary>
+    <ul id="bklog"></ul>
+    <div class="warn">⚠️ 这是浏览器内记录，清缓存/换电脑会丢。要真正落到 D 盘永久保存：点「复制给助手（带时间戳）」发对话，我会写入 <code>00-捕获箱/backup-日期.md</code>；或点「导出时间戳备份.md」下载存档。</div>
+  </details>
+</section>
+
+<!-- ② 灵感卡片 -->
+<section class="page" id="cards">
+  <h2 class="sec">② 灵感卡片（已精炼）</h2>
+  <div class="desc">已经过 AI 精炼的卡片。多轴筛选：用途（练 / 想 / 用 / 存）× 主题标签（可叠加）。点「看完整卡片」打开详细 md。</div>
+  <div class="flabel">按用途筛选</div>
+  <div class="filters" id="fPurpose"></div>
+  <div class="flabel">按主题标签筛选（可多选叠加）</div>
+  <div class="filters" id="fTopic"></div>
+  <div class="grid" id="cardGrid" style="margin-top:14px"></div>
+</section>
+
+<!-- ③ 关联地图 -->
+<section class="page" id="map">
+  <h2 class="sec">③ 关联地图（AI 关联成网）</h2>
+  <div class="desc">节点=碎片/卡片，连线=关联。悬停任一节点高亮其关系网；或用下方主题标签筛选只看该主题。</div>
+  <div class="flabel">按主题标签筛选</div>
+  <div class="filters" id="mTopic"></div>
+  <svg id="svg" viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg"></svg>
+  <div class="legend">
+    <span><i style="background:var(--growth)"></i>练·训练卡</span>
+    <span><i style="background:var(--values)"></i>想·决策过滤器</span>
+    <span><i style="background:var(--idea)"></i>用·运营卡</span>
+    <span><i style="background:var(--cardc)"></i>已精炼卡片</span>
+    <span><i style="background:#94a3b8"></i>虚线=跨主题关联</span>
+  </div>
+</section>
+
+<!-- ④ 整理分析 -->
+<section class="page" id="fragments">
+  <h2 class="sec">④ 整理分析（13 段原文 · 带归类 · 未删）</h2>
+  <div class="desc">这是"整理分析模式"产物：保留全部原文，AI 逐条标用途 + 主题 + 处置建议，不删不改。等所有杂乱内容堆齐，再统一决定哪些精炼成卡。</div>
+  <div class="filters" id="fragFilters"></div>
+  <div id="fragList"></div>
+</section>
+
+<!-- ⑤ 复习卡 -->
+<section class="page" id="review">
+  <h2 class="sec">⑤ 间隔重复复习卡</h2>
+  <div class="desc">卡片光存会忘。这里拆成小问答，用间隔重复（Anki / obsidian-flashcards）真正记住。用法二选一：</div>
+  <div class="note">
+    <b>方法 A（Obsidian，推荐）</b>：装 <code>obsidian-flashcards</code> 插件 → 打开 <code>10-灵感库/复习卡/*.md</code> → 点"复习"每天刷（已带 <code>?</code> 格式）。<br>
+    <b>方法 B（Anki，装 D 盘）</b>：打开 <code>10-灵感库/复习卡/anki-导入.txt</code> → Anki「文件→导入」选 Basic、分隔符 Tab。
+  </div>
+  <div id="revList" style="margin-top:14px"></div>
+</section>
+
+<!-- ⑥ 分类体系 -->
+<section class="page" id="system">
+  <h2 class="sec">⑥ 多轴分类体系（速查）</h2>
+  <div class="desc">不再用单一"这是啥"维度——大佬（Tiago Forte 的 PARA / Luhmann 的 Zettelkasten）都按"拿来干嘛"组织、靠链接成网。你的体系是四轴：</div>
+  <div class="flow" style="margin-bottom:16px">
+    <span class="step">碎片输入</span><span class="arr">→</span>
+    <span class="step">① 成熟度 (素材/精炼卡)</span><span class="arr">→</span>
+    <span class="step">② 用途 (练/想/用/存)</span><span class="arr">→</span>
+    <span class="step">③ 主题标签 (可多选)</span><span class="arr">→</span>
+    <span class="step">④ 双向链接关联</span>
+  </div>
+  <div class="axis">
+    <h3>① 成熟度轴</h3>
+    <p>素材 = 捕获箱里的 raw/闪念；精炼卡 = 已用 AI 加工、可练可查的内容。一眼区分"还在原料"还是"已成品"。</p>
+  </div>
+  <div class="axis">
+    <h3>② 用途轴（原 4 类的精炼语义）</h3>
+    <ul>
+      <li><b style="color:var(--growth)">练</b>：行为/技能，能立刻变行动（训练卡）。</li>
+      <li><b style="color:var(--values)">想</b>：价值观/认知，当判断标准用（决策过滤器卡）。</li>
+      <li><b style="color:var(--idea)">用</b>：运营/选题/传播知识，做内容素材（idea 卡）。</li>
+      <li><b style="color:var(--hold)">存</b>：情感/提问/吐槽，暂挂不进主库，回头统一看。</li>
+    </ul>
+  </div>
+  <div class="axis">
+    <h3>③ 主题标签轴（可多选）</h3>
+    <p>#沟通社交 · #自我成长 · #心态看开 · #内容运营 · #理财搞钱 · #健康 · #学习。靠标签跨类检索，不靠文件夹。</p>
+  </div>
+  <div class="axis">
+    <h3>④ 关联轴（真正结构）</h3>
+    <p>用 <code>[[双向链接]]</code> 把相关碎片串起来，让"行动簇 / 心态簇 / 运营簇"自己浮现成网。这是大佬公认比任何文件夹都重要的组织方式。</p>
+  </div>
+</section>
+
+<script>
+/* ============ 数据（内联，文件独立可双击运行） ============ */
+const CARDS=[
+  {id:"b1",type:"blogger",purpose:"用",maturity:"精炼卡",title:"dontbesilent（聊赚钱）博主档案",
+   topics:["#内容运营","#自我成长"],summary:"中文商业/自媒体博主。核心：对标思维、流量变现优先、填内容能力>找选题、开源即商业模式。对你：小红书运营+认知破局直接可用。",
+   rating:5,card:"10-灵感库/cards/2026-07-31_dontbesilent-运营方法论与推文集.md"},
+  {id:"b2",type:"growth",purpose:"练",maturity:"精炼卡",title:"唯唯诺诺改造训练卡",
+   topics:["#沟通社交","#自我成长","#心态看开"],summary:"12条改气质的民间清单，对应 Assertiveness Training。先练'停顿3秒'再回话。",
+   rating:4,card:"10-灵感库/cards/2026-07-31_唯唯诺诺改造训练卡.md"},
+  {id:"b3",type:"values",purpose:"想",maturity:"精炼卡",title:"生活主线决策过滤器",
+   topics:["#自我成长","#心态看开"],summary:"先定主线再把琐事当噪声过滤。每周回看：新念头先问'服务主线吗'。",
+   rating:4,card:"10-灵感库/cards/2026-07-31_生活主线决策过滤器.md"}
+];
+const FRAGMENTS=[
+ {n:1,purpose:"想",topics:["#心态看开","#自我成长"],text:"脸面是富人才需要考虑和保护的，对于穷人来说最好是拿它变现。其实包括很多富人都只认利益愿意拉下脸。",
+  why:"重新定义'脸面'的工具属性。可作'该不该拉下脸争取机会'的判断标准。",do:"待精炼为决策过滤器卡"},
+ {n:2,purpose:"用",topics:["#内容运营"],text:"标题：如何彻底荒废一个周末（建议反着做）",
+  why:"反讽标题，现成内容选题/标题模板（反向 framing），契合小红书反直觉爆款。",do:"待精炼为 idea 卡（标题套路）"},
+ {n:3,purpose:"想",topics:["#心态看开","#自我成长"],text:"很多世俗烦恼其实是自己意识的投射而钻牛角尖一样。",
+  why:"烦恼≠客观事实，是内心投射。可作'我这是在钻牛角尖吗'的自检。",do:"待精炼为决策过滤器卡"},
+ {n:4,purpose:"想",topics:["#心态看开","#自我成长"],text:"为什么都是亚古兽第一个进化？那是为了告诉你，无论做什么事，先用勇气开道。为什么巴达兽总是最后一个进化？那是因为当你的友情、诚实、爱心、知识、纯真和光明都被现实无情击碎后仍要充满希望。",
+  why:"心态故事。可作'行动前鼓勇气、低谷守希望'的心理锚点。",do:"待精炼为决策过滤器卡（心态向）"},
+ {n:5,purpose:"存",topics:[],text:"真正喜欢小猫的人从来都不会在意它是什么品种，只会特别爱它。每天下班回来看到它，我一身的疲惫瞬间被猫咪治愈了。",
+  why:"情感/生活共鸣，无 actionable 点。",do:"暂挂（情感）；想做萌宠选题可转 idea"},
+ {n:6,purpose:"想",topics:["#心态看开","#自我成长"],text:"真正的重生不是离开旧地方，而是让旧地方看见新的你。",
+  why:"改变不一定要换环境，可在原地用新状态刷新他人认知。",do:"待精炼为决策过滤器卡"},
+ {n:7,purpose:"想",topics:["#心态看开","#自我成长"],text:"我们总是等待，等什么时候就能过上理想的生活了，其实不然，我们没有未来，生活就在当下。",
+  why:"戒掉'等以后'的拖延幻觉。可作'我是不是又在等以后'的自检。",do:"待精炼为决策过滤器卡"},
+ {n:8,purpose:"存",topics:[],text:"想问一下有没有除法的速算，多位数除以3位/4位的那种。",
+  why:"这是提问不是沉淀片段。已口头答（估算试商+25/125/99法）。",do:"暂挂（提问·已答）"},
+ {n:9,purpose:"存",topics:[],text:"中国人一讲起来屎尿屁就发狠了忘情了。",
+  why:"社会观察/吐槽，情绪化无沉淀价值。",do:"暂挂（吐槽）；想做国人表达特质可转 idea"},
+ {n:10,purpose:"练",topics:["#自我成长","#沟通社交"],text:"提高行动力的办法就是让大脑不停做决策，平均每分钟一个决策，没有也要逼着自己作，你就根本不会刷着手机脑子麻木着。",
+  why:"强 actionable——用高频微决策打断麻木刷手机。",do:"待精炼为训练卡（微习惯：每小时逼自己做个小决定）"},
+ {n:11,purpose:"用",topics:["#内容运营"],text:"内容要被人转发：第一有价值值得传播；第二要么和'我'有关，要么和我分享的那个人有关。VERITAS 窍门：引导读者想'这条和自己关系'，转发意愿明显升。",
+  why:"运营/传播知识，直接对应小红书运营。",do:"待精炼为 idea 卡（转发套路）"},
+ {n:12,purpose:"练",topics:["#自我成长"],text:"1）学习事物运作规律；2）立即行动，从小事培养自律；3）不走捷径，坚持正确道路。任一天都能彻底改变生活方向。",
+  why:"行为清单，可拆成可执行三件事。",do:"待精炼为训练卡（或合并 #10）"},
+ {n:13,purpose:"练",topics:["#自我成长","#心态看开"],text:"请跳过情绪直接做事。'只有一件事让人精疲力尽，那就是犹豫要不要做。'每做一件事都是对自己的解放。都是做明白的。",
+  why:"强 actionable——用'先做再想'打断犹豫内耗。",do:"待精炼为训练卡（微习惯：犹豫直接做最小一步）"}
+];
+const PNAME={all:'全部','练':'练（可行动）','想':'想（价值观）','用':'用（运营素材）','存':'存（暂挂）'};
+const TOPICS=['#沟通社交','#自我成长','#心态看开','#内容运营','#理财搞钱','#健康','#学习'];
+
+/* ============ 顶栏 KPI ============ */
+(function(){
+  const c={练:0,想:0,用:0,存:0};
+  [...CARDS.map(x=>x.purpose),...FRAGMENTS.map(x=>x.purpose)].forEach(p=>c[p]++);
+  document.getElementById('kpis').innerHTML=
+   `<div class="kpi"><b>${FRAGMENTS.length}</b>待整理碎片</div>`+
+   `<div class="kpi"><b>${CARDS.length}</b>已精炼卡片</div>`+
+   `<div class="kpi"><b style="color:var(--growth)">${c['练']}</b>练</div>`+
+   `<div class="kpi"><b style="color:var(--values)">${c['想']}</b>想</div>`+
+   `<div class="kpi"><b style="color:var(--idea)">${c['用']}</b>用</div>`+
+   `<div class="kpi"><b style="color:var(--hold)">${c['存']}</b>存</div>`;
+})();
+
+/* ============ 标签切换 ============ */
+function tab(t){
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`nav button[onclick*="${t}"]`).classList.add('active');
+  document.getElementById(t).classList.add('active');
+  if(t==='map') initMap();
+}
+
+/* ============ ① 捕获箱逻辑 ============ */
+const KEY='capture_inbox_v1',BKEY='capture_backup_log_v1';
+const KW={
+  idea:['标题','转发','选题','内容','传播','运营','小红书','爆款','流量','文案','涨粉','变现','账号','粉丝','笔记','钩子','开头','排版','分享'],
+  growth:['行动','执行','自律','习惯','决策','直接做','练习','微决策','坚持','专注','拖延','执行力','做起来','立刻做','从小事','练'],
+  values:['脸面','烦恼','当下','重生','主线','心态','看开','意义','价值','焦虑','内耗','勇气','希望','自我','放下','接纳','认知','投射','人生','活着','情绪']
+};
+const TOPIC_KW={
+  '#沟通社交':['沟通','社交','拒绝','礼貌','表情','眼神','别人','群聊','同事','领导','人际关系','聊天','客气'],
+  '#自我成长':['成长','行动','执行','自律','习惯','决策','坚持','专注','拖延','练','微决策','从小事','执行力','自我'],
+  '#心态看开':['脸面','烦恼','当下','重生','主线','心态','看开','意义','价值','焦虑','内耗','勇气','希望','放下','接纳','认知','投射','人生','活着','情绪'],
+  '#内容运营':['标题','转发','选题','内容','传播','运营','小红书','爆款','流量','文案','涨粉','变现','账号','粉丝','笔记','钩子','开头','排版','分享'],
+  '#理财搞钱':['理财','搞钱','财富','赚钱','收入','存款','投资','副业','钱'],
+  '#健康':['健康','运动','睡眠','身体','饮食','健身','锻炼'],
+  '#学习':['学习','读书','阅读','知识','速算','除法','考试','公考','申论','笔记法']
+};
+const CNAME={growth:'练',values:'想',idea:'用',hold:'存'};
+let capItems=capLoad(),capLog=capLoadLog(),capCur='all';
+function capLoad(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){return[]}}
+function capSave(){try{localStorage.setItem(KEY,JSON.stringify(capItems))}catch(e){alert('浏览器存不了，请用导出')}}
+function capLoadLog(){try{return JSON.parse(localStorage.getItem(BKEY))||[]}catch(e){return[]}}
+function capSaveLog(){try{localStorage.setItem(BKEY,JSON.stringify(capLog))}catch(e){}}
+function fmtT(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
+function fmtF(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`}
+function classify(t){let best='hold',max=0;for(const k in KW){let n=0;for(const w of KW[k])if(t.includes(w))n++;if(n>max){max=n;best=k}}return best}
+function topicsFor(t){const out=[];for(const tk in TOPIC_KW){let hit=false;for(const w of TOPIC_KW[tk])if(t.includes(w)){hit=true;break}if(hit)out.push(tk);if(out.length>=3)break}return out}
+function addIn(){const raw=document.getElementById('ta').value.trim();if(!raw){alert('先粘点东西');return}
+  const blocks=raw.split(/\n\s*\n+/).map(s=>s.trim()).filter(Boolean);const now=fmtT();
+  blocks.forEach(b=>capItems.unshift({id:Date.now()+Math.random(),text:b,type:classify(b),topics:topicsFor(b),time:now}));
+  capSave();document.getElementById('ta').value='';
+  capLog.unshift({time:now,count:blocks.length,preview:blocks[0].slice(0,28)+(blocks[0].length>28?'…':'')});capSaveLog();capRender();}
+function clearTa(){document.getElementById('ta').value=''}
+function capDel(id){capItems=capItems.filter(i=>i.id!==id);capSave();capRender()}
+function clearAll(){if(confirm('确定清空全部？建议先点导出')){capItems=[];capSave();capRender()}}
+function copyAll(){if(!capItems.length){alert('空的');return}
+  const txt=capItems.map(i=>`[${CNAME[i.type]} · ${(i.topics||[]).join(' ')} · ${i.time}] ${i.text}`).join('\n\n');
+  navigator.clipboard?.writeText(txt).then(()=>alert(`已复制 ${capItems.length} 条（含用途+主题+时间戳）。发对话喊「整理」即可`)).catch(()=>prompt('复制下面发给我：',txt));}
+function exportMd(){if(!capItems.length){alert('空的');return}
+  let md=`# 捕获箱时间戳备份 ${fmtT()}\n\n> 共 ${capItems.length} 条\n\n`;
+  capItems.forEach((i,n)=>{md+=`### [${CNAME[i.type]} ${(i.topics||[]).join(' ')}] 条目${n+1} · 存入 ${i.time}\n${i.text}\n\n`});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'}));a.download=`捕获箱备份_${fmtF()}.md`;a.click();}
+function capRender(){
+  const c={growth:0,values:0,idea:0,hold:0};capItems.forEach(i=>c[i.type]++);
+  document.getElementById('capFilters').innerHTML=['all',...Object.keys(CNAME)].map(k=>
+    `<button class="${k===capCur?'active':''}" onclick="capSet('${k}')">${k==='all'?'全部':CNAME[k]}</button>`).join('');
+  const list=capItems.filter(i=>capCur==='all'||i.type===capCur);
+  document.getElementById('capList').innerHTML=list.length?list.map(i=>`
+    <div class="item ${i.type}">
+      <div class="top"><span class="meta">存入 ${i.time} · <span class="badge ${i.type}">${CNAME[i.type]}</span><span style="opacity:.6">（预估）</span>
+        ${(i.topics||[]).map(t=>`<span class="badge topic">${t}</span>`).join('')}</span>
+        <button class="del" onclick="capDel(${i.id})">删除</button></div>
+      <div class="txt">${i.text.replace(/</g,'&lt;')}</div>
+    </div>`).join('') : '<div class="empty">还没有内容，粘一段试试 👆</div>';
+  document.getElementById('bklog').innerHTML=capLog.length?capLog.map(b=>
+    `<li>${b.time} · 存入 <b>${b.count}</b> 条 · ${b.preview.replace(/</g,'&lt;')}</li>`).join('') : '<li>暂无备份记录</li>';
+}
+function capSet(t){capCur=t;capRender()}
+
+/* ============ ② 卡片区 ============ */
+let curP='all',curT=new Set();
+function cardMatch(i){if(curP!=='all'&&i.purpose!==curP)return false;if(curT.size&&!(i.topics||[]).some(t=>curT.has(t)))return false;return true}
+function renderCards(){
+  document.getElementById('fPurpose').innerHTML=['all','练','想','用','存'].map(p=>
+    `<button class="${p===curP?'active':''}" onclick="setP('${p}')">${PNAME[p]}</button>`).join('');
+  document.getElementById('fTopic').innerHTML=['all',...TOPICS].map(t=>{
+    const on=curT.has(t);const active=(t==='all'&&curT.size===0)||on;
+    return `<button class="${active?'active':''}" onclick="setT('${t}')">${t==='all'?'全部主题':t}</button>`}).join('');
+  const items=CARDS.filter(cardMatch);
+  document.getElementById('cardGrid').innerHTML=items.length?items.map(i=>`
+    <div class="c"><h3><span class="badge b-${i.purpose}">${i.purpose}</span>${i.title}</h3>
+      <div class="tags">${(i.topics||[]).map(t=>`<span class="topic">${t}</span>`).join('')}</div>
+      <div class="sum">${i.summary}</div>
+      <div class="foot"><span class="rate">${'★'.repeat(i.rating||0)}${'☆'.repeat(5-(i.rating||0))}</span>
+        ${i.card?`<a href="${i.card}" target="_blank">看完整卡片 →</a>`:''}</div></div>`).join('')
+    : '<div class="empty">当前筛选无内容</div>';
+}
+function setP(p){curP=p;renderCards()}
+function setT(t){if(t==='all')curT.clear();else curT.has(t)?curT.delete(t):curT.add(t);renderCards()}
+
+/* ============ ④ 整理分析区 ============ */
+let fragCur='all';
+function renderFrags(){
+  document.getElementById('fragFilters').innerHTML=['all','练','想','用','存'].map(k=>
+    `<button class="${k===fragCur?'active':''}" onclick="fragSet('${k}')">${k==='all'?'全部':CNAME[k]}</button>`).join('');
+  const list=FRAGMENTS.filter(f=>fragCur==='all'||f.purpose===fragCur);
+  document.getElementById('fragList').innerHTML=list.length?list.map(f=>`
+    <div class="frag">
+      <div class="h"><span class="num">#${f.n}</span>
+        <span class="badge b-${f.purpose==='存'?'存':f.purpose}">${PNAME[f.purpose].split('（')[0]}</span>
+        ${(f.topics||[]).map(t=>`<span class="badge topic">${t}</span>`).join('')}</div>
+      <div class="quote">${f.text.replace(/</g,'&lt;')}</div>
+      <div class="why"><b>归类理由：</b>${f.why}</div>
+      <div class="do">处置：${f.do}</div>
+    </div>`).join('') : '<div class="empty">无</div>';
+}
+function fragSet(t){fragCur=t;renderFrags()}
+
+/* ============ ⑤ 复习卡区 ============ */
+const REVIEWS=[
+  {title:"唯唯诺诺_复习卡（4 张）",file:"10-灵感库/复习卡/唯唯诺诺_复习卡.md",
+   qa:[["和人没对你笑时，你该怎么做？","不笑可解决50%软弱问题——别用笑脸换亲切。"],
+       ["别人提要求时第一反应是什么？","先停顿3秒再回，显稳不显急。"],
+       ["不想做的事怎么拒绝？","大方简洁拒绝，不过度解释。"],
+       ["面对权威/优秀的人该什么姿态？","不卑不亢，正常表达自己。"]]},
+  {title:"生活主线_复习卡（3 张）",file:"10-灵感库/复习卡/生活主线_复习卡.md",
+   qa:[["新念头涌来时先问什么？","这事服务我的生活主线吗？"],
+       ["'健康/成长/自由/财富'哪条是主线由谁定？","由你自己定，别被世俗成功牵着走。"],
+       ["一周该回看什么？","回看自己写下的生活主线那句话。"]]}
+];
+function renderReviews(){
+  document.getElementById('revList').innerHTML=REVIEWS.map(r=>`
+    <div class="rev"><h3>${r.title}</h3>
+      ${r.qa.map(([q,a])=>`<div class="qa"><div class="q">Q：${q}</div><div class="a">A：${a}</div></div>`).join('')}
+      <div class="foot" style="margin-top:8px"><span></span><a href="${r.file}" target="_blank">看完整复习卡 →</a></div>
+    </div>`).join('');
+}
+
+/* ============ ③ 关联地图（复用 SVG 逻辑） ============ */
+function initMap(){
+  const NS='http://www.w3.org/2000/svg';
+  const PNAME2={card:'已精炼卡片',growth:'练·训练卡',values:'想·决策过滤器',idea:'用·运营卡'};
+  const nodes=[
+    {id:'c1',label:'唯唯诺诺训练卡',cls:'card',x:330,y:80,topics:['#沟通社交','#自我成长','#心态看开']},
+    {id:'c2',label:'生活主线决策过滤器',cls:'card',x:640,y:80,topics:['#自我成长','#心态看开']},
+    {id:'A',label:'行动·执行',x:170,y:150,cls:'lane',lane:1},
+    {id:'B',label:'自我叙事·看开',x:500,y:150,cls:'lane',lane:1},
+    {id:'C',label:'内容·运营',x:830,y:150,cls:'lane',lane:1},
+    {id:'n10',label:'#10 逼决策行动力',sub:'growth',x:170,y:230,cls:'growth',topics:['#自我成长','#沟通社交']},
+    {id:'n04a',label:'#04a 亚古兽勇气开道',sub:'growth',x:170,y:340,cls:'growth',topics:['#心态看开','#自我成长']},
+    {id:'n12',label:'#12 自律三原则',sub:'growth',x:170,y:450,cls:'growth',topics:['#自我成长']},
+    {id:'n13',label:'#13 跳过情绪直接做事',sub:'growth',x:170,y:560,cls:'growth',topics:['#自我成长','#心态看开']},
+    {id:'n07',label:'#07 活在当下',sub:'growth',x:170,y:650,cls:'growth',topics:['#心态看开','#自我成长']},
+    {id:'n01',label:'#01 脸面变现',sub:'values',x:500,y:250,cls:'values',topics:['#心态看开','#自我成长']},
+    {id:'n03',label:'#03 烦恼是投射',sub:'values',x:500,y:360,cls:'values',topics:['#心态看开','#自我成长']},
+    {id:'n06',label:'#06 重生',sub:'values',x:500,y:470,cls:'values',topics:['#心态看开','#自我成长']},
+    {id:'n04b',label:'#04b 巴达兽希望',sub:'values',x:500,y:580,cls:'values',topics:['#心态看开','#自我成长']},
+    {id:'n02',label:'#02 反着做标题',sub:'idea',x:830,y:330,cls:'idea',topics:['#内容运营']},
+    {id:'n11',label:'#11 转发传播原理',sub:'idea',x:830,y:470,cls:'idea',topics:['#内容运营']}
+  ];
+  const edges=[
+    {f:'c1',t:'n10',cross:0},{f:'c2',t:'n01',cross:0},{f:'c1',t:'c2',cross:1},
+    {f:'n07',t:'n13',cross:0},{f:'n04a',t:'n13',cross:0},{f:'n02',t:'n11',cross:0},
+    {f:'n03',t:'n06',cross:0},{f:'n07',t:'B',cross:1}
+  ];
+  const byId={};nodes.forEach(n=>byId[n.id]=n);
+  const adj={};nodes.forEach(n=>adj[n.id]=[]);edges.forEach(e=>{adj[e.f].push(e);adj[e.t].push(e)});
+  const svg=document.getElementById('svg');svg.innerHTML='';
+  ['A','B','C'].forEach(id=>{const n=byId[id];const r=document.createElementNS(NS,'rect');
+    r.setAttribute('x',n.x-110);r.setAttribute('y',n.y+24);r.setAttribute('width',220);r.setAttribute('height',500);
+    r.setAttribute('rx',14);r.setAttribute('class','lane');r.setAttribute('fill',id==='A'?'#ecfdf5':id==='B'?'#eff6ff':'#fffbeb');svg.appendChild(r);
+    const t=document.createElementNS(NS,'text');t.setAttribute('x',n.x);t.setAttribute('y',n.y+10);t.setAttribute('text-anchor','middle');t.setAttribute('class','llabel');t.textContent=n.label;svg.appendChild(t);});
+  function mkEdge(e){const a=byId[e.f],b=byId[e.t];const p=document.createElementNS(NS,'path');
+    const x1=a.x+((e.f==='c1'||e.f==='c2')?60:-60),y1=a.y;
+    const x2=b.x+((e.t==='c1'||e.t==='c2')?60:-60),y2=b.y;const my=(y1+y2)/2;
+    p.setAttribute('d',`M${x1},${y1} C${x1},${my} ${x2},${my} ${x2},${y2}`);
+    p.setAttribute('class','edge'+(e.cross?' cross':''));p.dataset.f=e.f;p.dataset.t=e.t;return p;}
+  edges.forEach(e=>svg.appendChild(mkEdge(e)));
+  const nodeEls={};
+  nodes.filter(n=>!n.lane).forEach(n=>{const g=document.createElementNS(NS,'g');g.setAttribute('class','node '+n.cls);g.dataset.id=n.id;
+    const w=200,h=44;const r=document.createElementNS(NS,'rect');r.setAttribute('x',n.x-w/2);r.setAttribute('y',n.y-h/2);r.setAttribute('width',w);r.setAttribute('height',h);r.setAttribute('rx',9);g.appendChild(r);
+    const t=document.createElementNS(NS,'text');t.setAttribute('x',n.x);t.setAttribute('y',n.y-2);t.setAttribute('text-anchor','middle');t.textContent=n.label;g.appendChild(t);
+    const s=document.createElementNS(NS,'text');s.setAttribute('x',n.x);s.setAttribute('y',n.y+14);s.setAttribute('text-anchor','middle');s.setAttribute('class','t');s.textContent=PNAME2[n.sub];g.appendChild(s);
+    g.addEventListener('mouseenter',()=>hi(n.id));g.addEventListener('mouseleave',unhi);svg.appendChild(g);nodeEls[n.id]=g;});
+  let curTopic='all';
+  function hi(id){document.querySelectorAll('.edge').forEach(p=>p.classList.toggle('hi',p.dataset.f===id||p.dataset.t===id));
+    const set=new Set([id]);adj[id].forEach(e=>{set.add(e.f);set.add(e.t)});
+    document.querySelectorAll('.node').forEach(g=>g.classList.toggle('hi',set.has(g.dataset.id)));}
+  function unhi(){document.querySelectorAll('.edge,.node').forEach(x=>x.classList.remove('hi'));applyTopic(curTopic)}
+  function applyTopic(t){curTopic=t;document.querySelectorAll('.node').forEach(g=>{const n=byId[g.dataset.id];const on=t==='all'||(n.topics&&n.topics.includes(t));g.classList.toggle('dim',!on);});
+    document.querySelectorAll('.edge').forEach(p=>{const a=byId[p.dataset.f],b=byId[p.dataset.t];const on=t==='all'||(a.topics&&a.topics.includes(t))||(b.topics&&b.topics.includes(t));p.classList.toggle('dim',!on);});}
+  function renderFilters(){document.getElementById('mTopic').innerHTML=['all',...TOPICS].map(t=>
+    `<button class="${t===curTopic?'active':''}" onclick="mSet('${t}')">${t==='all'?'全部主题':t}</button>`).join('');}
+  window.mSet=function(t){curTopic=t;renderFilters();applyTopic(t);};
+  renderFilters();applyTopic('all');
+}
+
+/* ============ 初始化 ============ */
+capRender();renderCards();renderFrags();renderReviews();
+</script>
+</body>
+</html>

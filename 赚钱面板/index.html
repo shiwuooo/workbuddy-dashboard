@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💰 赚钱面板</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#fff; --text:#1f2329; --sub:#8a9099; --line:#e6e8eb;
+    --cn:#2f6fed; --os:#1f9d55; --accent:#2f6fed; --tag:#eef1f5; --warn:#fff7e6; --warnb:#f0c674;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.6}
+  .topbar{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)}
+  .topbar-in{max-width:1180px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .logo{font-size:19px;font-weight:800;white-space:nowrap}
+  .logo small{font-weight:500;color:var(--sub);font-size:12px;margin-left:6px}
+  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav button{font:inherit;font-size:14px;border:none;background:transparent;color:var(--sub);
+    padding:8px 14px;border-radius:8px;cursor:pointer}
+  nav button:hover{background:var(--tag);color:var(--text)}
+  nav button.on{background:var(--accent);color:#fff}
+  .wrap{max-width:1180px;margin:0 auto;padding:18px}
+  .warnbar{background:var(--warn);border:1px solid var(--warnb);color:#8a6d1a;
+    padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:14px}
+  .warnbar code{background:#fff;border:1px solid var(--warnb);padding:1px 6px;border-radius:5px}
+  .hidden{display:none}
+  /* 资讯流 */
+  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 13px;font-size:13px;cursor:pointer}
+  .chip.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  input[type=search]{flex:1;min-width:180px;padding:8px 13px;border:1px solid var(--line);border-radius:9px;font:inherit}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:15px;display:flex;flex-direction:column;gap:8px}
+  .card .top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .badge{font-size:11px;padding:2px 9px;border-radius:6px;color:#fff}
+  .badge.cn{background:var(--cn)} .badge.os{background:var(--os)}
+  .tag{font-size:11px;background:var(--tag);color:var(--sub);padding:2px 9px;border-radius:6px}
+  .card a{font-size:15px;font-weight:600;color:var(--text);text-decoration:none;word-break:break-word}
+  .card a:hover{color:var(--accent)}
+  .card .desc{font-size:13px;color:#5a6068;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .card .time{font-size:12px;color:var(--sub);margin-top:auto}
+  .fail{color:#c0392b;font-size:13px}
+  .empty{text-align:center;color:var(--sub);padding:50px 0}
+  /* AI 解读 */
+  .digest{display:grid;grid-template-columns:240px 1fr;gap:16px}
+  .dlist{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;height:fit-content;max-height:70vh;overflow:auto}
+  .ditem{padding:10px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+  .ditem:hover{background:var(--tag)}
+  .ditem.on{background:var(--accent);color:#fff}
+  .ditem .dt{font-size:11px;opacity:.7;margin-top:2px}
+  .dview{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;min-height:300px}
+  .dview h1,.dview h2,.dview h3{margin:18px 0 8px;line-height:1.3}
+  .dview h1{font-size:22px}.dview h2{font-size:18px;border-left:4px solid var(--accent);padding-left:10px}
+  .dview h3{font-size:15px;color:#374151}
+  .dview p{margin:8px 0;color:#374151}
+  .dview ul,.dview ol{margin:8px 0 8px 22px}
+  .dview li{margin:4px 0}
+  .dview blockquote{margin:10px 0;padding:8px 14px;background:var(--tag);border-left:3px solid var(--sub);color:#555}
+  .dview code{background:var(--tag);padding:1px 5px;border-radius:4px;font-size:13px}
+  .dview table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13px}
+  .dview th,.dview td{border:1px solid var(--line);padding:7px 10px;text-align:left}
+  .dview th{background:var(--tag)}
+  .dview a{color:var(--accent)}
+  .dview hr{border:none;border-top:1px solid var(--line);margin:16px 0}
+  /* 项目库 */
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px;display:flex;flex-direction:column;gap:8px}
+  .pcard .pn{font-size:15px;font-weight:700}
+  .pcard .pd{font-size:13px;color:#5a6068;flex:1}
+  .pcard .pmeta{display:flex;gap:6px;flex-wrap:wrap}
+  .pcard a.go{font-size:13px;color:var(--accent);text-decoration:none;font-weight:600}
+  /* 关于 */
+  .about{background:#fff;border:1px solid var(--line);border-radius:13px;padding:22px;max-width:820px}
+  .about h2{font-size:17px;margin:14px 0 6px}
+  .about ul{margin:6px 0 6px 20px;font-size:14px}
+  .about code{background:var(--tag);padding:1px 6px;border-radius:5px}
+  .footer{text-align:center;color:var(--sub);font-size:12px;padding:24px}
+  @media(max-width:720px){.digest{grid-template-columns:1fr}.dlist{max-height:none}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="logo">💰 赚钱面板<small>零积分 · 本地版</small></div>
+    <nav>
+      <button data-tab="feed" class="on">📡 资讯流</button>
+      <button data-tab="digest">🤖 AI 每日解读</button>
+      <button data-tab="projects">📚 项目库</button>
+      <button data-tab="about">ℹ️ 关于</button>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="warn" class="warnbar hidden"></div>
+
+  <!-- 资讯流 -->
+  <section id="feed">
+    <div class="bar">
+      <span class="chip on" data-region="全部">全部</span>
+      <span class="chip" data-region="国内">国内</span>
+      <span class="chip" data-region="海外">海外</span>
+      <span id="cats"></span>
+      <input type="search" id="q" placeholder="搜索标题/摘要…" oninput="renderFeed()">
+    </div>
+    <div class="feednote hidden" id="feednote"></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty hidden" id="empty">还没有数据。请先双击「立即采集.bat」或「register_task.bat」生成 data.json。</div>
+  </section>
+
+  <!-- AI 每日解读 -->
+  <section id="digest" class="hidden">
+    <div class="digest">
+      <div class="dlist" id="dlist"></div>
+      <div class="dview" id="dview"><p style="color:#8a9099">加载中…</p></div>
+    </div>
+  </section>
+
+  <!-- 项目库 -->
+  <section id="projects" class="hidden">
+    <div class="pgrid" id="pgrid"></div>
+  </section>
+
+  <!-- 关于 -->
+  <section id="about" class="hidden">
+    <div class="about" id="aboutBox"></div>
+  </section>
+</div>
+
+<div class="footer">💰 赚钱面板 · 全部数据在本地 D:\workbuddy\赚钱面板\ · 零积分运行</div>
+
+<script>
+const FILEMODE = location.protocol === 'file:';
+if (FILEMODE) {
+  const w = document.getElementById('warn');
+  w.classList.remove('hidden');
+  w.innerHTML = '⚠️ 你正在用「直接打开文件」方式浏览，浏览器会拦截本地数据读取。请用 <code>start.bat</code> 启动本地服务器（双击它，自动开 http://127.0.0.1:8000）。';
+}
+
+/* ---------- 标签切换 ---------- */
+document.querySelectorAll('nav button').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
+    ['feed','digest','projects','about'].forEach(t=>
+      document.getElementById(t).classList.toggle('hidden', t!==b.dataset.tab));
+    if(b.dataset.tab==='digest') loadDigestIndex();
+    if(b.dataset.tab==='projects') renderProjects();
+    if(b.dataset.tab==='about') renderAbout();
+  };
+});
+
+/* ---------- 资讯流 ---------- */
+let DATA=null, REGION="全部", CAT="全部";
+function loadFeed(){
+  fetch('data.json?t='+Date.now()).then(r=>r.json()).then(d=>{
+    DATA=d; initCats(); renderFeed();
+    document.title = `💰 赚钱面板 (${d.ok||0})`;
+  }).catch(e=>{
+    document.getElementById('empty').classList.remove('hidden');
+    document.getElementById('empty').textContent='读取 data.json 失败：'+e.message+'（建议用 start.bat 启动）';
+  });
+}
+function initCats(){
+  const box=document.getElementById('cats'); box.innerHTML='';
+  const set=new Set(['全部']);
+  (DATA.items||[]).forEach(i=>set.add(i.category||'其他'));
+  set.forEach(c=>{
+    const s=document.createElement('span');
+    s.className='chip'+(c==='全部'?' on':''); s.textContent=c; s.dataset.cat=c;
+    s.onclick=()=>{CAT=c;[...box.children].forEach(x=>x.classList.toggle('on',x.dataset.cat===c));renderFeed();};
+    box.appendChild(s);
+  });
+  document.querySelectorAll('.bar .chip[data-region]').forEach(x=>
+    x.onclick=()=>{REGION=x.dataset.region;
+      document.querySelectorAll('.bar .chip[data-region]').forEach(y=>y.classList.toggle('on',y===x));renderFeed();});
+}
+function renderFeed(){
+  const q=(document.getElementById('q').value||'').toLowerCase();
+  const all=(DATA.items||[]).filter(i=>!(i.title&&i.title.startsWith('[抓取失败]')));
+  const fails=(DATA.items||[]).length - all.length;
+  const items=all.filter(i=>{
+    if(REGION!=='全部'&&i.region!==REGION)return false;
+    if(CAT!=='全部'&&(i.category||'其他')!==CAT)return false;
+    if(q&&!((''+(i.title||'')+(i.desc||'')).toLowerCase().includes(q)))return false;
+    return true;
+  });
+  const note=document.getElementById('feednote');
+  if(note){
+    note.classList.remove('hidden');
+    note.style.cssText='font-size:12px;color:#8a9099;margin:2px 0 12px;padding:6px 10px;background:#f4f6f8;border-radius:8px;';
+    let s='最后更新：'+(DATA.updated||'?')+' · 成功源 '+(DATA.ok||0)+' / 暂不可达 '+(DATA.fail||0);
+    if(fails>0) s+=' （被拦截的多因当前网络环境，换有完整外网的机器双击「立即采集.bat」即可正常）';
+    note.textContent=s;
+  }
+  const empty=document.getElementById('empty');
+  empty.classList.toggle('hidden', items.length>0);
+  if(items.length===0) empty.textContent='当前没有可显示的资讯。请确认已双击「立即采集.bat」联网采集；本环境网络受限时，在你电脑上双击即可获取实时数据。';
+  const grid=document.getElementById('grid'); grid.innerHTML='';
+  items.forEach(i=>{
+    const el=document.createElement('div'); el.className='card';
+    const rc=i.region==='国内'?'cn':'os';
+    el.innerHTML=`
+      <div class="top">
+        <span class="badge ${rc}">${i.region||''}</span>
+        <span class="tag">${i.category||'其他'}</span>
+        <span class="tag">${i.source||''}</span>
+      </div>
+      <a href="${i.link||'#'}" target="_blank" rel="noopener">${i.title||'(无标题)'}</a>
+      ${i.desc?`<div class="desc">${i.desc}</div>`:''}
+      <div class="time">${i.pub||''}</div>`;
+    grid.appendChild(el);
+  });
+}
+
+/* ---------- AI 每日解读 ---------- */
+let DIGESTS=[];
+function loadDigestIndex(){
+  fetch('digests/index.json?t='+Date.now()).then(r=>r.json()).then(list=>{
+    DIGESTS=list; renderDigestList();
+    if(list.length){ openDigest(list[0].file); }
+    else document.getElementById('dview').innerHTML='<p style="color:#8a9099">暂无 AI 解读。每天 09:00 由 WorkBuddy 生成后，双击「立即采集.bat」即可同步进来（这一步才消耗积分）。</p>';
+  }).catch(e=>{
+    document.getElementById('dview').innerHTML='<p style="color:#c0392b">读取 digests/index.json 失败：'+e.message+'。请用 start.bat 启动本地服务器。</p>';
+  });
+}
+function renderDigestList(){
+  const box=document.getElementById('dlist'); box.innerHTML='';
+  DIGESTS.forEach(d=>{
+    const el=document.createElement('div'); el.className='ditem'; el.dataset.file=d.file;
+    el.innerHTML=`<div>${d.title}</div><div class="dt">${d.date}</div>`;
+    el.onclick=()=>{document.querySelectorAll('.ditem').forEach(x=>x.classList.remove('on'));el.classList.add('on');openDigest(d.file);};
+    box.appendChild(el);
+  });
+  if(DIGESTS[0]) box.firstChild.classList.add('on');
+}
+function openDigest(file){
+  fetch('digests/'+encodeURIComponent(file)+'?t='+Date.now()).then(r=>r.text()).then(t=>{
+    document.getElementById('dview').innerHTML=mdToHtml(t);
+  }).catch(e=>{
+    document.getElementById('dview').innerHTML='<p style="color:#c0392b">读取失败：'+e.message+'</p>';
+  });
+}
+
+/* ---------- 项目库（硬编码） ---------- */
+const PROJECTS=[
+  {n:'Folo（原 Follow）',d:'国人团队 RSSNext 出品，内置 RSSHub，国内+海外通吃，有手机 App，开箱即用的资讯面板。',u:'https://github.com/RSSNext/Folo',tags:['阅读器','国内']},
+  {n:'RSSHub',d:'diygod 出品：把知乎/微博/B站/公众号等没有 RSS 的站点变成订阅源。可自建更稳。',u:'https://github.com/DIYgod/RSSHub',tags:['阅读器','国内']},
+  {n:'FreshRSS',d:'自托管 RSS 阅读器，功能丰富、主题多、支持手机 App 同步。',u:'https://github.com/FreshRSS/FreshRSS',tags:['阅读器']},
+  {n:'Miniflux',d:'单文件 Go 二进制，极简、极快、低内存的自托管阅读器。',u:'https://github.com/miniflux/v2',tags:['阅读器']},
+  {n:'NewsNow',d:'ourongji 出品：实时热榜聚合面板，一眼看全网热点。',u:'https://github.com/ourongji/newsnow',tags:['面板','国内']},
+  {n:'awesome-indie',d:'mezod 出品（11k⭐）：独立开发者赚钱资源总集，从社区到工具到案例。',u:'https://github.com/mezod/awesome-indie',tags:['知识库']},
+  {n:'awesome-indie-cn',d:'awesome-indie 中文版，独立开发商赚钱资源合集。',u:'https://github.com/kuaijierun/awesome-indie-cn',tags:['知识库','国内']},
+  {n:'chinese-independent-developer',d:'1c7 出品：国内独立开发者项目汇总，看同行都在做什么、怎么赚钱。',u:'https://github.com/1c7/chinese-independent-developer',tags:['知识库','国内']},
+  {n:'howto-make-more-money',d:'easychen 出品：程序员副业赚钱实操秘籍，覆盖接单/自媒体/数字产品。',u:'https://github.com/easychen/howto-make-more-money',tags:['知识库','国内']},
+  {n:'ai-money-maker-handbook',d:'AI 副业赚钱思路大全，整理用 AI 工具做副业的各种玩法与案例。',u:'https://github.com/XiaomingX/ai-money-maker-handbook',tags:['知识库','AI']},
+  {n:'MoneyPrinterV2',d:'FujiwaraChoki 出品：海外多渠道自动化变现（短视频/联盟/开发邮件）。',u:'https://github.com/FujiwaraChoki/MoneyPrinterV2',tags:['自动化','海外']},
+  {n:'Huginn',d:'自动化监控全网：设定规则后自动抓取网站变化、生成事件，无需 AI。',u:'https://github.com/huginn/huginn',tags:['自动化']},
+];
+function renderProjects(){
+  const box=document.getElementById('pgrid'); box.innerHTML='';
+  PROJECTS.forEach(p=>{
+    const el=document.createElement('div'); el.className='pcard';
+    el.innerHTML=`<div class="pn">${p.n}</div><div class="pd">${p.d}</div>
+      <div class="pmeta">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      <a class="go" href="${p.u}" target="_blank" rel="noopener">在 GitHub 打开 →</a>`;
+    box.appendChild(el);
+  });
+}
+
+/* ---------- 关于 ---------- */
+function renderAbout(){
+  document.getElementById('aboutBox').innerHTML=`
+    <h2>这是什么</h2>
+    <p>一个<strong>完全不经过 WorkBuddy、不消耗任何积分</strong>的本地赚钱资讯面板。每天自动抓取国内外「副业 / 创业 / 行业动向 / 被动收入」信息，你自己在浏览器里点、自己看。</p>
+    <h2>四个标签页</h2>
+    <ul>
+      <li><strong>📡 资讯流</strong>：每天抓取的 RSS 原始资讯，按国内/海外、分类筛选、搜索。</li>
+      <li><strong>🤖 AI 每日解读</strong>：WorkBuddy 帮你消化成小白能懂的中文简报（这份才耗积分，建议每周 1–2 次）。</li>
+      <li><strong>📚 项目库</strong>：现成的开源阅读器 / 知识库 / 自动化工具，点开即看。</li>
+      <li><strong>ℹ️ 关于</strong>：本页。</li>
+    </ul>
+    <h2>零积分原理</h2>
+    <ul>
+      <li>采集由本机 <code>collector.py</code>（纯标准库）完成，抓公开 RSS，无 API Key、无 AI 调用。</li>
+      <li>自动更新由 Windows 计划任务触发，不经过 WorkBuddy，因此<strong>不扣积分</strong>。</li>
+    </ul>
+    <h2>使用步骤（只需点两下）</h2>
+    <ul>
+      <li>双击 <code>start.bat</code> → 浏览器自动开 http://127.0.0.1:8000（推荐入口）。</li>
+      <li>首次数据为空时，双击 <code>立即采集.bat</code> 生成 data.json；或双击 <code>register_task.bat</code> 注册每天 09:00 自动跑。</li>
+      <li>想加自己的信息源？编辑 <code>feeds.json</code> 后双击「立即采集.bat」。</li>
+    </ul>
+    <h2>信息源说明</h2>
+    <ul>
+      <li>海外源（Hacker News、Reddit、Side Hustle Nation 等）为原生 RSS，稳定、无需代理。</li>
+      <li>国内源经 RSSHub 公益实例 rsshub.app 生成，可能偶尔不稳；可换实例或自搭。</li>
+    </ul>`;
+}
+
+/* ---------- 轻量 Markdown 渲染 ---------- */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function inline(s){
+  s=esc(s);
+  s=s.replace(/`([^`]+)`/g,'<code>$1</code>');
+  s=s.replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/\*([^*]+)\*/g,'<em>$1</em>');
+  s=s.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>');
+  return s;
+}
+function mdToHtml(md){
+  const lines=md.replace(/\r/g,'').split('\n');
+  let h='', i=0;
+  while(i<lines.length){
+    let line=lines[i];
+    if(/^\s*#{1,3}\s/.test(line)){ h+=`<h${line.indexOf(' ')}>${inline(line.replace(/^\s*#+\s/,'') )}</h${line.indexOf(' ')}>`; i++; continue; }
+    if(/^\s*>{1,3}\s/.test(line)){ h+=`<blockquote>${inline(line.replace(/^\s*>{1,3}\s/,''))}</blockquote>`; i++; continue; }
+    if(/^\s*-{3,}\s*$/.test(line)){ h+='<hr>'; i++; continue; }
+    if(/^\s*\|.*\|\s*$/.test(line)){
+      const tbl=[]; let j=i;
+      while(j<lines.length && /^\s*\|.*\|\s*$/.test(lines[j])){ tbl.push(lines[j]); j++; }
+      h+=parseTable(tbl); i=j; continue;
+    }
+    if(/^\s*[-*]\s+/.test(line)){
+      let buf=[]; let j=i;
+      while(j<lines.length && /^\s*[-*]\s+/.test(lines[j])){ buf.push('<li>'+inline(lines[j].replace(/^\s*[-*]\s+/,''))+'</li>'); j++; }
+      h+='<ul>'+buf.join('')+'</ul>'; i=j; continue;
+    }
+    if(/^\s*\d+\.\s+/.test(line)){
+      let buf=[]; let j=i;
+      while(j<lines.length && /^\s*\d+\.\s+/.test(lines[j])){ buf.push('<li>'+inline(lines[j].replace(/^\s*\d+\.\s+/,''))+'</li>'); j++; }
+      h+='<ol>'+buf.join('')+'</ol>'; i=j; continue;
+    }
+    if(line.trim()===''){ i++; continue; }
+    h+='<p>'+inline(line)+'</p>'; i++;
+  }
+  return h;
+}
+function parseTable(rows){
+  const split=r=>r.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(c=>c.trim());
+  const head=split(rows[0]);
+  let body='';
+  for(let k=2;k<rows.length;k++){
+    const cells=split(rows[k]);
+    body+='<tr>'+cells.map(c=>`<td>${inline(c)}</td>`).join('')+'</tr>';
+  }
+  return '<table><thead><tr>'+head.map(c=>`<th>${inline(c)}</th>`).join('')+'</tr></thead><tbody>'+body+'</tbody></table>';
+}
+
+loadFeed();
+</script>
+</body>
+</html>

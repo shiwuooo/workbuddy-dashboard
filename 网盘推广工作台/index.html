@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网盘推广工作台</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#fff; --line:#e5e7eb; --text:#1f2937;
+    --muted:#6b7280; --brand:#2563eb; --brand2:#7c3aed;
+    --ok:#16a34a; --warn:#d97706; --bad:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  header{background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;padding:22px 20px}
+  header h1{margin:0;font-size:22px;font-weight:700}
+  header .sub{font-size:13px;opacity:.9;margin-top:6px;line-height:1.6}
+  main{padding:20px;max-width:1080px;margin:0 auto}
+  h2{font-size:16px;margin:24px 0 12px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  a.card{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;transition:.15s}
+  a.card:hover{border-color:var(--brand);box-shadow:0 4px 14px rgba(37,99,235,.12);transform:translateY(-2px)}
+  a.card .tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;background:#eef2ff;color:var(--brand);margin-bottom:8px}
+  a.card b{display:block;font-size:15px;margin-bottom:6px}
+  a.card .desc{font-size:12.5px;color:var(--muted);line-height:1.6}
+  .ext{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;text-decoration:none;color:inherit}
+  .ext:hover{border-color:var(--brand2)}
+  .ext .name{font-weight:600}
+  .ext .url{font-size:12px;color:var(--muted)}
+  .ext .go{font-size:12px;color:var(--brand2);white-space:nowrap}
+  .note{font-size:12.5px;color:var(--muted);line-height:1.8;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-top:14px}
+  footer{padding:18px 20px 40px;color:var(--muted);font-size:12px;max-width:1080px;margin:0 auto}
+</style>
+</head>
+<body>
+<header>
+  <h1>网盘推广工作台</h1>
+  <p class="sub">夸克为主 · 百度 / 迅雷多平台叠加 · 所有数据存在你本机浏览器（localStorage），不上传任何服务器<br>手机用 GitHub 公网打开 · 电脑用本地 HTML 直接打开</p>
+</header>
+<main>
+  <h2>① 五大面板（点开即用）</h2>
+  <div class="grid">
+    <a class="card" href="手册.html">
+      <span class="tag">作战手册</span>
+      <b>完整作战手册（深挖版）</b>
+      <div class="desc">知乎年入千万者玩法拆解 + 多平台叠加策略 + 文案模板，全篇可编辑可加内容。</div>
+    </a>
+    <a class="card" href="跟踪表.html">
+      <span class="tag">数据跟踪</span>
+      <b>资源-渠道跟踪表</b>
+      <div class="desc">记录每个资源放哪几个网盘、拉新/转存/首充单价与每日数据，CSV 导出。</div>
+    </a>
+    <a class="card" href="作战台.html">
+      <span class="tag">作战台</span>
+      <b>网盘推广作战台</b>
+      <div class="desc">资源库脑图 + 文案一键生成 + 夸克口令管理，整合式操作台。</div>
+    </a>
+    <a class="card" href="佣金监控.html">
+      <span class="tag">佣金监控</span>
+      <b>任推邦项目监控</b>
+      <div class="desc">40 个推广项目实时佣金/单价看板，含本地更新入口。</div>
+    </a>
+    <a class="card" href="夸克工具箱.html">
+      <span class="tag">工具箱</span>
+      <b>夸克网盘工具箱</b>
+      <div class="desc">去重 / 重命名 / 语义推荐 / 搜索等本地工具链，命令可一键复制。</div>
+    </a>
+  </div>
+
+  <h2>② 跨域互链（工作台 ↔ 其他项目）</h2>
+  <a class="ext" href="https://shiwuooo.github.io/quark">
+    <span><span class="name">夸克网盘工具</span> <span class="url">独立部署的夸克工具站</span></span>
+    <span class="go">打开 ↗</span>
+  </a>
+  <a class="ext" href="https://shiwuooo.github.io/zimeiti-hub">
+    <span><span class="name">自媒体 / 小红书运营</span> <span class="url">账号定位、选题、爆款拆解</span></span>
+    <span class="go">打开 ↗</span>
+  </a>
+  <a class="ext" href="https://shiwuooo.github.io/workbuddy-dashboard">
+    <span><span class="name">总控面板</span> <span class="url">所有工具与产物总入口</span></span>
+    <span class="go">打开 ↗</span>
+  </a>
+  <a class="ext" href="https://shiwuooo.github.io/shangantong">
+    <span><span class="name">上岸通刷题网站</span> <span class="url">考公刷题 + 历年试卷</span></span>
+    <span class="go">打开 ↗</span>
+  </a>
+
+  <div class="note">
+    <b>编辑说明：</b>点右上角「✏️编辑」即可直接改任意文字、加新区块；改动自动存进本机浏览器，也可「📤导出」成独立 HTML 文件备份。换设备/清缓存会丢，重要修改记得导出。
+  </div>
+</main>
+<footer>
+  网盘推广工作台 · 本地优先 · 数据不上传 ｜ 部署仓库：shiwuooo/wangpan-panels
+</footer>
+<script>
+(function(){
+ 'use strict';
+ var KEY='wp_home';
+ function $(s){return document.querySelector(s);}
+ function $a(s){return document.querySelectorAll(s);}
+ var SEL='h1,h2,h3,h4,h5,p,li,blockquote,pre,.card,.what,.hint,.intro,.rec,.tag,.desc,.muted,.sub,.rows,.row,.tree,.lvl1,.lvl2,.price,.badge,.footer,.note';
+ function formAnc(el){return el.closest&&el.closest('input,textarea,select,button,script,style,a,.toolbar,#wb-toolbar');}
+ function editEls(){var r=[];$a(SEL).forEach(function(el){if(!formAnc(el))r.push(el);});return r;}
+ function setEdit(on){editEls().forEach(function(el){el.setAttribute('contenteditable',on?'true':'false');});document.body.classList.toggle('wb-edit',!!on);}
+ function st(m,c){var s=$('#wb-status');if(s){s.textContent=m;s.className='wb-status'+(c?' '+c:'');}}
+ function save(){try{var els=editEls();var arr=els.map(function(e){return e.innerHTML;});localStorage.setItem(KEY,JSON.stringify(arr));st('已保存到本机浏览器 '+new Date().toLocaleTimeString(),'ok');}catch(e){st('保存失败:'+e.message,'err');}}
+ function load(){var raw=localStorage.getItem(KEY);if(!raw)return false;try{var arr=JSON.parse(raw);var els=editEls();if(arr.length===els.length){els.forEach(function(el,i){el.innerHTML=arr[i];});}}catch(e){return false;}st('已恢复上次编辑','ok');return true;}
+ function exp(){var h='<!DOCTYPE html>\n'+document.documentElement.outerHTML;var b=new Blob([h],{type:'text/html;charset:utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='网盘工作台_'+new Date().toISOString().slice(0,10)+'.html';a.click();st('已导出HTML文件','ok');}
+ function addB(){var m=$('main')||document.body;var s=document.createElement('section');s.setAttribute('contenteditable','true');s.style.cssText='border:2px dashed #2f6fed;padding:16px;margin:12px 0;border-radius:10px';s.innerHTML='<h2>新区块（点我编辑）</h2><p>在这里写任何内容……</p>';m.appendChild(s);save();}
+ function initTB(){var tb=$('#wb-toolbar');if(!tb)return;tb.querySelector('#wb-edit').onclick=function(){setEdit(true);st('编辑中：直接点文字改','');};tb.querySelector('#wb-stop').onclick=function(){setEdit(false);st('预览');};tb.querySelector('#wb-save').onclick=save;tb.querySelector('#wb-export').onclick=exp;tb.querySelector('#wb-restore').onclick=function(){if(confirm('恢复初始？当前修改将丢失')){localStorage.removeItem(KEY);location.reload();}};tb.querySelector('#wb-add').onclick=addB;}
+ document.addEventListener('DOMContentLoaded',function(){
+  if(!$('#wb-toolbar')){var tb=document.createElement('div');tb.id='wb-toolbar';tb.innerHTML='<button id="wb-edit">✏️编辑</button><button id="wb-stop">👁停止</button><button id="wb-save">💾保存</button><button id="wb-export">📤导出</button><button id="wb-restore">↩恢复</button><button id="wb-add">➕区块</button><span id="wb-status" class="wb-status"></span>';document.body.insertBefore(tb,document.body.firstChild);var c=document.createElement('style');c.textContent='#wb-toolbar{position:sticky;top:0;z-index:99999;background:#fff;border-bottom:1px solid #e3e6ea;padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#wb-toolbar button{border:1px solid #e3e6ea;background:#fff;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:13px}#wb-toolbar button:hover{background:#eef3ff}#wb-status{margin-left:auto;font-size:12px;color:#6b7785}#wb-status.ok{color:#16a34a}#wb-status.err{color:#dc2626}body.wb-edit [contenteditable="true"]{outline:2px dashed #2f6fed;outline-offset:2px;background:#fffef5}';document.head.appendChild(c);}
+  initTB();var ok=load();if(!ok)st('点 ✏️ 编辑即可修改内容（自动保存到本机浏览器）','');
+  document.addEventListener('input',function(){if(document.body.classList.contains('wb-edit')){clearTimeout(window.__wbt);window.__wbt=setTimeout(save,1500);}});
+ });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>知本导师 · 593册经典熔炼的私人一对一导师</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <h1>📚 知本导师</h1>
+  <p>由 593 册学习 · 思维 · 成长 · 自我管理经典熔炼而成的私人一对一导师。离线可用，可一键升级 AI 对话。</p>
+</header>
+
+<nav class="tabs">
+  <button data-s="diag" class="active" onclick="showSection('diag')">🧭 诊断室</button>
+  <button data-s="lib" onclick="showSection('lib')">📖 方法库</button>
+  <button data-s="chat" onclick="showSection('chat')">💬 导师对话</button>
+  <button data-s="set" onclick="showSection('set')">⚙️ AI设置</button>
+  <button data-s="prompt" onclick="showSection('prompt')">📋 导师人格</button>
+</nav>
+
+<div class="wrap">
+
+  <!-- 诊断室 -->
+  <section id="diag" class="show">
+    <div class="card">
+      <h2>导师诊断室 · 我先了解你，再开方</h2>
+      <p class="muted">就像好导师第一次见面会问诊。选完点「生成专属方案」。</p>
+
+      <label class="fld">① 你的目标类型（单选）</label>
+      <div class="opt-row">
+        <span class="chip" data-group="goal" data-v="skill" onclick="pick(this,'goal')">学新技能</span>
+        <span class="chip" data-group="goal" data-v="exam" onclick="pick(this,'goal')">备考考证</span>
+        <span class="chip" data-group="goal" data-v="read" onclick="pick(this,'goal')">读书吸收</span>
+        <span class="chip" data-group="goal" data-v="write" onclick="pick(this,'goal')">写作表达</span>
+        <span class="chip" data-group="goal" data-v="think" onclick="pick(this,'goal')">思维决策</span>
+        <span class="chip" data-group="goal" data-v="habit" onclick="pick(this,'goal')">习惯自律</span>
+        <span class="chip" data-group="goal" data-v="career" onclick="pick(this,'goal')">职业成长</span>
+      </div>
+
+      <label class="fld">② 当前最大卡点（可多选）</label>
+      <div class="opt-row">
+        <span class="chip" data-v="in" onclick="pick(this,'pains',true)">学不进</span>
+        <span class="chip" data-v="forget" onclick="pick(this,'pains',true)">记不住</span>
+        <span class="chip" data-v="focus" onclick="pick(this,'pains',true)">专注差</span>
+        <span class="chip" data-v="output" onclick="pick(this,'pains',true)">不会输出</span>
+        <span class="chip" data-v="persist" onclick="pick(this,'pains',true)">坚持不了</span>
+        <span class="chip" data-v="method" onclick="pick(this,'pains',true)">没方法</span>
+      </div>
+
+      <label class="fld">③ 每天可投入时间（单选）</label>
+      <div class="opt-row">
+        <span class="chip" data-group="time" data-v="t1" onclick="pick(this,'time')">&lt;30分钟</span>
+        <span class="chip" data-group="time" data-v="t2" onclick="pick(this,'time')">30-60分钟</span>
+        <span class="chip" data-group="time" data-v="t3" onclick="pick(this,'time')">1-2小时</span>
+        <span class="chip" data-group="time" data-v="t4" onclick="pick(this,'time')">&gt;2小时</span>
+      </div>
+
+      <label class="fld">④ 已有基础（单选）</label>
+      <div class="opt-row">
+        <span class="chip" data-group="level" data-v="zero" onclick="pick(this,'level')">零基础</span>
+        <span class="chip" data-group="level" data-v="intro" onclick="pick(this,'level')">入门</span>
+        <span class="chip" data-group="level" data-v="adv" onclick="pick(this,'level')">进阶</span>
+      </div>
+
+      <label class="fld">⑤ 用一句话描述你想达成的結果（可选）</label>
+      <textarea id="diagDetail" placeholder="例如：3个月搞定Python，能写个小工具；或：读完书能讲给别人听"></textarea>
+
+      <button class="btn" onclick="buildPlan()">生成我的专属方案 →</button>
+    </div>
+    <div id="planOut"></div>
+  </section>
+
+  <!-- 方法库 -->
+  <section id="lib">
+    <div class="card">
+      <h2>方法库 · 593本经典的熔炼结晶</h2>
+      <p class="muted">按主题筛选。每张卡片都点名了来源书与可立即执行的步骤。</p>
+      <div id="libTags">
+        <span class="tag sel" data-f="all" onclick="renderMethods('all')">全部</span>
+        <span class="tag" data-f="学习力" onclick="renderMethods('学习力')">学习力</span>
+        <span class="tag" data-f="记忆" onclick="renderMethods('记忆')">记忆</span>
+        <span class="tag" data-f="专注" onclick="renderMethods('专注')">专注</span>
+        <span class="tag" data-f="思维" onclick="renderMethods('思维')">思维</span>
+        <span class="tag" data-f="写作表达" onclick="renderMethods('写作表达')">写作表达</span>
+        <span class="tag" data-f="自我管理" onclick="renderMethods('自我管理')">自我管理</span>
+        <span class="tag" data-f="科学世界观" onclick="renderMethods('科学世界观')">科学世界观</span>
+      </div>
+    </div>
+    <div id="libGrid" class="grid"></div>
+  </section>
+
+  <!-- 导师对话 -->
+  <section id="chat">
+    <div class="card">
+      <h2>导师对话</h2>
+      <div id="chatHint" class="notice"></div>
+      <div id="chatBox" class="chat"></div>
+      <div class="chat-input">
+        <input id="chatInput" type="text" placeholder="问导师任何学习/成长问题，回车发送…">
+        <button class="btn sm" onclick="sendChat()">发送</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI设置 -->
+  <section id="set">
+    <div class="card">
+      <h2>AI 设置 · 一键升级为自由对话导师</h2>
+      <p class="muted">填入任意 OpenAI 兼容接口的 Key 即可。配置只存在你本地浏览器，不上传。</p>
+      <label class="fld">接口地址（Endpoint）</label>
+      <input id="cfgEndpoint" type="text" value="https://api.openai.com/v1/chat/completions">
+      <label class="fld">API Key</label>
+      <input id="cfgKey" type="text" placeholder="sk-...">
+      <label class="fld">模型名（Model）</label>
+      <input id="cfgModel" type="text" value="gpt-4o-mini">
+      <p class="muted">兼容：OpenAI / DeepSeek / Moonshot(Kimi) / 智谱 / 本地 llama.cpp 等。若遇 CORS 报错，换支持跨域的代理或本地模型即可。</p>
+      <button class="btn" onclick="saveSettings()">保存配置</button>
+      <button class="btn ghost" onclick="clearSettings()">清除配置</button>
+      <div id="cfgMsg" class="muted" style="margin-top:10px"></div>
+    </div>
+  </section>
+
+  <!-- 导师人格 -->
+  <section id="prompt">
+    <div class="card">
+      <h2>导师人格 · 系统提示词</h2>
+      <p class="muted">这是导师的「大脑」。复制后粘贴到任意 AI（ChatGPT / Claude / Kimi / 本机模型），即可召唤这位导师。</p>
+      <div class="copybar">
+        <button class="btn sm" onclick="copyPrompt()">复制导师人格</button>
+      </div>
+      <div id="copyMsg" class="muted" style="margin-bottom:8px"></div>
+      <pre class="prompt" id="promptText"></pre>
+    </div>
+  </section>
+
+  <div class="foot">知本导师 · 离线可用 · 数据全在本地 · 由 593 册经典熔炼</div>
+</div>
+
+<script src="app.js"></script>
+<script>document.getElementById("promptText").textContent=PERSONA;</script>
+</body>
+</html>

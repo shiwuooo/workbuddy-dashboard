@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>石墨文档 × WorkBuddy 强强联合方案</title>
+<style>
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f7fa;color:#1f2933;margin:0;padding:24px;line-height:1.7;}
+  .wrap{max-width:960px;margin:0 auto;}
+  h1{font-size:23px;margin:0 0 4px;color:#102a43;}
+  .sub{color:#7b8794;margin:0 0 18px;font-size:13px;}
+  .card{background:#fff;border:1px solid #e4e7eb;border-radius:12px;padding:18px 22px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  h2{font-size:17px;margin:0 0 12px;color:#102a43;border-left:4px solid #324cd6;padding-left:10px;}
+  p{font-size:14px;margin:8px 0;}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:6px 0;}
+  th,td{border:1px solid #e4e7eb;padding:8px 10px;text-align:left;vertical-align:top;}
+  th{background:#f0f4f8;color:#243b53;font-weight:600;}
+  .ok{color:#0a7d3b;font-weight:700;}
+  .no{color:#c0392b;font-weight:700;}
+  .part{color:#b9770e;font-weight:700;}
+  .warn{border-color:#f0c000;background:#fffdf2;}
+  .warn h2{border-color:#e0a800;}
+  .tag{display:inline-block;background:#eef2ff;color:#324cd6;padding:1px 8px;border-radius:6px;font-size:12px;margin:2px 4px 2px 0;}
+  .reco{background:#eafaf0;border-color:#7fce9b;}
+  .reco h2{border-color:#0a7d3b;}
+  code{background:#f0f4f8;padding:1px 5px;border-radius:4px;font-size:12px;color:#243b53;}
+  ul{margin:8px 0;padding-left:20px;font-size:14px;}
+  li{margin:4px 0;}
+  .small{font-size:12px;color:#7b8794;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>石墨文档 × WorkBuddy 强强联合方案</h1>
+  <p class="sub">2026-07-31 · 小白可执行版 · 信息来源：石墨开放平台文档 + 海外 AI×文档工作流实践</p>
+
+  <div class="card">
+    <h2>一句话结论</h2>
+    <p>石墨强在「<b>人写、人协作</b>」，WorkBuddy 强在「<b>AI 处理、生成、自动化</b>」。两者联合的本质是：让 WorkBuddy 直接吃进石墨内容 → 出结果 → 回流石墨。</p>
+    <p>难点不在 AI，而在<b>石墨把内容交出来的通道</b>。石墨公网个人版几乎没有开放接口，这是所有方案的分水岭。</p>
+  </div>
+
+  <div class="card">
+    <h2>① 石墨能给你什么通道？（决定可行性）</h2>
+    <table>
+      <tr><th>通道</th><th>个人免费版</th><th>企业版 / 私有部署</th><th>WorkBuddy 能否接</th></tr>
+      <tr><td>导出 md / docx / xlsx</td><td><span class="ok">支持</span></td><td><span class="ok">支持</span></td><td>手动导入即可（立刻用）</td></tr>
+      <tr><td>互联网公开发布链接</td><td><span class="ok">支持</span></td><td><span class="ok">支持</span></td><td>WebFetch 可读（<b>只读</b>）</td></tr>
+      <tr><td>个人 REST API Token</td><td><span class="no">无</span></td><td><span class="ok">企业开放平台</span></td><td>需自建 / 第三方</td></tr>
+      <tr><td>Webhook 事件回调</td><td><span class="no">无</span></td><td><span class="ok">企业 SDK</span></td><td>需自建后端</td></tr>
+      <tr><td>官方 MCP / Skill</td><td><span class="no">暂无</span></td><td><span class="no">暂无</span></td><td>等官方排期</td></tr>
+    </table>
+    <p class="small">免费版：无限文档、协作上限 15 人、1GB 空间、版本历史 30 天。企业版 ¥360/人/年，高级版 ¥600/人/年（含 API 对接能力）。</p>
+  </div>
+
+  <div class="card">
+    <h2>② 五条联合路线对比</h2>
+    <table>
+      <tr><th>方案</th><th>个人可行性</th><th>自动化</th><th>双向</th><th>成本</th><th>适合谁</th></tr>
+      <tr><td><b>A 手动导出→AI→贴回</b></td><td><span class="ok">立刻用</span></td><td>手动</td><td>写回手动</td><td>0</td><td>个人轻度使用</td></tr>
+      <tr><td><b>B 开源 MCP 直连</b><br><span class="small">rush-shimo-cli</span></td><td><span class="no">不可行</span><br><span class="small">公网无 token</span></td><td><span class="part">半自动(读)</span></td><td>读为主</td><td>0（需企业 token）</td><td>企业/私有部署</td></tr>
+      <tr><td><b>C 等官方石墨 Skill</b></td><td><span class="part">未知排期</span></td><td>全自动</td><td>双向</td><td>0</td><td>全人群（等）</td></tr>
+      <tr><td><b>D 迁移腾讯文档/飞书</b></td><td><span class="ok">立刻用</span></td><td>全自动</td><td><span class="ok">官方双向</span></td><td>0（免费版）</td><td>想省心的人</td></tr>
+      <tr><td><b>E 企业开放平台自建</b></td><td><span class="no">需资质</span></td><td>全自动事件驱动</td><td>双向</td><td>高（开发+版费）</td><td>团队/企业</td></tr>
+    </table>
+    <p class="small">已验证：GitHub 上有 <code>kanyun-inc/rush-shimo-cli</code> 这个石墨 MCP Server（whoami / list / read_doc / read_sheet 等工具），但其默认 base url 指向某私有部署实例（shimo.zhenguanyu.com），<b>不是公网 shimo.im 个人版</b>，个人用户拿不到对应 token，故方案 B 对个人基本不可用。</p>
+  </div>
+
+  <div class="card">
+    <h2>③ 海外成熟范式借鉴（让联合更聪明）</h2>
+    <p><span class="tag">Notion AI</span> 数据库 + AI 属性 + 自动化：先设计好库结构（状态/分类字段），AI 按字段自动生成大纲、摘要、推广文案。映射做法：用石墨<b>应用表格</b>当数据库，WorkBuddy 当 AI 引擎，按状态字段触发处理。</p>
+    <p><span class="tag">OpenKnowledge（开源 GPL-3.0）</span> 原生 MCP，AI 与人对<b>同一份文档实时共编</b>，消灭「复制→粘贴→改→再粘贴」的往返损耗。这是「强强联合」的理想范式，值得等官方 Skill 时对标。</p>
+    <p><span class="tag">Google Docs + Zapier + ChatGPT</span> 文件夹即触发器：文档进指定文件夹 → AI 摘要/改写 → 写回 Docs 并通知。零代码自动化思路，可直接套到「方案 A」做成半自动。</p>
+  </div>
+
+  <div class="card reco">
+    <h2>④ 我的推荐路径</h2>
+    <p><b>个人免费版用户</b>：先走 <b>方案 A</b> 立刻受益；同时把常需 AI 处理的文档设为「互联网公开发布」，让 WorkBuddy 用 WebFetch 直接读，省去复制粘贴。</p>
+    <p><b>想彻底省心、能迁移</b>：走 <b>方案 D</b> —— 腾讯文档（个人/企业版 Skill 已内置）、飞书（lark-doc/sheets/base 已连）WorkBuddy 均已深度支持，开箱双向。</p>
+    <p><b>企业团队</b>：走 <b>方案 E</b>（开放平台）或 <b>方案 B</b>（私有部署 token + MCP）。</p>
+    <p><b>长期最省心</b>：等 <b>方案 C</b> 官方石墨 Skill 上线。</p>
+  </div>
+
+  <div class="card warn">
+    <h2>关键提醒</h2>
+    <ul>
+      <li>石墨公网个人版<b>没有开放 API</b>，凡标「一键同步石墨」的第三方多半违规或泄露风险，勿轻信。</li>
+      <li>「互联网公开发布」仅用于可公开内容，<b>敏感/私密文档切勿公开</b>。</li>
+      <li>企业 API 需资质 + 付费，且要自建回调后端，个人用户性价比低。</li>
+      <li>WorkBuddy 当前已原生支持 MCP（<code>~/.workbuddy/mcp.json</code>），未来官方石墨 Skill 或合规 MCP 可直接接入。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>⑤ 下一步我可以帮你直接做的</h2>
+    <p>告诉我你的场景（个人/团队、什么用途），我可以：</p>
+    <ul>
+      <li>做一个「石墨 md 导出 → WorkBuddy 处理模板/脚本」（傻瓜版，立刻用）</li>
+      <li>帮你把常用文档设成公开发布 + 写一个 WorkBuddy 抓取处理流程</li>
+      <li>配置 rush-shimo-cli MCP（需你提供企业/私有部署 token）</li>
+      <li>直接迁移到腾讯文档/飞书并接好官方集成（最省心）</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

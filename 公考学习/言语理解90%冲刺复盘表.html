@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>言语理解 90% 冲刺复盘表</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#ffffff; --ink:#1f2329; --sub:#646a73;
+    --line:#e5e6eb; --brand:#2f54eb; --green:#2ba471; --yellow:#e37318; --red:#f53f3f;
+    --soft:#f2f3f5;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;}
+  header{padding:18px 24px;background:var(--card);border-bottom:1px solid var(--line);}
+  header h1{margin:0;font-size:20px;}
+  header p{margin:6px 0 0;color:var(--sub);font-size:13px;}
+  .wrap{display:grid;grid-template-columns:340px 1fr;gap:16px;padding:16px 24px;align-items:start;}
+  @media(max-width:880px){.wrap{grid-template-columns:1fr;}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;}
+  .card h2{margin:0 0 12px;font-size:15px;}
+  label{display:block;font-size:12px;color:var(--sub);margin:10px 0 4px;}
+  input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);
+    border-radius:7px;font-size:14px;background:#fff;color:var(--ink);}
+  textarea{resize:vertical;min-height:48px;}
+  button{cursor:pointer;border:none;border-radius:7px;font-size:14px;padding:9px 14px;
+    background:var(--brand);color:#fff;margin-top:12px;width:100%;}
+  button.ghost{background:var(--soft);color:var(--ink);border:1px solid var(--line);}
+  .row{display:flex;gap:8px;}
+  .row button{margin-top:12px;}
+  /* 统计区 */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  @media(max-width:880px){.kpis{grid-template-columns:repeat(2,1fr);}}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;}
+  .kpi .v{font-size:28px;font-weight:700;}
+  .kpi .t{font-size:12px;color:var(--sub);margin-top:2px;}
+  .bar{height:8px;background:var(--soft);border-radius:5px;overflow:hidden;margin-top:8px;}
+  .bar>i{display:block;height:100%;background:var(--brand);}
+  .bar>i.g{background:var(--green);} .bar>i.y{background:var(--yellow);} .bar>i.r{background:var(--red);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;}
+  th{color:var(--sub);font-weight:600;background:var(--soft);}
+  .pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;}
+  .pill.g{background:#e8f6ef;color:var(--green);} .pill.y{background:#fdf0e3;color:var(--yellow);}
+  .pill.r{background:#fdecec;color:var(--red);}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:880px){.grid2{grid-template-columns:1fr;}}
+  .logs{max-height:340px;overflow:auto;}
+  .logs .del{cursor:pointer;color:var(--red);font-size:12px;background:none;border:none;padding:0;width:auto;margin:0;}
+  .empty{color:var(--sub);font-size:13px;padding:10px 0;}
+  .toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+  .toolbar button{width:auto;margin:0;padding:7px 12px;font-size:13px;}
+  .note{font-size:12px;color:var(--sub);margin-top:10px;line-height:1.6;}
+</style>
+</head>
+<body>
+<header>
+  <h1>言语理解 90% 冲刺复盘表</h1>
+  <p>目标：总正确率稳定 90%（30 题错 ≤3）。逻辑填空是死穴，片段语句靠方法冲 93%+。数据存本地，刷新不丢。</p>
+</header>
+
+<div class="wrap">
+  <!-- 录入 -->
+  <div class="card">
+    <h2>录入一道题</h2>
+    <label>日期</label>
+    <input type="date" id="f-date">
+    <label>来源（试卷/套题名）</label>
+    <input type="text" id="f-src" placeholder="如 2025国考执法卷">
+    <label>题型</label>
+    <select id="f-type">
+      <option>逻辑填空</option>
+      <option>主旨概括</option>
+      <option>意图判断</option>
+      <option>细节理解</option>
+      <option>标题选择</option>
+      <option>语句填空</option>
+      <option>语句排序</option>
+      <option>下文推断</option>
+    </select>
+    <label>结果</label>
+    <select id="f-result">
+      <option value="1">✓ 对</option>
+      <option value="0">✗ 错</option>
+    </select>
+    <label>错因（错了才填，可多选，逗号分隔）</label>
+    <input type="text" id="f-reason" placeholder="如 逻辑填空无依据,成语不认识">
+    <label>备注</label>
+    <textarea id="f-note" placeholder="二选一miss / 哪两个选项纠结 / 关键依据词…"></textarea>
+    <button id="add">+ 记录这道题</button>
+    <div class="note">
+      错因常用词（方便统计）：<br>
+      未找主题词 · 被干扰项带偏 · 逻辑填空无依据 · 成语不认识 · 二选一miss · 细节定位错 · 粗心 · 其他
+    </div>
+  </div>
+
+  <!-- 统计 -->
+  <div>
+    <div class="toolbar">
+      <button class="ghost" id="exp">导出JSON</button>
+      <button class="ghost" id="imp">导入JSON</button>
+      <button class="ghost" id="clear">清空数据</button>
+      <input type="file" id="file" accept="application/json" style="display:none">
+    </div>
+
+    <div class="kpis">
+      <div class="kpi">
+        <div class="v" id="k-total">--</div>
+        <div class="t">总正确率（目标 90%）</div>
+        <div class="bar"><i id="k-total-bar" style="width:0"></i></div>
+      </div>
+      <div class="kpi">
+        <div class="v" id="k-count">0</div>
+        <div class="t">已记录题数</div>
+      </div>
+      <div class="kpi">
+        <div class="v" id="k-fill">--</div>
+        <div class="t">逻辑填空正确率（死穴）</div>
+        <div class="bar"><i id="k-fill-bar" style="width:0"></i></div>
+      </div>
+      <div class="kpi">
+        <div class="v" id="k-2ch">--</div>
+        <div class="t">二选一miss 题数</div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h2>各题型正确率（目标 90%）</h2>
+        <table id="t-type">
+          <thead><tr><th>题型</th><th>对/总</th><th>正确率</th><th>状态</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <h2>错因分布（Top）</h2>
+        <table id="t-reason">
+          <thead><tr><th>错因</th><th>次数</th><th>占比</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h2>录入记录</h2>
+      <div class="logs">
+        <table id="t-log">
+          <thead><tr><th>日期</th><th>来源</th><th>题型</th><th>结果</th><th>错因</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+        <div class="empty" id="log-empty">还没有记录。做完题就来记一道。</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const TYPES=["逻辑填空","主旨概括","意图判断","细节理解","标题选择","语句填空","语句排序","下文推断"];
+const KEY="yuyan_90_logs_v1";
+let logs=JSON.parse(localStorage.getItem(KEY)||"[]");
+
+function save(){localStorage.setItem(KEY,JSON.stringify(logs));render();}
+function today(){const d=new Date();return d.toISOString().slice(0,10);}
+
+function statusPill(acc){
+  if(acc==null) return '<span class="pill r">无数据</span>';
+  if(acc>=90) return '<span class="pill g">达标</span>';
+  if(acc>=80) return '<span class="pill y">临界</span>';
+  return '<span class="pill r">偏低</span>';
+}
+function barColor(ac){return ac>=90?'g':(ac>=80?'y':'r');}
+
+function render(){
+  // KPIs
+  const total=logs.length;
+  const right=logs.filter(l=>l.result==1).length;
+  const acc=total? Math.round(right/total*100):null;
+  document.getElementById("k-total").textContent=acc==null?'--':acc+'%';
+  document.getElementById("k-total-bar").className=acc==null?'':barColor(acc);
+  document.getElementById("k-total-bar").style.width=(acc||0)+'%';
+  document.getElementById("k-count").textContent=total;
+
+  const fill=logs.filter(l=>l.type=="逻辑填空");
+  const fillRight=fill.filter(l=>l.result==1).length;
+  const fillAcc=fill.length?Math.round(fillRight/fill.length*100):null;
+  document.getElementById("k-fill").textContent=fillAcc==null?'--':fillAcc+'%';
+  document.getElementById("k-fill-bar").className=fillAcc==null?'':barColor(fillAcc);
+  document.getElementById("k-fill-bar").style.width=(fillAcc||0)+'%';
+
+  const tworch=logs.filter(l=>/二选一/.test(l.reason||'')).length;
+  document.getElementById("k-2ch").textContent=tworch;
+
+  // 题型表
+  const tb=document.querySelector("#t-type tbody");tb.innerHTML="";
+  TYPES.forEach(t=>{
+    const arr=logs.filter(l=>l.type==t);
+    const r=arr.filter(l=>l.result==1).length;
+    const a=arr.length?Math.round(r/arr.length*100):null;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${t}</td><td>${arr.length?r+'/'+arr.length:'--'}</td>
+      <td>${a==null?'--':a+'%'}</td><td>${statusPill(a)}</td>`;
+    tb.appendChild(tr);
+  });
+
+  // 错因表
+  const rc={};
+  logs.forEach(l=>{(l.reason||'').split(/[,，]/).map(s=>s.trim()).filter(Boolean)
+    .forEach(r=>rc[r]=(rc[r]||0)+1);});
+  const wrong=logs.filter(l=>l.result==0).length;
+  const rb=document.querySelector("#t-reason tbody");rb.innerHTML="";
+  Object.entries(rc).sort((a,b)=>b[1]-a[1]).forEach(([k,v])=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${k}</td><td>${v}</td><td>${wrong?Math.round(v/wrong*100)+'%':'--'}</td>`;
+    rb.appendChild(tr);
+  });
+  if(!Object.keys(rc).length) rb.innerHTML='<tr><td colspan="3" class="empty">暂无错因</td></tr>';
+
+  // 日志表
+  const lb=document.querySelector("#t-log tbody");lb.innerHTML="";
+  logs.slice().reverse().forEach((l,i)=>{
+    const idx=logs.length-1-i;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${l.date}</td><td>${l.src||''}</td><td>${l.type}</td>
+      <td>${l.result==1?'✓':'✗'}</td><td>${l.reason||''}</td>
+      <td><button class="del" data-i="${idx}">删</button></td>`;
+    lb.appendChild(tr);
+  });
+  document.getElementById("log-empty").style.display=logs.length?'none':'block';
+  document.querySelectorAll(".del").forEach(b=>b.onclick=()=>{
+    logs.splice(+b.dataset.i,1);save();
+  });
+}
+
+document.getElementById("f-date").value=today();
+document.getElementById("add").onclick=()=>{
+  const rec={
+    date:document.getElementById("f-date").value||today(),
+    src:document.getElementById("f-src").value.trim(),
+    type:document.getElementById("f-type").value,
+    result:+document.getElementById("f-result").value,
+    reason:document.getElementById("f-reason").value.trim(),
+    note:document.getElementById("f-note").value.trim()
+  };
+  if(rec.result==1) rec.reason="";
+  logs.push(rec);save();
+  document.getElementById("f-reason").value="";
+  document.getElementById("f-note").value="";
+};
+
+document.getElementById("exp").onclick=()=>{
+  const blob=new Blob([JSON.stringify(logs,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download="言语90复盘_"+today()+".json";a.click();
+};
+document.getElementById("imp").onclick=()=>document.getElementById("file").click();
+document.getElementById("file").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{try{logs=JSON.parse(r.result);save();
+    alert("导入成功，共 "+logs.length+" 条");}catch(err){alert("文件格式错误");}};
+  r.readAsText(f);
+};
+document.getElementById("clear").onclick=()=>{
+  if(confirm("确定清空所有记录？建议先点导出备份。")){logs=[];save();}
+};
+
+render();
+</script>
+</body>
+</html>

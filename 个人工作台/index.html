@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>个人工作台</title>
+<style>
+* { box-sizing: border-box; }
+body { margin:0; font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+  background:#f5f5f7; color:#222; font-size:14px; }
+header { background:#534ab7; color:#fff; padding:14px 20px; font-size:16px; font-weight:600; }
+nav { display:flex; gap:8px; padding:10px 20px; background:#fff; border-bottom:1px solid #e5e5ea; }
+nav button { border:1px solid #d9d9e3; background:#faf9ff; color:#534ab7; padding:8px 16px;
+  border-radius:8px; cursor:pointer; font-size:14px; }
+nav button.active { background:#534ab7; color:#fff; border-color:#534ab7; }
+main { padding:18px 20px; max-width:980px; margin:0 auto; }
+section { display:none; }
+section.active { display:block; }
+.card { background:#fff; border:1px solid #e5e5ea; border-radius:12px; padding:16px; margin-bottom:16px; }
+h3 { margin:0 0 12px; font-size:15px; color:#26215c; }
+label { display:block; font-size:13px; color:#555; margin:10px 0 4px; }
+input, textarea, select { width:100%; padding:9px 10px; border:1px solid #d9d9e3; border-radius:8px;
+  font-size:14px; font-family:inherit; background:#fff; color:#222; }
+textarea { resize:vertical; min-height:80px; }
+.row { display:flex; gap:10px; flex-wrap:wrap; }
+.row > div { flex:1; min-width:160px; }
+button.act { background:#534ab7; color:#fff; border:none; padding:10px 18px; border-radius:8px;
+  cursor:pointer; font-size:14px; margin-top:12px; }
+button.ghost { background:#fff; color:#534ab7; border:1px solid #534ab7; padding:9px 14px;
+  border-radius:8px; cursor:pointer; font-size:13px; }
+.rec { border:1px solid #eee; border-radius:10px; padding:12px; margin-top:10px; background:#fcfcfe; }
+.rec b { color:#26215c; }
+.meta { color:#999; font-size:12px; }
+.thumb { max-width:160px; max-height:160px; border-radius:8px; margin-top:6px; display:block; }
+.tag { display:inline-block; background:#eef; color:#534ab7; border-radius:6px; padding:2px 8px;
+  font-size:12px; margin:2px; }
+.muted { color:#999; font-size:12px; }
+.sub { border-left:3px solid #534ab7; padding-left:10px; margin:8px 0; }
+.kpis { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:8px; }
+.kpi { background:#f3f0ff; border-radius:10px; padding:10px 14px; min-width:120px; }
+.kpi b { display:block; font-size:20px; color:#534ab7; }
+</style>
+</head>
+<body>
+<header>个人工作台 · 本地版（申论 / 行测 / 网盘推广）</header>
+<nav>
+  <button data-tab="shenlun" class="active">申论评分</button>
+  <button data-tab="xingce">行测真题</button>
+  <button data-tab="wangpan">网盘推广</button>
+</nav>
+<main>
+
+<!-- ===== 申论评分 ===== -->
+<section id="shenlun" class="active">
+  <div class="card">
+    <h3>录入一次练习（可重复，每次独立留痕）</h3>
+    <label>套题名称（如：2024国考副省卷）</label>
+    <input id="sl_paper" placeholder="写清年份+考试+卷型">
+    <label>我的答案（可直接打字，或拍照后把要点转写填入）</label>
+    <textarea id="sl_answer" placeholder="把你的作答贴进来"></textarea>
+    <label>上传答案照片（手机拍的卷面，可选）</label>
+    <input type="file" id="sl_img" accept="image/*">
+    <div id="sl_img_prev"></div>
+    <label>AI 分析 / 评分结论（先把记录发我分析，再把结论粘回来）</label>
+    <textarea id="sl_analysis" placeholder="例如：得分 78/100；优势在对策具体；劣势在开头破题慢…"></textarea>
+    <label>备注</label>
+    <textarea id="sl_note" placeholder="自己的感想、待办"></textarea>
+    <button class="act" onclick="slAdd()">保存这次练习</button>
+  </div>
+  <div class="card">
+    <div class="row" style="align-items:center">
+      <h3 style="margin:0">历史记录</h3>
+      <button class="ghost" onclick="slExport()">导出全部发给 WorkBuddy 分析</button>
+    </div>
+    <div id="sl_list"></div>
+  </div>
+</section>
+
+<!-- ===== 行测真题 ===== -->
+<section id="xingce">
+  <div class="card">
+    <h3>录入一道题（判对错 → 自动统计薄弱点）</h3>
+    <div class="row">
+      <div><label>模块</label>
+        <select id="xc_mod"><option>言语</option><option>资料</option><option>判断</option><option>数量</option><option>常识</option></select></div>
+      <div><label>题号/描述</label><input id="xc_q" placeholder="如：资料-第3题"></div>
+    </div>
+    <div class="row">
+      <div><label>我的答案</label><input id="xc_mine"></div>
+      <div><label>正确答案</label><input id="xc_right"></div>
+    </div>
+    <label>AI 分析 / 应加强（同申论，发我分析后粘回）</label>
+    <textarea id="xc_analysis" placeholder="如：资料速算弱，建议练截位直除法"></textarea>
+    <label>备注</label><textarea id="xc_note"></textarea>
+    <button class="act" onclick="xcAdd()">保存这道题</button>
+  </div>
+  <div class="card">
+    <div class="row" style="align-items:center">
+      <h3 style="margin:0">薄弱点画像</h3>
+      <button class="ghost" onclick="xcExport()">导出全部发给 WorkBuddy 分析</button>
+    </div>
+    <div id="xc_kpi" class="kpis"></div>
+    <div id="xc_list"></div>
+  </div>
+</section>
+
+<!-- ===== 网盘推广 ===== -->
+<section id="wangpan">
+  <!-- 选题赛道 -->
+  <div class="card">
+    <h3>选题赛道库（壮阳/小孩聪明/明星相关…都算"赛道"，随时加）</h3>
+    <div class="row">
+      <div><label>赛道名称</label><input id="wp_track"></div>
+      <div><label>标签（逗号分隔）</label><input id="wp_track_tag"></div>
+    </div>
+    <label>说明 / 为什么能引流</label><textarea id="wp_track_desc" style="min-height:48px"></textarea>
+    <button class="act" onclick="wpAdd('track')">添加赛道</button>
+    <div id="wp_track_list"></div>
+  </div>
+  <!-- 思路库 -->
+  <div class="card">
+    <h3>思路库（我的思路 / 大佬思路，粘贴链接或内容自动归档）</h3>
+    <div class="row">
+      <div><label>类别</label>
+        <select id="wp_idea_type"><option>我的思路</option><option>大佬思路</option></select></div>
+      <div><label>来源/标题</label><input id="wp_idea_title"></div>
+    </div>
+    <label>内容或链接</label><textarea id="wp_idea_body" placeholder="粘贴链接或一段话"></textarea>
+    <button class="act" onclick="wpAdd('idea')">保存思路</button>
+    <div id="wp_idea_list"></div>
+  </div>
+  <!-- 账号 -->
+  <div class="card">
+    <h3>账号登记管理</h3>
+    <div class="row">
+      <div><label>平台</label><input id="wp_acc_plat" placeholder="小红书/抖音"></div>
+      <div><label>昵称</label><input id="wp_acc_name"></div>
+      <div><label>状态</label><input id="wp_acc_status" placeholder="运营中/停更"></div>
+    </div>
+    <label>账号定位 / 选题结构</label><textarea id="wp_acc_note" style="min-height:48px"></textarea>
+    <button class="act" onclick="wpAdd('account')">登记账号</button>
+    <div id="wp_acc_list"></div>
+  </div>
+  <!-- 内容数据 -->
+  <div class="card">
+    <h3>作品数据分析（每个笔记/视频挂数据）</h3>
+    <div class="row">
+      <div><label>作品名</label><input id="wp_c_name"></div>
+      <div><label>平台</label><input id="wp_c_plat"></div>
+    </div>
+    <div class="row">
+      <div><label>播放</label><input id="wp_c_view" type="number"></div>
+      <div><label>点赞</label><input id="wp_c_like" type="number"></div>
+      <div><label>转化(网盘拉新)</label><input id="wp_c_conv" type="number"></div>
+    </div>
+    <label>备注 / 用的哪个选题赛道</label><textarea id="wp_c_note" style="min-height:40px"></textarea>
+    <button class="act" onclick="wpAdd('content')">记录作品</button>
+    <div id="wp_c_list"></div>
+  </div>
+  <div class="card">
+    <button class="ghost" onclick="wpExport()">导出网盘全部数据发给 WorkBuddy</button>
+  </div>
+</section>
+
+</main>
+<script>
+const API = (m) => "/api/" + m;
+function tab(t){ document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active', b.dataset.tab===t));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('active', s.id===t)); }
+document.querySelectorAll('nav button').forEach(b=> b.onclick=()=>tab(b.dataset.tab));
+
+async function apiList(m){ const r=await fetch(API(m)+"/list"); return r.ok? await r.json(): []; }
+async function apiAdd(m, body){ const r=await fetch(API(m)+"/add",{method:"POST",
+  headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)}); return r.ok; }
+async function uploadImg(file){ return new Promise((res)=>{ const fr=new FileReader();
+  fr.onload=async()=>{ const r=await fetch("/api/upload",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({filename:file.name, b64:fr.result})}); const j=await r.json(); res(j.ok? j.url:""); };
+  fr.readAsDataURL(file); }); }
+function esc(s){ return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+function download(name, text){ const b=new Blob([text],{type:"text/plain;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; a.click(); }
+
+/* ---- 申论 ---- */
+let slImg="";
+document.getElementById("sl_img").onchange=async e=>{ const f=e.target.files[0]; if(!f) return;
+  slImg=await uploadImg(f); document.getElementById("sl_img_prev").innerHTML=
+    slImg? '<img class="thumb" src="'+slImg+'">':'上传失败'; };
+async function slAdd(){ await apiAdd("shenlun",{paper:sl_paper.value, answer:sl_answer.value,
+  image:slImg, analysis:sl_analysis.value, note:sl_note.value});
+  sl_paper.value=sl_answer.value=sl_analysis.value=sl_note.value=""; slImg="";
+  document.getElementById("sl_img_prev").innerHTML=""; slRender(); }
+async function slRender(){ const d=await apiList("shenlun"); const box=document.getElementById("sl_list");
+  box.innerHTML = d.length? d.slice().reverse().map(r=>`
+   <div class="rec"><div><b>${esc(r.paper)}</b> <span class="meta">${r.ts}</span></div>
+   ${r.answer? '<div class="sub">'+esc(r.answer)+'</div>':''}
+   ${r.image? '<img class="thumb" src="'+r.image+'">':''}
+   ${r.analysis? '<div class="meta">AI分析：</div><div class="sub">'+esc(r.analysis)+'</div>':''}
+   ${r.note? '<div class="meta">备注：'+esc(r.note)+'</div>':''}</div>`).join("") :
+   '<p class="muted">还没有记录，录一次试试。</p>'; }
+function slExport(){ apiList("shenlun").then(d=>{ let t="【申论练习记录】共"+d.length+"次\n";
+  d.forEach((r,i)=>{ t+=`\n#${i+1} ${r.paper} (${r.ts})\n答案：${r.answer||"-"}\n`
+    +(r.image?("[含照片 "+r.image+"]\n"):"")+(r.analysis?("AI分析："+r.analysis+"\n"):"")
+    +(r.note?("备注："+r.note+"\n"):""); });
+  download("申论练习_待分析.txt", t); }); }
+
+/* ---- 行测 ---- */
+async function xcAdd(){ await apiAdd("xingce",{mod:xc_mod.value, q:xc_q.value, mine:xc_mine.value,
+  right:xc_right.value, analysis:xc_analysis.value, note:xc_note.value});
+  xc_q.value=xc_mine.value=xc_right.value=xc_analysis.value=xc_note.value=""; xcRender(); }
+async function xcRender(){ const d=await apiList("xingce"); const box=document.getElementById("xc_list");
+  const wrong=d.filter(r=>r.mine && r.right && r.mine!==r.right);
+  const byMod={}; wrong.forEach(r=> byMod[r.mod]=(byMod[r.mod]||0)+1);
+  document.getElementById("xc_kpi").innerHTML = Object.keys(byMod).length?
+    Object.entries(byMod).map(([k,v])=>`<div class="kpi"><b>${v}</b>${k} 错题</div>`).join("") :
+    '<span class="muted">暂无错题，或还没填正确答案。</span>';
+  box.innerHTML = d.length? d.slice().reverse().map(r=>{ const bad=r.mine&&r.right&&r.mine!==r.right;
+    return `<div class="rec"><div><b>${esc(r.mod)} · ${esc(r.q)}</b> <span class="meta">${r.ts}</span></div>
+    <div class="meta">我的：${esc(r.mine)} ｜ 正确：${esc(r.right)} ${bad?'<span style="color:#c0392b">✗错</span>':'<span style="color:#27ae60">✓对</span>'}</div>
+    ${r.analysis? '<div class="meta">AI分析：</div><div class="sub">'+esc(r.analysis)+'</div>':''}
+    ${r.note? '<div class="meta">备注：'+esc(r.note)+'</div>':''}</div>`; }).join("") :
+    '<p class="muted">还没有记录。</p>'; }
+function xcExport(){ apiList("xingce").then(d=>{ let t="【行测练习记录】共"+d.length+"题\n";
+  d.forEach((r,i)=>{ t+=`\n#${i+1} [${r.mod}] ${r.q} (${r.ts})\n我的：${r.mine} 正确：${r.right}\n`
+    +(r.analysis?("AI分析："+r.analysis+"\n"):"")+(r.note?("备注："+r.note+"\n"):""); });
+  download("行测练习_待分析.txt", t); }); }
+
+/* ---- 网盘 ---- */
+async function wpAdd(type){ let body={type};
+  if(type==="track"){ body.name=wp_track.value; body.tags=wp_track_tag.value; body.desc=wp_track_desc.value;
+    wp_track.value=wp_track_tag.value=wp_track_desc.value=""; }
+  if(type==="idea"){ body.cat=wp_idea_type.value; body.title=wp_idea_title.value; body.body=wp_idea_body.value;
+    wp_idea_title.value=wp_idea_body.value=""; }
+  if(type==="account"){ body.plat=wp_acc_plat.value; body.name=wp_acc_name.value; body.status=wp_acc_status.value;
+    body.note=wp_acc_note.value; wp_acc_plat.value=wp_acc_name.value=wp_acc_status.value=wp_acc_note.value=""; }
+  if(type==="content"){ body.name=wp_c_name.value; body.plat=wp_c_plat.value; body.view=wp_c_view.value;
+    body.like=wp_c_like.value; body.conv=wp_c_conv.value; body.note=wp_c_note.value;
+    wp_c_name.value=wp_c_plat.value=wp_c_view.value=wp_c_like.value=wp_c_conv.value=wp_c_note.value=""; }
+  await apiAdd("wangpan", body); wpRender(); }
+async function wpRender(){ const d=await apiList("wangpan");
+  const f=(t)=> d.filter(r=>r.type===t);
+  document.getElementById("wp_track_list").innerHTML = f("track").length? f("track").reverse().map(r=>
+    `<div class="rec"><b>${esc(r.name)}</b> <span class="meta">${r.ts}</span><br>${(r.tags||"").split(",").filter(Boolean).map(t=>'<span class="tag">'+esc(t)+'</span>').join("")}
+     ${r.desc? '<div class="meta">'+esc(r.desc)+'</div>':''}</div>`).join("") : '<p class="muted">暂无赛道。</p>';
+  document.getElementById("wp_idea_list").innerHTML = f("idea").length? f("idea").reverse().map(r=>
+    `<div class="rec"><b>[${esc(r.cat)}] ${esc(r.title)}</b> <span class="meta">${r.ts}</span><div class="sub">${esc(r.body)}</div></div>`).join("") : '<p class="muted">暂无思路。</p>';
+  document.getElementById("wp_acc_list").innerHTML = f("account").length? f("account").reverse().map(r=>
+    `<div class="rec"><b>${esc(r.plat)} · ${esc(r.name)}</b> <span class="meta">${r.status} ｜ ${r.ts}</span><div class="sub">${esc(r.note)}</div></div>`).join("") : '<p class="muted">暂无账号。</p>';
+  document.getElementById("wp_c_list").innerHTML = f("content").length? f("content").reverse().map(r=>
+    `<div class="rec"><b>${esc(r.name)}</b> <span class="meta">${r.plat} ｜ ${r.ts}</span>
+     <div class="meta">播放 ${r.view||0} ｜ 点赞 ${r.like||0} ｜ 转化 ${r.conv||0}</div>${r.note? '<div class="meta">'+esc(r.note)+'</div>':''}</div>`).join("") : '<p class="muted">暂无作品数据。</p>'; }
+function wpExport(){ apiList("wangpan").then(d=>{ let t="【网盘推广数据】共"+d.length+"条\n";
+  d.forEach((r,i)=>{ t+=`\n#${i+1} [${r.type}] (${r.ts})\n`+JSON.stringify(r,null,1)+"\n"; });
+  download("网盘推广_待分析.txt", t); }); }
+
+/* init */
+slRender(); xcRender(); wpRender();
+</script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>个人需求发掘 & 产品孵化工作台</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --panel:#ffffff; --ink:#1f2329; --sub:#646a73;
+    --line:#e5e6eb; --brand:#2f6bff; --brand-soft:#eef3ff;
+    --green:#18a058; --amber:#f0a020; --red:#d03050;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;font-size:14px;}
+  header{background:var(--brand);color:#fff;padding:22px 28px;}
+  header h1{margin:0;font-size:20px;font-weight:700;}
+  header p{margin:6px 0 0;opacity:.92;font-size:13px;}
+  .wrap{display:flex;max-width:1180px;margin:0 auto;}
+  nav{width:210px;flex:0 0 210px;padding:18px 12px;border-right:1px solid var(--line);
+    position:sticky;top:0;align-self:flex-start;height:100vh;overflow:auto;background:var(--panel);}
+  nav a{display:block;padding:9px 12px;color:var(--sub);text-decoration:none;border-radius:8px;font-size:13px;}
+  nav a:hover{background:var(--brand-soft);color:var(--brand);}
+  main{flex:1;padding:22px 26px 60px;min-width:0;}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin-bottom:18px;}
+  h2{font-size:16px;margin:0 0 14px;padding-bottom:8px;border-bottom:2px solid var(--brand-soft);}
+  h3{font-size:14px;margin:16px 0 8px;}
+  p.lead{color:var(--sub);margin:0 0 12px;}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0;}
+  th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top;}
+  th{background:var(--brand-soft);color:var(--brand);font-weight:600;}
+  .tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;background:var(--brand-soft);color:var(--brand);}
+  .star{color:var(--amber);letter-spacing:1px;}
+  .pill{display:inline-block;padding:2px 9px;border-radius:11px;font-size:12px;font-weight:600;}
+  .pill.low{background:#e8f7ee;color:var(--green);}
+  .pill.mid{background:#fdf3e0;color:var(--amber);}
+  .pill.high{background:#fdeaee;color:var(--red);}
+  .card{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px;background:#fcfcfd;}
+  .card h3{margin-top:0;color:var(--brand);}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .q{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:8px;margin-bottom:8px;cursor:pointer;}
+  .q:hover{background:var(--brand-soft);}
+  .q input{margin-right:8px;}
+  #result{margin-top:12px;padding:12px 14px;background:var(--brand-soft);border-radius:8px;color:var(--brand);font-weight:600;display:none;}
+  .src{font-size:12px;color:var(--sub);}
+  .src a{color:var(--brand);text-decoration:none;}
+  .cta{background:var(--brand);color:#fff;border-radius:12px;padding:18px 22px;text-align:center;}
+  .cta b{font-size:15px;}
+  code{background:#eef0f3;padding:1px 5px;border-radius:4px;font-size:12px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>个人需求发掘 &amp; 产品孵化工作台</h1>
+  <p>你不是“不知道用什么”，你是已经有 10+ 真实需求，但没人帮你理清楚、帮你落地。本工作台把你的资产、海外信号、自测题、可开工产品全列出来，直接选一个做。</p>
+</header>
+
+<div class="wrap">
+<nav>
+  <a href="#s1">1 · 你的真实资产</a>
+  <a href="#s2">2 · 海外 2026 信号</a>
+  <a href="#s3">3 · 需求自测 5 问</a>
+  <a href="#s4">4 · 推荐产品清单</a>
+  <a href="#s5">5 · 下一步</a>
+</nav>
+
+<main>
+  <!-- 1 -->
+  <section id="s1">
+    <h2>1 · 你的真实资产（从你已有项目挖出的需求）</h2>
+    <p class="lead">这些不是我编的，是你已经在推进的主线。每条都能产品化。</p>
+    <table>
+      <tr><th style="width:20%">你已有的项目</th><th style="width:34%">当前痛点 / 没被满足的需求</th><th style="width:46%">可产品化方向</th></tr>
+      <tr><td>上岸通 公考刷题站<br><span class="src">6053+ 真题</span></td><td>单机版，无多用户、无付费、无商业化</td><td>Supabase 多用户 SaaS：刷题 + 解析白名单 + 会员</td></tr>
+      <tr><td>求是申论素材库<br><span class="src">离线 HTML</span></td><td>素材有，但不会自动组框架、不会对照踩分</td><td>申论 AI 写作助手：多源对照 + 自动生成框架</td></tr>
+      <tr><td>网盘推广 CPS<br><span class="src">光鸭 / 夸克</span></td><td>引流内容手工写，转存/注册无追踪看板</td><td>CPS 自动化矩阵：内容生成 + 转化追踪</td></tr>
+      <tr><td>夸克视频索引<br><span class="src">15 万视频 / 40TB</span></td><td>只能按文件名搜，无法按画面内容搜</td><td>关键帧视觉检索：抽帧 + CLIP 向量 + 画面搜索</td></tr>
+      <tr><td>小红书 / 自媒体变现</td><td>选题、脚本、多平台分发全靠手工</td><td>变现 Agent：选题 + 脚本 + 一键多平台</td></tr>
+      <tr><td>灵感库 / 飞书资料分析</td><td>内容散落多平台，复盘靠手动</td><td>内容精炼 + 自动双链 + 每日简报</td></tr>
+    </table>
+  </section>
+
+  <!-- 2 -->
+  <section id="s2">
+    <h2>2 · 海外 2026 信号（非技术人员在造什么）</h2>
+    <p class="lead">来源：Reddit / YouTube / X / 独立博客，2026-07 检索。核心共识：从“用 AI”转向“编排 AI 系统”，专业化小 Agent 胜过万能聊天机器人。</p>
+
+    <h3>趋势 A · 个人 AI Agent（专精单任务，可自托管）</h3>
+    <ul>
+      <li><b>晨间简报 Agent</b>：每天推送日历 + 待办 + 资讯（OneClaw、MintedBrain 均推荐）</li>
+      <li><b>研究摘要 Agent</b>：喂文章/论文/文档 → 结构化摘要（NotebookLM 模式）</li>
+      <li><b>错题 / 闪卡 Agent</b>：学习材料 → 问答卡，追踪薄弱点（Anki 模式）</li>
+      <li><b>考试陪练 Agent</b>：按大纲出题、自适应纠错（直接对应你的公考）</li>
+      <li><b>内容复用 Agent</b>：一篇文 → 多平台版本（对应你的灵感库/小红书）</li>
+    </ul>
+    <p class="src">参考：buildyourfish.com/use-cases · oneclaw.net/blog/personal-ai-agent-ideas · mintedbrain.com/blog/build-personal-ai-assistant-no-code-2026</p>
+
+    <h3>趋势 B · 非技术副业（知识变现 + 自动化服务）</h3>
+    <ul>
+      <li><b>垂直新闻简报</b>：RSS/X 监控 → AI 摘要 → 订阅制（$10/月/500 人 = $5k）</li>
+      <li><b>“无人出镜”视频代运营</b>：博客/商品 URL → 脚本+配音+切片，按 $1.5k/月  retain</li>
+      <li><b>本地线索挖掘</b>：抓本地论坛“求推荐” → 自动触达商家（对应你的网盘 CPS 引流）</li>
+      <li><b>自动化工作流服务</b>：用 n8n/Make 帮小企业接管道，$500–$2k/单 + 月维护</li>
+      <li><b>知识 Agent 上架</b>：把你的专长打包成 Agent 挂市场，按次收费（Alysium AgentHub）</li>
+    </ul>
+    <p class="src">参考：ai-automation-central.com · alysium.ai/blog/ai-side-hustles-2026 · neuralcoretech.com · dev.to/onewallai</p>
+  </section>
+
+  <!-- 3 -->
+  <section id="s3">
+    <h2>3 · 需求自测 5 问（勾选你最想解决的）</h2>
+    <p class="lead">勾完点“生成建议”，工作台会直接推荐最该先做的产品。</p>
+    <label class="q"><input type="checkbox" value="study" data-p="P2"> 我想让公考（行测/申论）备考更高效，少手抄错题、少自己啃解析</label>
+    <label class="q"><input type="checkbox" value="product" data-p="P2"> 我想把一个已有项目做成能卖钱的多用户产品</label>
+    <label class="q"><input type="checkbox" value="writing" data-p="P3"> 我写东西（申论/小红书/公众号）需要素材自动组合和框架生成</label>
+    <label class="q"><input type="checkbox" value="money" data-p="P4"> 我想把网盘推广/自媒体做成自动化、可追踪的副业</label>
+    <label class="q"><input type="checkbox" value="hub" data-p="P6"> 我项目太多太散，想要一个统一入口和每日简报把我串起来</label>
+    <button onclick="genSuggest()" style="margin-top:6px;padding:9px 18px;border:0;background:var(--brand);color:#fff;border-radius:8px;cursor:pointer;font-size:13px;">生成建议</button>
+    <div id="result"></div>
+  </section>
+
+  <!-- 4 -->
+  <section id="s4">
+    <h2>4 · 推荐产品清单（设计 / 市面对标 / 开源参考 / 推荐度）</h2>
+    <p class="lead">每个都来自你的真实场景。标注“先做的”是我建议第一步落地的。</p>
+
+    <div class="card">
+      <h3>P6 · 个人 AI 工作台 Portal（先把所有项目串起来）<span class="tag">先做的骨架</span></h3>
+      <div class="grid">
+        <div><b>设计构思</b><br>单页聚合你所有项目入口（上岸通/素材库/灵感库/网盘工具）；每日晨间简报拉日历+待办+资讯。改一次，全局可见。</div>
+        <div><b>市面对标</b><br>Notion 个人主页 / OneClaw 自托管 Agent 面板</div>
+        <div><b>开源参考</b><br>FlowiseAI、Dify、OneClaw 模板（拖拽编排）</div>
+        <div><b>指标</b><br>推荐 <span class="star">★★★★★</span> ｜ 落地难度 <span class="pill low">低</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>P2 · 上岸通 公考刷题站（多用户商业化版）</h3>
+      <div class="grid">
+        <div><b>设计构思</b><br>Supabase 后端，6053+ 真题，多用户/会员/付费，解析严格走信任来源白名单。</div>
+        <div><b>市面对标</b><br>粉笔 / 华图 / 腰果 APP</div>
+        <div><b>开源参考</b><br>Supabase 社区刷题模板 + 自研题库</div>
+        <div><b>指标</b><br>推荐 <span class="star">★★★★</span> ｜ 落地难度 <span class="pill high">高</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>P3 · 申论 AI 写作助手（求是素材库增强）</h3>
+      <div class="grid">
+        <div><b>设计构思</b><br>输入主题 → 多源素材对照 + 自动生成申论框架/踩分点；可套历年真题。</div>
+        <div><b>市面对标</b><br>半月谈 / 人民网申论批改</div>
+        <div><b>开源参考</b><br>NotebookLM；本地 RAG 检索</div>
+        <div><b>指标</b><br>推荐 <span class="star">★★★★</span> ｜ 落地难度 <span class="pill mid">中</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>P4 · 网盘推广 CPS 自动化矩阵</h3>
+      <div class="grid">
+        <div><b>设计构思</b><br>光鸭/夸克 自动生成引流内容 + 转存/注册转化追踪看板；按你的实测计佣规则跑。</div>
+        <div><b>市面对标</b><br>任推邦 / 各类网盘 CPS 平台</div>
+        <div><b>开源参考</b><br>n8n 自动化；自研转化追踪</div>
+        <div><b>指标</b><br>推荐 <span class="star">★★★</span> ｜ 落地难度 <span class="pill mid">中</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>P5 · 夸克视频索引（关键帧视觉检索）</h3>
+      <div class="grid">
+        <div><b>设计构思</b><br>15 万视频 → 抽帧 + CLIP 向量 → 按画面内容搜（而非文件名）。</div>
+        <div><b>市面对标</b><br>暂无成熟 C 端产品</div>
+        <div><b>开源参考</b><br>CLIP / Whisper / 视频检索开源方案</div>
+        <div><b>指标</b><br>推荐 <span class="star">★★★</span> ｜ 落地难度 <span class="pill high">高（吃算力）</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section id="s5">
+    <h2>5 · 下一步</h2>
+    <div class="cta">
+      <b>我的建议：先做 P6（工作台骨架）+ P3（申论写作助手，直接服务公考）。</b><br>
+      P6 半天见效、把你所有项目串成一体；P3 复用你已有的求是素材库，直接服务公考备考。<br>
+      回复「做 P6」「做 P1」或「做 X」，我直接开工，不用你动手。
+    </div>
+  </section>
+</main>
+</div>
+
+<script>
+function genSuggest(){
+  const checked = Array.from(document.querySelectorAll('#s3 input:checked'));
+  const map = {'study':'P2 上岸通刷题站','product':'P2 上岸通商业化','writing':'P3 申论写作助手','money':'P4 网盘CPS矩阵','hub':'P6 个人工作台'};
+  const picks = checked.map(c=>map[c.value]);
+  const box = document.getElementById('result');
+  if(picks.length===0){ box.style.display='block'; box.textContent='请至少勾选 1 项，我再给你推荐。'; return; }
+  let tip = picks.join(' + ');
+  if(checked.some(c=>c.value==='hub')===false){ tip += ' ｜ 建议额外加 P6 作骨架'; }
+  box.style.display='block';
+  box.textContent='推荐顺序：'+tip+'。回复对应编号，我直接帮你做。';
+}
+</script>
+</body>
+</html>

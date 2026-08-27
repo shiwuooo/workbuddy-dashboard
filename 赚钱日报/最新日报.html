@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赚钱日报 · 2026-08-17（周一）</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#1f2933; --muted:#6b7280;
+  --line:#e5e7eb; --accent:#2563eb; --accent2:#1e3a8a; --mark:#fff3a3;
+  --codebg:#f3f4f6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:16px;line-height:1.75;-webkit-text-size-adjust:100%}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;padding:10px 18px;flex-wrap:wrap}
+.topbar .ttl{font-weight:700;font-size:16px;color:var(--accent2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:140px}
+.tag{background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe;
+  font-size:12px;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.meta{font-size:12px;color:var(--muted);white-space:nowrap}
+.search{display:flex;align-items:center;gap:6px}
+.search input{width:200px;max-width:46vw;padding:7px 12px;border:1px solid var(--line);
+  border-radius:999px;font-size:14px;outline:none}
+.search input:focus{border-color:var(--accent)}
+.tocbtn{display:none;border:1px solid var(--line);background:#fff;border-radius:8px;
+  padding:6px 10px;font-size:14px;cursor:pointer}
+.layout{max-width:920px;margin:0 auto;padding:22px 18px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:30px 34px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.toc{position:fixed;left:0;top:0;height:100%;width:280px;background:#fff;
+  border-right:1px solid var(--line);overflow:auto;padding:64px 20px 20px;
+  transform:translateX(-100%);transition:transform .2s;z-index:30}
+.toc.open{transform:translateX(0)}
+.toc h4{margin:0 0 10px;font-size:13px;color:var(--muted)}
+.toc a{display:block;color:#374151;text-decoration:none;padding:4px 8px;border-radius:6px;font-size:14px}
+.toc a:hover{background:#f1f5f9}
+.toc a.lv3{padding-left:22px;font-size:13px;color:#6b7280}
+.tocmask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:25}
+.tocmask.open{display:block}
+h1,h2,h3,h4{color:var(--accent2);line-height:1.35;margin:1.6em 0 .6em}
+h1{font-size:25px;margin-top:.2em;border-bottom:2px solid var(--line);padding-bottom:.3em}
+h2{font-size:20px;border-left:4px solid var(--accent);padding-left:12px}
+h3{font-size:17px;color:#1e40af}
+p{margin:.7em 0}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+strong,b{color:#111827}
+ul,ol{padding-left:1.6em;margin:.6em 0}
+li{margin:.3em 0}
+code{background:var(--codebg);padding:2px 6px;border-radius:5px;font-size:.92em;
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+pre{background:var(--codebg);padding:16px 18px;border-radius:10px;overflow:auto;
+  border:1px solid var(--line);font-size:.88em;line-height:1.6}
+pre code{background:none;padding:0}
+blockquote{margin:.8em 0;padding:10px 16px;border-left:4px solid var(--accent);
+  background:#f8fafc;color:#374151;border-radius:0 8px 8px 0}
+hr{border:none;border-top:1px solid var(--line);margin:1.8em 0}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14px;
+  display:block;overflow-x:auto;white-space:nowrap}
+th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}
+th{background:#eef2ff;color:#1e3a8a;font-weight:600;position:sticky;top:0}
+tbody tr:nth-child(even){background:#fafafa}
+mark{background:var(--mark);padding:0 2px;border-radius:3px}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+@media (max-width:760px){
+  .layout{padding:14px 10px 60px}
+  .card{padding:20px 16px}
+  h1{font-size:21px}
+  .tocbtn{display:inline-block}
+  .search input{width:140px}
+}
+@media print{
+  .topbar,.toc,.tocmask{display:none!important}
+  body{background:#fff}
+  .card{box-shadow:none;border:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="ttl">赚钱日报 · 2026-08-17（周一）</span>
+  <span class="tag">赚钱副业·日报</span>
+  <span class="meta">2026-08-17 08:54 · 5,148 字</span>
+  <button class="tocbtn" onclick="document.getElementById('toc').classList.toggle('open');document.getElementById('mask').classList.toggle('open')">☰ 目录</button>
+  <div class="search"><input id="q" placeholder="搜索本页…" oninput="search(this.value)"></div>
+</div>
+<div class="tocmask" id="mask" onclick="document.getElementById('toc').classList.remove('open');this.classList.remove('open')"></div>
+<nav class="toc" id="toc"><h4>目录</h4><div class="toc">
+<ul>
+<li><a href="#2026-08-17">赚钱日报 · 2026-08-17（周一）</a><ul>
+<li><a href="#3">一、今天最值得盯的 3 个信号</a><ul>
+<li><a href="#1opc-ai">信号 1：OPC「装备包」继续加码扩散，真给钱、零成本拿 AI 生产资料（国内独有杠杆）</a></li>
+<li><a href="#2-ai-chatbot-no1">信号 2：给本地小商家做 AI chatbot / 代运营，国内外共识 No.1，仍真能赚、还没卷</a></li>
+<li><a href="#3_1">信号 3：海外"自动赚钱/被动收入"被实测打脸——真相是垂直小众 + 持续执行</a></li>
+</ul>
+</li>
+<li><a href="#_1">二、按普通人能不能做分类</a><ul>
+<li><a href="#a">A 组：国内已验证、可立刻上手（低门槛、现金流快）</a></li>
+<li><a href="#b">B 组：海外已跑通、国内可借鉴（注意合规与汇率）</a></li>
+</ul>
+</li>
+<li><a href="#_2">三、跨边洞察（海外已火、国内还没卷的方向）</a></li>
+<li><a href="#_3">四、给纯小白的「今天就能做」行动建议</a></li>
+<li><a href="#_4">五、主要信息来源</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<div class="layout"><div class="card"><h1 id="2026-08-17">赚钱日报 · 2026-08-17（周一）</h1>
+<blockquote>
+<p>导语：今天从国内+海外两边检索。国内这边盯的是「一人公司（OPC）政策装备包」继续加码扩散——重庆、安徽、佛山桂城本周都有新动作，真金白银给工位、算力、订单；海外这边 Reddit 把"AI 副业到底哪些真能赚"做了实测排名，同时用一个个翻车案例把"自动赚钱躺赚"的神话打回原形。结论很清晰：对普通人最稳的路子，还是"本地小商家 AI 服务 + 垂直小众数字产品"，靠持续执行，不靠幻想。</p>
+</blockquote>
+<hr />
+<h2 id="3">一、今天最值得盯的 3 个信号</h2>
+<h3 id="1opc-ai">信号 1：OPC「装备包」继续加码扩散，真给钱、零成本拿 AI 生产资料（国内独有杠杆）</h3>
+<ul>
+<li><strong>白话解释</strong>：一人公司（用 AI 一个人跑通一家公司）已不是口号，而是地方真在发钱。本周新增三处落地：</li>
+<li><strong>重庆（8/11 十二条）</strong>：一次性创业补贴最高 8000 元/户；个人创业担保贷最高 50 万、小微企业最高 600 万，贴息 50%；免费/补贴办公场地，办"个人创业一件事"全程网办。</li>
+<li><strong>安徽（省级三年方案，全国第二个省级 OPC 专项）</strong>：首创"Token 贷/模型贷"（数据、算法可质押）；个人 50 万、小微 400 万贷、贴息 50%；算力支出补贴最高 20%（例：月算力 1 万补贴 2000，年补 2.4 万）；政府采购预付款不低于合同 40%；科研人员离岗创业保留人事关系 3 年；100 名资深导师"一对一陪跑"。</li>
+<li><strong>佛山桂城街道（8/12 修订版）</strong>：全国首个街道级 OPC 措施——最长 3 年免租、单工位月补 180 元；设算力券/语料券/智能券，单企年补最高 20 万。</li>
+<li><strong>落地姿势</strong>：在重庆/安徽/佛山（及此前广东 10 城、杭州、嘉兴、南宁等）的人，先去查本地"OPC 社区/人社局"报名，零成本拿免费工位+算力券，再接本地商家 AI 代运营单，等于"场地和工具政府补贴、订单自己赚"。这是海外没有的政策红利。</li>
+</ul>
+<h3 id="2-ai-chatbot-no1">信号 2：给本地小商家做 AI chatbot / 代运营，国内外共识 No.1，仍真能赚、还没卷</h3>
+<ul>
+<li><strong>白话解释</strong>：餐馆、理发店、宠物店、诊所老板想做线上但不会弄，你帮他搭个客服机器人、做短视频、运营美团/点评，按月收服务费。</li>
+<li>国内：单店 500–1500 元/月，1 人可管 10–20 家，月入 5000–15000+。</li>
+<li>海外 Reddit 实测：搭建费 300–500 美元 + 每月 150–500 美元 retainer（包月订阅），零代码（Retell/Twilio/n8n），案例有牙科 bot 做到 7000 美元/月、8 个月 0 代码。</li>
+<li><strong>落地姿势</strong>：别卖"一次性服务"，改卖"包月维护"（价差窗口：国内习惯一单一结，海外收 retainer，你收包月就比同行多赚且锁客）。先给 1 家做 demo 上门演示，比发 100 条朋友圈管用。</li>
+</ul>
+<h3 id="3_1">信号 3：海外"自动赚钱/被动收入"被实测打脸——真相是垂直小众 + 持续执行</h3>
+<ul>
+<li><strong>白话解释</strong>：Reddit 用真实案例拆穿神话：</li>
+<li>有人跑"全自动 AI agent"247 小时，结果 16 用户、3 付费、月经常性收入 <strong>仅 4 美元</strong> ——"设好就忘"是梦。</li>
+<li>AI 代写已商品化：客户只肯付 5–10 美元/篇（因为默认是 AI 写的），纯代写被压死。</li>
+<li>卖课/无货源 dropshipping/POD（打印按需）被一致判 overhyped（过度吹捧）。</li>
+<li><strong>真正稳的</strong>：Etsy 超细分数字产品（贴纸/插画 1500–2100 美元/月）、AI 音乐 5000+ 美元/月、micro-SaaS 订阅 5–20 美元/月（100 用户即真实复收）、AI 联盟 SEO 页 500–5000 美元/月。</li>
+<li><strong>落地姿势</strong>：放弃"躺赚"幻想。选一个超细分人群（例：给考研党做错题分析模板、给小红书店主做封面图包），做数字产品反复卖，或做 micro-SaaS 收小额月费。核心=垂直 + 包月 + 持续做。</li>
+</ul>
+<hr />
+<h2 id="_1">二、按普通人能不能做分类</h2>
+<h3 id="a">A 组：国内已验证、可立刻上手（低门槛、现金流快）</h3>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>启动成本</th>
+<th>月增收预期（参考）</th>
+<th>适合谁</th>
+<th>坑与提醒</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>大厂官方众包（腾讯搜活帮/阿里众包/百度众测/字节众包）</td>
+<td>0（免费注册，零押金）</td>
+<td>时薪 15–50 元，月 1500–2500</td>
+<td>社恐、宝妈、学生、碎片时间多</td>
+<td>凡收培训费/押金的中介 100% 骗子；正规只搜官方渠道</td>
+</tr>
+<tr>
+<td>闲鱼虚拟资料（考研/考公/Excel/PPT 模板）</td>
+<td>0（一次制作反复卖）</td>
+<td>日均 70–130，熟手月 5000–10000（3 账号）</td>
+<td>有整理能力、想做长期复利</td>
+<td>拼多多几元买素材简单排版即可；别碰盗版课程</td>
+</tr>
+<tr>
+<td>官方云客服（阿里云/菜鸟/京东夜班）</td>
+<td>0</td>
+<td>时薪 22–32，月 1000+</td>
+<td>下班后有 2 小时的人</td>
+<td>平台免费培训；收培训费的全是骗子</td>
+</tr>
+<tr>
+<td>本地生活代运营（短视频/美团点评/社群）</td>
+<td>0（手机即可）</td>
+<td>单店 500–1500/月，管 3–5 家月过 5000</td>
+<td>懂点剪辑、肯跑门店</td>
+<td>收"包月"比一单一结更稳；先 demo 上门</td>
+</tr>
+<tr>
+<td>AI 文案/设计外包（ChatGPT 写文案、Canva 做图）</td>
+<td>0（免费工具）</td>
+<td>月 3000–8000（20–30 单）</td>
+<td>愿花 1–2 周学透工具</td>
+<td>别只做通用代写（已被压价），做行业细分（如电商标题/海报）</td>
+</tr>
+<tr>
+<td>AI 轻服务（老照片修复/AI 头像/证件照）</td>
+<td>0（醒图/美图 AI）</td>
+<td>单 19.9–59 元，每天 1 小时可观</td>
+<td>会基础修图、肯交付</td>
+<td>闲鱼/小红书免费接单；靠口碑复购</td>
+</tr>
+<tr>
+<td>短剧/小说推文（CPS 分销）</td>
+<td>0</td>
+<td>佣金 50%–85%，爆款几百上千</td>
+<td>愿批量剪 15–30s 视频</td>
+<td>需矩阵号、量大；非"躺赚"，要持续发</td>
+</tr>
+<tr>
+<td>二手精细化倒卖（无货源赚信息差）</td>
+<td>0（先无货源）</td>
+<td>月净利约 4000（10–15 件）</td>
+<td>会选品、重服务细节</td>
+<td>卖不出不囤货无损失；别碰高价赝品</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b">B 组：海外已跑通、国内可借鉴（注意合规与汇率）</h3>
+<table>
+<thead>
+<tr>
+<th>方向</th>
+<th>启动成本</th>
+<th>月增收预期（参考，美元）</th>
+<th>适合谁</th>
+<th>坑与提醒</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本地商家 AI chatbot（retainer 模式）</td>
+<td>低（无代码工具）</td>
+<td>搭建 300–500 + 150–500/月；案例 7000/月</td>
+<td>愿学 n8n/Retell，接国内同款</td>
+<td>国内同类多一单一结，你收包月=价差；先 demo</td>
+</tr>
+<tr>
+<td>AI 联盟 SEO 页（细分对比站）</td>
+<td>低（域名+AI 写）</td>
+<td>500–5000/月（排名后被动）</td>
+<td>愿做内容、懂点 SEO</td>
+<td>6–12 周才见效；须加人工编辑避免被算法判纯 AI</td>
+</tr>
+<tr>
+<td>AI 线索生成（Apollo+Clay+AI 外联）</td>
+<td>中</td>
+<td>2000–8000/月 retainer</td>
+<td>懂销售漏斗</td>
+<td>偏技术，国内需合规使用数据</td>
+</tr>
+<tr>
+<td>Etsy 超细分数字产品（贴纸/插画/模板）</td>
+<td>30–50/月</td>
+<td>1500–2100（百个优化 listings）</td>
+<td>有审美、肯每周上新</td>
+<td>平台自带流量；饱和靠"风格独特+垂直"</td>
+</tr>
+<tr>
+<td>Micro-SaaS（vibe-coding 建小工具）</td>
+<td>低（Bolt/Lovable）</td>
+<td>5–20/月订阅，100 用户即真实复收</td>
+<td>愿用 AI 写小工具</td>
+<td>天花板高但需验证需求；别全做</td>
+</tr>
+<tr>
+<td>AI 音乐/ faceless 视频</td>
+<td>低–中</td>
+<td>音乐 5000+/月；视频 500–5000/月</td>
+<td>愿日更、做 evergreen</td>
+<td>需 3–6 月积累；YouTube 已降权纯 AI 内容，必加人工</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>风险红线（今天再次重申）：凡让<strong>交押金/培训费/买账号</strong>的众包、云客服、数据标注招募，一律骗局；鼓吹"日入上千零成本躺赚"还卖课的，大概率割韭菜；海外 survey/看广告仅零花（30–60 美元/月），别当主业。</p>
+</blockquote>
+<hr />
+<h2 id="_2">三、跨边洞察（海外已火、国内还没卷的方向）</h2>
+<ol>
+<li><strong>价差窗口仍在放大</strong>：国内副业圈习惯"一单一结"（399–880 元/月），海外成熟做法是"包月 retainer"（150–500 美元/月）。你只要把收费方式从"按次"改成"包月维护"，同样的服务收入立刻翻倍且锁客。这是认知差，不是能力差。</li>
+<li><strong>"被动收入躺赚"被海外数据证伪，国内还在追</strong>：Reddit 用 247 小时自动 agent 仅 4 美元 MRR、AI 代写压到 5–10 美元/篇、dropshipping/POD 被一致判 overhyped——而国内仍有大量人在追"纯 AI 素材包/短剧切片/自动搬运"。避开这些已证伪赛道 = 少踩坑。</li>
+<li><strong>国内独有 OPC 政策杠杆持续加码</strong>：本周重庆、安徽、佛山桂城再添"装备包"（免费工位+算力券+Token 贷+预付款 40%+导师陪跑），这是海外完全没有的国家级/地方级红利，等于"政府补贴你的创业成本"。</li>
+<li><strong>Reddit 铁律（反复验证）</strong>：①最容易的=最饱和的；②卖"问题"不卖"AI"（客户要的是解决麻烦，不是 chatbot 本身）；③垂直&gt;通用；④先 demo 上门，比发朋友圈强 10 倍；⑤95% 的人只研究不执行，永远赚不到；⑥社区"先给价值再软广"获客（10:1 法则）国内没卷透。</li>
+<li><strong>开源模型再降门槛</strong>：今日 aihot AI 日报——阿里 Qwen 3.8 27B 以 Apache 2.0 许可开源（视觉大模型，超越前代及部分闭源），OPC 创业者可免费自部署，进一步压缩算力成本，呼应安徽"算力补贴 20%"。</li>
+</ol>
+<hr />
+<h2 id="_3">四、给纯小白的「今天就能做」行动建议</h2>
+<ol>
+<li><strong>先拿第一笔零风险钱</strong>（10 分钟）：去腾讯搜活帮/阿里众包/百度众测注册，做图片标注或语音转写，时薪 15–50 元，当天就能做、周结。先建立"副业能赚钱"的正反馈。</li>
+<li><strong>选一个方向做精，别同时开 5 个</strong>（今天定）：从上面 A 组挑 1 个（建议"闲鱼虚拟资料"或"本地代运营"），花 1 周做出第一个成品/第一个客户，比收藏 100 篇攻略有用。</li>
+<li><strong>把"按次"改成"包月"</strong>（今天改）：如果你已经在做代运营/客服/设计，主动给老客户推"包月维护套餐"，锁定收入、减少找单焦虑。</li>
+<li><strong>查你城市的 OPC 政策</strong>（今天查）：在微信搜"你所在城市 + 一人公司 / OPC / 人工智能创业补贴"，看有没有免费工位、算力券、创业贷——能领的先领，零成本起步。</li>
+<li><strong>避开今天点名的坑</strong>：任何要你先交钱（押金/培训费/账号费）的"兼职"，直接拉黑；别碰"日入上千躺赚"的课。</li>
+</ol>
+<hr />
+<h2 id="_4">五、主要信息来源</h2>
+<ul>
+<li>国内政策：人力资源社会保障部《重庆十二条举措护航 AI OPC 创业》（8/11）；大皖新闻/安徽省科技厅《安徽省推进人工智能 OPC 创新创业发展行动方案（2026—2028）》（8/5–8/13）；珠江时报《桂城修订扶持办法·全国首个街道级 OPC 措施》（8/12）；头条号《广东 10 城 OPC 政策地图》（8/5）。</li>
+<li>国内副业清单：腾讯 ima 知识库《2026 副业风向标》系列（大厂众包/闲鱼虚拟资料/云客服/本地代运营/AI 轻服务/短剧推文/二手倒卖）。</li>
+<li>海外实测：incomelab《What Reddit Actually Says About AI Side Hustles in 2026》（Top3 + 8 项评级 + 5 大误区）；aicap《I Tested Reddit's Top 5 AI Side Hustles》（247h agent $4 MRR、Etsy clip-art、AI 音乐、$226K 案例）；aijinks《AI side hustle Reddit guide 2026》。</li>
+<li>海外"sleepy"被动收入：jobdoor《How to Build Automated Online Income in 2026》；veramoney《Side Hustles and Passive Income in 2026》；dailyproductivityhub《8 Side Hustles to $5,000/Month》。</li>
+<li>AI 行业日报：aihot 每日日报（2026-08-17）— Qwen 3.8 27B 开源（Apache 2.0）、Anthropic IPO 热度提示。</li>
+</ul>
+<blockquote>
+<p>说明：本文金额/政策多标注"预期/参考/美元"，均来自上述公开来源；实际收入因人而异，请以官方最新发布与自身实测为准。纯资讯整理，不构成投资建议。</p>
+</blockquote></div>
+<p class="foot">由 WorkBuddy 自动生成 · 最后更新 2026-08-17 08:54</p></div>
+<script>
+var _t;
+function search(q){
+  clearTimeout(_t);
+  _t=setTimeout(function(){
+    var marks=document.querySelectorAll('mark');marks.forEach(function(m){m.replaceWith(document.createTextNode(m.textContent))});
+    if(!q)return;
+    var body=document.querySelector('.card');var txt=body.innerHTML;
+    var re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+    body.innerHTML=txt.replace(re,'<mark>$1</mark>');
+  },250);
+}
+</script>
+</body>
+</html>

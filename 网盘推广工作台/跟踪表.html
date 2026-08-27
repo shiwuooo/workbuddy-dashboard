@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网盘推广跟踪表（夸克为主·多平台）</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --line:#e5e7eb; --ink:#1f2937; --sub:#6b7280;
+    --brand:#2563eb; --brand2:#0ea5e9; --ok:#16a34a; --warn:#d97706; --danger:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,"Microsoft YaHei",sans-serif}
+  header{background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;padding:16px 20px}
+  header h1{margin:0;font-size:18px}
+  header p{margin:4px 0 0;opacity:.92;font-size:12px}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:16px}
+  .card h2{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px}
+  .tag{font-size:11px;background:#eef2ff;color:var(--brand);padding:2px 8px;border-radius:99px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-weight:600;white-space:nowrap}
+  td input{border:1px solid transparent;background:#fafafa;width:100%;padding:4px 6px;border-radius:6px;font:inherit;color:inherit}
+  td input:focus{outline:none;border-color:var(--brand);background:#fff}
+  td.num input{text-align:right}
+  .row-actions button{border:none;background:#fee2e2;color:var(--danger);border-radius:6px;padding:2px 8px;cursor:pointer;font-size:12px}
+  .btn{border:none;border-radius:8px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600}
+  .btn-add{background:var(--brand);color:#fff}
+  .btn-exp{background:#059669;color:#fff}
+  .btn-clear{background:#fff;color:var(--danger);border:1px solid var(--danger)}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 10px}
+  .settings-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+  .settings-grid label{display:flex;flex-direction:column;font-size:12px;color:var(--sub);gap:4px}
+  .settings-grid input{border:1px solid var(--line);border-radius:6px;padding:6px;font:inherit}
+  .hint{font-size:12px;color:var(--sub);margin-top:8px}
+  .income{font-weight:700;color:var(--ok)}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:12px}
+</style>
+<script>
+(function(){
+ 'use strict';
+ var KEY='wp_gen';
+ function $(s){return document.querySelector(s);}
+ function $a(s){return document.querySelectorAll(s);}
+ var SEL='h1,h2,h3,h4,h5,p,li,blockquote,pre,.card,.what,.hint,.intro,.rec,.tag,.desc,.muted,.sub,.rows,.row,.tree,.lvl1,.lvl2,.price,.badge,.footer,.note';
+ function formAnc(el){return el.closest&&el.closest('input,textarea,select,button,script,style,a,.toolbar,#wb-toolbar');}
+ function editEls(){var r=[];$a(SEL).forEach(function(el){if(!formAnc(el))r.push(el);});return r;}
+ function setEdit(on){editEls().forEach(function(el){el.setAttribute('contenteditable',on?'true':'false');});document.body.classList.toggle('wb-edit',!!on);}
+ function st(m,c){var s=$('#wb-status');if(s){s.textContent=m;s.className='wb-status'+(c?' '+c:'');}}
+ function save(){try{var els=editEls();var arr=els.map(function(e){return e.innerHTML;});localStorage.setItem(KEY,JSON.stringify(arr));st('已保存到本机浏览器 '+new Date().toLocaleTimeString(),'ok');}catch(e){st('保存失败:'+e.message,'err');}}
+ function load(){var raw=localStorage.getItem(KEY);if(!raw)return false;try{var arr=JSON.parse(raw);var els=editEls();if(arr.length===els.length){els.forEach(function(el,i){el.innerHTML=arr[i];});}}catch(e){return false;}if(window.__wbRerender){try{window.__wbRerender();}catch(e){}}st('已恢复上次编辑','ok');return true;}
+ function exp(){var h='<!DOCTYPE html>\n'+document.documentElement.outerHTML;var b=new Blob([h],{type:'text/html;charset:utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='网盘面板_'+new Date().toISOString().slice(0,10)+'.html';a.click();st('已导出HTML文件','ok');}
+ function addB(){var m=$('main')||document.body;var s=document.createElement('section');s.setAttribute('contenteditable','true');s.style.cssText='border:2px dashed #2f6fed;padding:16px;margin:12px 0;border-radius:10px';s.innerHTML='<h2>新区块（点我编辑）</h2><p>在这里写任何内容……</p>';m.appendChild(s);save();}
+ function initTB(){var tb=$('#wb-toolbar');if(!tb)return;tb.querySelector('#wb-edit').onclick=function(){setEdit(true);st('编辑中：直接点文字改','');};tb.querySelector('#wb-stop').onclick=function(){setEdit(false);st('预览');};tb.querySelector('#wb-save').onclick=save;tb.querySelector('#wb-export').onclick=exp;tb.querySelector('#wb-restore').onclick=function(){if(confirm('恢复初始？当前修改将丢失')){localStorage.removeItem(KEY);location.reload();}};tb.querySelector('#wb-add').onclick=addB;}
+ document.addEventListener('DOMContentLoaded',function(){
+  if(!$('#wb-toolbar')){var tb=document.createElement('div');tb.id='wb-toolbar';tb.innerHTML='<button id="wb-edit">✏️编辑</button><button id="wb-stop">👁停止</button><button id="wb-save">💾保存</button><button id="wb-export">📤导出</button><button id="wb-restore">↩恢复</button><button id="wb-add">➕区块</button><span id="wb-status" class="wb-status"></span>';document.body.insertBefore(tb,document.body.firstChild);var c=document.createElement('style');c.textContent='#wb-toolbar{position:sticky;top:0;z-index:99999;background:#fff;border-bottom:1px solid #e3e6ea;padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#wb-toolbar button{border:1px solid #e3e6ea;background:#fff;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:13px}#wb-toolbar button:hover{background:#eef3ff}#wb-status{margin-left:auto;font-size:12px;color:#6b7785}#wb-status.ok{color:#16a34a}#wb-status.err{color:#dc2626}body.wb-edit [contenteditable="true"]{outline:2px dashed #2f6fed;outline-offset:2px;background:#fffef5}';document.head.appendChild(c);}
+  initTB();var ok=load();if(!ok)st('点 ✏️ 编辑即可修改内容（自动保存到本机浏览器）','');
+  document.addEventListener('input',function(){if(document.body.classList.contains('wb-edit')){clearTimeout(window.__wbt);window.__wbt=setTimeout(save,1500);}});
+ });
+})();
+</script>
+</head>
+<body>
+<header>
+  <h1>网盘推广跟踪表 · 夸克为主 · 多平台叠加</h1>
+  <p>数据全部存在你本机浏览器（localStorage），不上传任何服务器 ｜ 主推：夸克 ｜ 叠加：百度 / 迅雷</p>
+</header>
+
+<div class="wrap">
+
+  <!-- 单价设置 -->
+  <div class="card">
+    <h2>① 收益单价设置（按你当前平台规则改）</h2>
+    <div class="settings-grid">
+      <label>夸克拉新单价(元/人)<input id="set_quarkNew" type="number" step="0.1" value="10"></label>
+      <label>夸克转存单价(元/次)<input id="set_quarkTrans" type="number" step="0.01" value="0.47"></label>
+      <label>百度拉新单价(元/人)<input id="set_baiduNew" type="number" step="0.1" value="8"></label>
+      <label>迅雷拉新单价(元/人)<input id="set_xunleiNew" type="number" step="0.1" value="8"></label>
+    </div>
+    <div class="hint">预估收益 = 夸克新用户×拉新 + 夸克转存×转存 + 百度新用户×百度 + 迅雷新用户×迅雷 + 会员分成(手动填)。改完自动重算并存盘。</div>
+  </div>
+
+  <!-- 资源库 -->
+  <div class="card">
+    <h2>② 资源库 <span class="tag">同一资源多平台链接</span></h2>
+    <div class="toolbar"><button class="btn btn-add" onclick="addRes()">+ 新增资源</button></div>
+    <table id="tblRes">
+      <thead><tr>
+        <th style="width:60px">资源ID</th><th>资源名</th><th>分类</th>
+        <th>夸克链接</th><th>百度链接</th><th>迅雷链接</th>
+        <th>大小GB</th><th>打包方式</th><th>合规风险</th><th>状态</th><th>更新日期</th><th style="width:54px"></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- 每日数据 -->
+  <div class="card">
+    <h2>③ 每日数据 <span class="tag">按渠道×资源记录转化</span></h2>
+    <div class="toolbar"><button class="btn btn-add" onclick="addDaily()">+ 新增记录</button></div>
+    <table id="tblDaily">
+      <thead><tr>
+        <th>日期</th><th>渠道</th><th>账号</th><th>发布内容</th><th>资源ID</th>
+        <th>链接查看</th><th>夸克转存</th><th>夸克新用户</th><th>百度新用户</th><th>迅雷新用户</th>
+        <th>会员分成(元)</th><th>预估收益</th><th>备注</th><th style="width:54px"></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- 汇总 -->
+  <div class="card">
+    <h2>④ 累计汇总</h2>
+    <div id="summary" style="font-size:14px;line-height:2"></div>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-exp" onclick="exportCSV()">导出全部为 CSV（本地下载）</button>
+    <button class="btn btn-clear" onclick="clearAll()">清空全部数据</button>
+  </div>
+  <div class="hint">
+    用法：①先填单价 → ②在资源库登记你的资源（多平台链接都填）→ ③每天在各渠道发完，来"每日数据"记一行。
+    想长期保存就点"导出CSV"。本页不联网、不收集你的任何数据。
+  </div>
+</div>
+
+<script>
+const LS_RES='wp_res_v1', LS_DAY='wp_day_v1', LS_SET='wp_set_v1';
+const $=id=>document.getElementById(id);
+const riskOpts=['低','中','高'], statusOpts=['有效','失效'];
+
+function load(k,def){try{return JSON.parse(localStorage.getItem(k))||def}catch(e){return def}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+let res=load(LS_RES,[]), day=load(LS_DAY,[]), set=load(LS_SET,{quarkNew:10,quarkTrans:0.47,baiduNew:8,xunleiNew:8});
+
+// 初始化示例（仅首次）
+if(res.length===0){
+  res=[{id:'R001',name:'2026考研英语真题+网课笔记合集',cat:'考试考证',quark:'',baidu:'',xunlei:'',size:'6.2',pack:'文件夹合集+解压密码',risk:'低',status:'有效',date:'2026-07-31'}];
+  save(LS_RES,res);
+}
+if(day.length===0){
+  day=[{date:'2026-07-31',channel:'知乎',account:'你的知乎号',content:'回答：考研资料怎么整理',rid:'R001',views:15,qtrans:1,qnew:1,bnew:0,xnew:0,member:0,note:'首日测试'}];
+  save(LS_DAY,day);
+}
+
+// 同步设置输入
+$('set_quarkNew').value=set.quarkNew;$('set_quarkTrans').value=set.quarkTrans;
+$('set_baiduNew').value=set.baiduNew;$('set_xunleiNew').value=set.xunleiNew;
+['set_quarkNew','set_quarkTrans','set_baiduNew','set_xunleiNew'].forEach(id=>{
+  $(id).addEventListener('input',()=>{set[id.replace('set_','')]=parseFloat($(id).value)||0;save(LS_SET,set);calcAll();});
+});
+
+function el(tag,attrs={},val){const e=document.createElement(tag);for(const k in attrs)e[k]=attrs[k];if(val!=null)e.value=val;return e;}
+
+function renderRes(){
+  const tb=$('tblRes').querySelector('tbody');tb.innerHTML='';
+  res.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.id}</td>`;
+    const mk=(key,ph,num)=>{const td=document.createElement('td');td.className=num?'num':'';const inp=el('input',{placeholder:ph||''},r[key]);inp.oninput=()=>{r[key]=inp.value;save(LS_RES,res);};td.appendChild(inp);return td;};
+    tr.appendChild(mk('name','资源名'));
+    tr.appendChild(mk('cat','分类'));
+    tr.appendChild(mk('quark','夸克链接'));
+    tr.appendChild(mk('baidu','百度链接'));
+    tr.appendChild(mk('xunlei','迅雷链接'));
+    tr.appendChild(mk('size','GB',true));
+    tr.appendChild(mk('pack','打包方式'));
+    // 风险下拉
+    const tdR=document.createElement('td');const selR=el('select');riskOpts.forEach(o=>{const op=el('option',{},o);if(o===r.risk)op.selected=true;selR.appendChild(op);});selR.onchange=()=>{r.risk=selR.value;save(LS_RES,res);};tdR.appendChild(selR);tr.appendChild(tdR);
+    // 状态下拉
+    const tdS=document.createElement('td');const selS=el('select');statusOpts.forEach(o=>{const op=el('option',{},o);if(o===r.status)op.selected=true;selS.appendChild(op);});selS.onchange=()=>{r.status=selS.value;save(LS_RES,res);};tdS.appendChild(selS);tr.appendChild(tdS);
+    tr.appendChild(mk('date','YYYY-MM-DD'));
+    const tdA=document.createElement('td');const b=el('button',{},'删');b.className='row-actions';b.onclick=()=>{res.splice(i,1);save(LS_RES,res);renderRes();};tdA.appendChild(b);tr.appendChild(tdA);
+    tb.appendChild(tr);
+  });
+}
+function addRes(){const n=res.length+1;res.push({id:'R'+String(n).padStart(3,'0'),name:'',cat:'',quark:'',baidu:'',xunlei:'',size:'',pack:'',risk:'低',status:'有效',date:''});save(LS_RES,res);renderRes();}
+
+function calcIncome(d){return (Number(d.qnew)||0)*set.quarkNew+(Number(d.qtrans)||0)*set.quarkTrans+(Number(d.bnew)||0)*set.baiduNew+(Number(d.xnew)||0)*set.xunleiNew+(Number(d.member)||0);}
+
+function renderDaily(){
+  const tb=$('tblDaily').querySelector('tbody');tb.innerHTML='';
+  day.forEach((d,i)=>{
+    const tr=document.createElement('tr');
+    const mk=(key,ph,num)=>{const td=document.createElement('td');td.className=num?'num':'';const inp=el('input',{placeholder:ph||''},d[key]);inp.oninput=()=>{d[key]=inp.value;save(LS_DAY,day);calcRow(tr,d);calcSummary();};td.appendChild(inp);return td;};
+    tr.appendChild(mk('date','YYYY-MM-DD'));
+    tr.appendChild(mk('channel','渠道'));
+    tr.appendChild(mk('account','账号'));
+    tr.appendChild(mk('content','发布内容'));
+    tr.appendChild(mk('rid','资源ID'));
+    tr.appendChild(mk('views','查看',true));
+    tr.appendChild(mk('qtrans','转存',true));
+    tr.appendChild(mk('qnew','新用户',true));
+    tr.appendChild(mk('bnew','新用户',true));
+    tr.appendChild(mk('xnew','新用户',true));
+    tr.appendChild(mk('member','元',true));
+    const tdInc=document.createElement('td');tdInc.className='income';tdInc.textContent='¥'+calcIncome(d).toFixed(2);tr.appendChild(tdInc);
+    tr.appendChild(mk('note','备注'));
+    const tdA=document.createElement('td');const b=el('button',{},'删');b.onclick=()=>{day.splice(i,1);save(LS_DAY,day);renderDaily();};tdA.appendChild(b);tr.appendChild(tdA);
+    tb.appendChild(tr);
+  });
+}
+function calcRow(tr,d){const cells=tr.querySelectorAll('td');cells[cells.length-3].textContent='¥'+calcIncome(d).toFixed(2);}
+function addDaily(){day.push({date:'',channel:'',account:'',content:'',rid:'',views:0,qtrans:0,qnew:0,bnew:0,xnew:0,member:0,note:''});save(LS_DAY,day);renderDaily();}
+
+function calcSummary(){
+  let qn=0,bn=0,xn=0,qt=0,mem=0;
+  day.forEach(d=>{qn+=(+d.qnew||0);bn+=(+d.bnew||0);xn+=(+d.xnew||0);qt+=(+d.qtrans||0);mem+=(+d.member||0);});
+  const total=qn*set.quarkNew+qt*set.quarkTrans+bn*set.baiduNew+xn*set.xunleiNew+mem;
+  $('summary').innerHTML=
+    `夸克新用户：<b>${qn}</b> 人（¥${(qn*set.quarkNew).toFixed(2)}）　|　`+
+    `夸克转存：<b>${qt}</b> 次（¥${(qt*set.quarkTrans).toFixed(2)}）　|　`+
+    `百度新用户：<b>${bn}</b> 人（¥${(bn*set.baiduNew).toFixed(2)}）　|　`+
+    `迅雷新用户：<b>${xn}</b> 人（¥${(xn*set.xunleiNew).toFixed(2)}）　|　`+
+    `会员分成：¥${mem.toFixed(2)}<br>`+
+    `📊 预估累计收益：<b style="color:#16a34a;font-size:18px">¥${total.toFixed(2)}</b>　（记录 ${day.length} 条）`;
+}
+function calcAll(){renderRes();renderDaily();calcSummary();}
+
+function exportCSV(){
+  const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  let csv='\uFEFF';
+  csv+='=== 资源库 ===\n';
+  csv+=['资源ID','资源名','分类','夸克链接','百度链接','迅雷链接','大小GB','打包方式','合规风险','状态','更新日期'].map(esc).join(',')+'\n';
+  res.forEach(r=>csv+=[r.id,r.name,r.cat,r.quark,r.baidu,r.xunlei,r.size,r.pack,r.risk,r.status,r.date].map(esc).join(',')+'\n');
+  csv+='\n=== 每日数据 ===\n';
+  csv+=['日期','渠道','账号','发布内容','资源ID','链接查看','夸克转存','夸克新用户','百度新用户','迅雷新用户','会员分成','预估收益','备注'].map(esc).join(',')+'\n';
+  day.forEach(d=>csv+=[d.date,d.channel,d.account,d.content,d.rid,d.views,d.qtrans,d.qnew,d.bnew,d.xnew,d.member,calcIncome(d).toFixed(2),d.note].map(esc).join(',')+'\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='网盘推广数据_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  alert('已导出到本地下载文件夹（CSV，Excel/WPS 可直接打开，中文正常）');
+}
+function clearAll(){if(confirm('确定清空所有资源与每日数据？此操作不可恢复。')){res=[];day=[];save(LS_RES,res);save(LS_DAY,day);renderRes();renderDaily();calcSummary();}}
+
+calcAll();
+</script>
+</body>
+</html>

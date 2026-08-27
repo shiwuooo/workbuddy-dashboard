@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>网盘推广作战台</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#fff; --line:#e5e7eb; --text:#1f2937;
+    --muted:#6b7280; --brand:#2563eb; --brand2:#7c3aed;
+    --ok:#16a34a; --warn:#d97706; --bad:#dc2626;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  header{background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+  header h1{margin:0;font-size:18px;font-weight:700}
+  header .sub{font-size:12px;opacity:.85}
+  nav{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:0 12px;flex-wrap:wrap}
+  nav button{background:none;border:none;padding:12px 14px;cursor:pointer;font-size:14px;color:var(--muted);border-bottom:2px solid transparent}
+  nav button.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:600}
+  main{padding:18px;max-width:1080px;margin:0 auto}
+  .tab{display:none}
+  .tab.active{display:block}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+  h2{font-size:16px;margin:0 0 10px}
+  h3{font-size:14px;margin:14px 0 6px}
+  .muted{color:var(--muted);font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .track{border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;background:#fff}
+  .track:hover{border-color:var(--brand)}
+  .track .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:#eef2ff;color:var(--brand);margin-bottom:6px}
+  .track b{display:block;margin-bottom:4px}
+  .track .desc{font-size:12px;color:var(--muted)}
+  input,textarea,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;margin-top:4px}
+  label{font-size:13px;font-weight:600;display:block;margin-top:10px}
+  button.act{background:var(--brand);color:#fff;border:none;padding:9px 16px;border-radius:8px;cursor:pointer;font-size:13px;margin-top:12px}
+  button.act:hover{opacity:.9}
+  button.ghost{background:#fff;border:1px solid var(--line);color:var(--text)}
+  .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;margin:2px 4px 2px 0}
+  .p-ok{background:#dcfce7;color:var(--ok)}
+  .p-warn{background:#fef3c7;color:var(--warn)}
+  .p-bad{background:#fee2e2;color:var(--bad)}
+  .tree{font-size:13px;line-height:1.9}
+  .tree .lvl1{font-weight:700;color:var(--brand2);margin-top:10px}
+  .tree .lvl2{margin-left:18px}
+  .tree .lvl2:before{content:"• ";color:var(--brand)}
+  .copy-box{background:#f3f4f6;border-radius:8px;padding:12px;white-space:pre-wrap;font-size:13px;margin-top:8px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left}
+  th{background:#f9fafb}
+  .row-actions button{padding:3px 8px;font-size:12px;margin-right:4px}
+  .search{margin-bottom:12px}
+  .hidden{display:none}
+  .kbd{font-family:monospace;background:#111827;color:#fff;padding:1px 6px;border-radius:4px;font-size:12px}
+</style>
+<script>
+(function(){
+ 'use strict';
+ var KEY='wp_zhantai';
+ function $(s){return document.querySelector(s);}
+ function $a(s){return document.querySelectorAll(s);}
+ var SEL='h1,h2,h3,h4,h5,p,li,blockquote,pre,.card,.what,.hint,.intro,.rec,.tag,.desc,.muted,.sub,.rows,.row,.tree,.lvl1,.lvl2,.price,.badge,.footer,.note';
+ function formAnc(el){return el.closest&&el.closest('input,textarea,select,button,script,style,a,.toolbar,#wb-toolbar');}
+ function editEls(){var r=[];$a(SEL).forEach(function(el){if(!formAnc(el))r.push(el);});return r;}
+ function setEdit(on){editEls().forEach(function(el){el.setAttribute('contenteditable',on?'true':'false');});document.body.classList.toggle('wb-edit',!!on);}
+ function st(m,c){var s=$('#wb-status');if(s){s.textContent=m;s.className='wb-status'+(c?' '+c:'');}}
+ function save(){try{var els=editEls();var arr=els.map(function(e){return e.innerHTML;});localStorage.setItem(KEY,JSON.stringify(arr));st('已保存到本机浏览器 '+new Date().toLocaleTimeString(),'ok');}catch(e){st('保存失败:'+e.message,'err');}}
+ function load(){var raw=localStorage.getItem(KEY);if(!raw)return false;try{var arr=JSON.parse(raw);var els=editEls();if(arr.length===els.length){els.forEach(function(el,i){el.innerHTML=arr[i];});}}catch(e){return false;}if(window.__wbRerender){try{window.__wbRerender();}catch(e){}}st('已恢复上次编辑','ok');return true;}
+ function exp(){var h='<!DOCTYPE html>\n'+document.documentElement.outerHTML;var b=new Blob([h],{type:'text/html;charset:utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='网盘面板_'+new Date().toISOString().slice(0,10)+'.html';a.click();st('已导出HTML文件','ok');}
+ function addB(){var m=$('main')||document.body;var s=document.createElement('section');s.setAttribute('contenteditable','true');s.style.cssText='border:2px dashed #2f6fed;padding:16px;margin:12px 0;border-radius:10px';s.innerHTML='<h2>新区块（点我编辑）</h2><p>在这里写任何内容……</p>';m.appendChild(s);save();}
+ function initTB(){var tb=$('#wb-toolbar');if(!tb)return;tb.querySelector('#wb-edit').onclick=function(){setEdit(true);st('编辑中：直接点文字改','');};tb.querySelector('#wb-stop').onclick=function(){setEdit(false);st('预览');};tb.querySelector('#wb-save').onclick=save;tb.querySelector('#wb-export').onclick=exp;tb.querySelector('#wb-restore').onclick=function(){if(confirm('恢复初始？当前修改将丢失')){localStorage.removeItem(KEY);location.reload();}};tb.querySelector('#wb-add').onclick=addB;}
+ document.addEventListener('DOMContentLoaded',function(){
+  if(!$('#wb-toolbar')){var tb=document.createElement('div');tb.id='wb-toolbar';tb.innerHTML='<button id="wb-edit">✏️编辑</button><button id="wb-stop">👁停止</button><button id="wb-save">💾保存</button><button id="wb-export">📤导出</button><button id="wb-restore">↩恢复</button><button id="wb-add">➕区块</button><span id="wb-status" class="wb-status"></span>';document.body.insertBefore(tb,document.body.firstChild);var c=document.createElement('style');c.textContent='#wb-toolbar{position:sticky;top:0;z-index:99999;background:#fff;border-bottom:1px solid #e3e6ea;padding:8px 12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#wb-toolbar button{border:1px solid #e3e6ea;background:#fff;padding:6px 12px;border-radius:7px;cursor:pointer;font-size:13px}#wb-toolbar button:hover{background:#eef3ff}#wb-status{margin-left:auto;font-size:12px;color:#6b7785}#wb-status.ok{color:#16a34a}#wb-status.err{color:#dc2626}body.wb-edit [contenteditable="true"]{outline:2px dashed #2f6fed;outline-offset:2px;background:#fffef5}';document.head.appendChild(c);}
+  initTB();var ok=load();if(!ok)st('点 ✏️ 编辑即可修改内容（自动保存到本机浏览器）','');
+  document.addEventListener('input',function(){if(document.body.classList.contains('wb-edit')){clearTimeout(window.__wbt);window.__wbt=setTimeout(save,1500);}});
+ });
+})();
+</script>
+</head>
+<body>
+<header>
+  <div>
+    <h1>网盘推广作战台</h1>
+    <div class="sub">四怕选品 · 8 大赛道 · 大佬打法 · 本地存储（数据只在你电脑）</div>
+  </div>
+  <div class="sub">v1 · 2026-07-31</div>
+</header>
+<nav>
+  <button class="active" data-tab="mind">脑图</button>
+  <button data-tab="lib">资源库</button>
+  <button data-tab="copy">文案生成</button>
+  <button data-tab="cmd">口令管理</button>
+</nav>
+<main>
+
+  <!-- 脑图 C -->
+  <section class="tab active" id="mind">
+    <div class="card">
+      <h2>一页纸脑图：四怕 → 8 大赛道</h2>
+      <div class="tree">
+        <div class="lvl1">男人怕虚</div>
+        <div class="lvl2">赛道1 男人怕虚：壮阳/男性保健·微信步数·防撤回·两性</div>
+        <div class="lvl1">女人怕老</div>
+        <div class="lvl2">赛道2 女人怕老：变美·减肥穿搭·腐剧情感</div>
+        <div class="lvl1">老人怕死</div>
+        <div class="lvl2">赛道3 老人怕死：玄学·养生·自我觉察·银发AI</div>
+        <div class="lvl1">小孩想长大想玩</div>
+        <div class="lvl2">赛道4 小孩想玩：破解游戏·小学奥数·早教母婴·动漫追星</div>
+        <div class="lvl1">你的基本盘（已跑通）</div>
+        <div class="lvl2">赛道5 公考学习：真题·速成包·绝版课</div>
+        <div class="lvl1">流量前端</div>
+        <div class="lvl2">赛道6 影视小说明星：小说全集·影视·明星·热梗壁纸</div>
+        <div class="lvl1">工具盘</div>
+        <div class="lvl2">赛道7 软件工具AI：吾爱破解·防撤回·不限速·AI包</div>
+        <div class="lvl1">生活盘</div>
+        <div class="lvl2">赛道8 宝妈母婴：早教·副业·备孕·宠物·食谱</div>
+      </div>
+      <p class="muted">大佬逻辑：点子不值钱，能跑通的赛道才值钱。先矩阵广撒网测 Top3，再 All in；所有流量导私域，留存>拉新。</p>
+    </div>
+  </section>
+
+  <!-- 资源库 A -->
+  <section class="tab" id="lib">
+    <div class="card">
+      <h2>资源库（8 大赛道）</h2>
+      <input class="search" id="libSearch" placeholder="搜索钩子 / 赛道 / 平台…">
+      <div class="grid" id="trackGrid"></div>
+    </div>
+    <div class="card hidden" id="trackDetail"></div>
+  </section>
+
+  <!-- 文案生成 A -->
+  <section class="tab" id="copy">
+    <div class="card">
+      <h2>文案生成</h2>
+      <label>选择赛道模板</label>
+      <select id="copyTpl"></select>
+      <label>资源名 / 钩子（如：考公速成技巧包）</label>
+      <input id="vName" placeholder="考公速成技巧包">
+      <label>网盘口令（如 /f9X3oSyuiaCa:/）</label>
+      <input id="vCmd" placeholder="/f9X3oSyuiaCa:/">
+      <label>平台（如 微博 / 小红书 / 知乎）</label>
+      <input id="vPlat" placeholder="微博">
+      <button class="act" id="genCopy">生成文案</button>
+      <div class="copy-box hidden" id="copyOut"></div>
+      <button class="act ghost hidden" id="copyBtn">复制</button>
+    </div>
+  </section>
+
+  <!-- 口令管理 A -->
+  <section class="tab" id="cmd">
+    <div class="card">
+      <h2>口令管理</h2>
+      <label>网盘</label>
+      <select id="cNet"><option>移动云盘</option><option>夸克</option><option>悟空</option><option>UC</option><option>百度</option><option>迅雷</option></select>
+      <label>赛道</label>
+      <input id="cTrack" placeholder="公考学习">
+      <label>口令</label>
+      <input id="cCmd" placeholder="/f9X3oSyuiaCa:/">
+      <label>备注</label>
+      <input id="cNote" placeholder="每天更新合集">
+      <button class="act" id="addCmd">保存口令</button>
+      <div id="cmdList" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// ---------- 数据 ----------
+const TRACKS = [
+  {id:1,name:"男人怕虚",tag:"高客单",desc:"壮阳/男性保健·微信步数·防撤回·两性",
+   hooks:["男性健康(养生包装)","微信步数/支付宝能量攻略","防撤回工具包","两性情感话术"],
+   play:"壮阳软性种草贴吧+微博；微信步数做教程+工具包导私域；防撤回知乎B站教程→付费小课",
+   earn:"拉新(附加)+男性私域社群/两性咨询(主项)",risk:"中",riskNote:"不碰药品宣传/涉黄；防撤回标仅学习"},
+  {id:2,name:"女人怕老",tag:"消费强",desc:"变美·减肥穿搭·腐剧情感",
+   hooks:["变美书单","穿搭模板","减肥食谱","医美科普","热剧腐剧截图文案","情感话术"],
+   play:"小红书豆瓣封面目录截图+评论区私信领→私域；变美资料包引流→带货/课程",
+   earn:"拉新+带货/美妆课程/社群",risk:"低",riskNote:"不夸大功效"},
+  {id:3,name:"老人怕死",tag:"蓝海",desc:"玄学·养生·自我觉察·银发AI",
+   hooks:["玄学(软)","养生书单","防骗","中老年手机教程","自我觉察视频","教爸妈用AI"],
+   play:"快手抖音中老年；养生书单/玄学/自我成长；主项养生课程/带货/社群",
+   earn:"拉新(低)+养生带货课程社群(主项)",risk:"低",riskNote:"玄学软性；养生不宣传疗效"},
+  {id:4,name:"小孩想玩",tag:"高确定",desc:"破解游戏·小学奥数·早教母婴·动漫追星",
+   hooks:["破解游戏(软)","小学奥数竞赛","早教绘本","母婴好物","动漫合集","追星素材"],
+   play:"破解贴吧QQ频道(学习版)；小学奥数最稳高客单配客单价；早教宝妈社群",
+   earn:"拉新+家长社群/教辅课程(主项)",risk:"中",riskNote:"破解灰区软性多号；教育标考生回忆版"},
+  {id:5,name:"公考学习",tag:"基本盘",desc:"真题·速成包·绝版课（已跑通口令）",
+   hooks:["考公考研教资真题","图推数量速成包","绝版课","全学段考试"],
+   play:"持续更新=复购；多平台分发同钩子；AI自动生成资料文案；速成人性产品化",
+   earn:"拉新(附加)+进群会员/高阶资料(主项)",risk:"低",riskNote:"标考生回忆版；不碰盗版付费课"},
+  {id:6,name:"影视小说明星",tag:"流量大",desc:"小说全集·影视·明星·热梗壁纸",
+   hooks:["热门小说全集(AI浓缩)","影视番剧","明星物料神评","热梗壁纸","有声书"],
+   play:"小说AI浓缩→评论区→网盘；明星热梗神评求资源→转存；搬运外网信息差",
+   earn:"拉新(主收益之一)+私域二次",risk:"高",riskNote:"版权禁区，用片段/影评软引流；壁纸最安全"},
+  {id:7,name:"软件工具AI",tag:"复购强",desc:"吾爱破解·防撤回·不限速·AI包",
+   hooks:["吾爱破解","防撤回","李跳跳","各网盘不限速","多网盘管理","AI工具包"],
+   play:"神器合集→付费社群；多网盘分放=风险分散；AI工具绝对有流量",
+   earn:"拉新+工具会员/付费群(主项)",risk:"中",riskNote:"破解灰区软性多号；标仅学习"},
+  {id:8,name:"宝妈母婴",tag:"高传播",desc:"早教·副业·备孕·宠物·食谱",
+   hooks:["早教","辅食","宝妈副业","省钱攻略","备孕育儿","宠物养护","食谱"],
+   play:"小红书抖音宝妈号；先解答建立信任再分享；宝妈副业资料本身变现",
+   earn:"拉新+母婴带货/副业课程(主项)",risk:"低",riskNote:"基本合规"}
+];
+
+const COPY_TPL = {
+  1:"【标题】男生别再硬扛了，这几样才是真刚需\n\n很多人不好意思说，但需求是真的。我整理了一份「男性健康·精力管理」资料包（养生向，不含药）：\n- 微信步数/支付宝能量攻略\n- 防撤回工具包\n- 精力管理书单\n\n先存网盘，懂的都懂。\n\n口令：{{cmd}}\n手机端对应App→复制口令→自动弹出。\n\n#男性健康 #精力管理 #男生必备",
+  2:"【标题】变美这件事，资料比盲目买划算\n\n整理了「变美书单+穿搭模板+减肥食谱」合集，小红书/豆瓣都在推的同款：\n- 各类变美电子书\n- 穿搭模板\n- 减肥食谱\n\n先存了慢慢看。\n\n口令：{{cmd}}\n手机端对应App→复制口令→自动弹出。\n\n#变美 #减肥 #穿搭",
+  3:"【标题】给爸妈存的：手机教程+养生书单\n\n银发族最该有的资料包：\n- 中老年智能手机教程\n- 养生书单（不宣传疗效）\n- 防骗指南\n- 教爸妈用AI\n\n先存网盘留给家人。\n\n口令：{{cmd}}\n手机端对应App→复制口令→自动弹出。\n\n#银发 #养生 #孝心",
+  4:"【标题】家长都在抢的小学奥数/竞赛资料\n\n别让孩子输在起跑线。整理了小学奥数+竞赛辅导资料：\n- 数量关系速成\n- 竞赛真题\n- 早教绘本\n\n先存网盘，标注考生回忆版/自用整理。\n\n口令：{{cmd}}\n手机端对应App→复制口令→自动弹出。\n\n#小学奥数 #家长 #教辅",
+  5:"【标题】考公考编合集（每天更新最新资料）\n\n先保存到网盘再看！！！就不会显示不全。\n考公考编合集（每天更新最新的资料），后期更新如果有新的口令会放在QQ群中。\n\n网盘口令：{{cmd}}\n打开手机端中国移动云盘App→复制口令→稍等两秒自动弹出。\n\n#考公 #考编 #公考资料 #每日更新",
+  6:"【标题】这本小说太炸了，浓缩片段先码住\n\nAI 总结了最炸裂的一段话（不剧透）：{{name}}\n想看全集的，存网盘慢慢看。\n\n口令：{{cmd}}\n手机端对应App→复制口令→自动弹出。\n\n#小说 #书荒 #求资源",
+  7:"【标题】打工人神器合集，白嫖党狂喜\n\n整理了「神器合集」：\n- 吾爱破解精选\n- 防撤回\n- 李跳跳\n- 各网盘不限速\n- AI工具包\n\n先存网盘，标仅学习研究。\n\n口令：{{cmd}}\n手机端对应App→复制口令→自动弹出。\n\n#神器 #效率 #白嫖",
+  8:"【标题】宝妈都在存的：早教+副业+食谱\n\n整理了宝妈必备资料：\n- 早教绘本\n- 宝妈副业攻略\n- 辅食食谱\n- 省钱攻略\n\n先存网盘。\n\n口令：{{cmd}}\n手机端对应App→复制口令→自动弹出。\n\n#宝妈 #早教 #副业"
+};
+
+// ---------- 通用 ----------
+const $ = s=>document.querySelector(s);
+const $$ = s=>document.querySelectorAll(s);
+function riskPill(r){return r==="高"?'<span class="pill p-bad">高风险</span>':r==="中"?'<span class="pill p-warn">中风险</span>':'<span class="pill p-ok">低风险</span>';}
+
+// 导航
+$$("nav button").forEach(b=>b.onclick=()=>{
+  $$("nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  $$(".tab").forEach(t=>t.classList.remove("active"));
+  $("#"+b.dataset.tab).classList.add("active");
+});
+
+// 资源库
+function renderTracks(filter=""){
+  const g=$("#trackGrid"); g.innerHTML="";
+  TRACKS.filter(t=>!filter || (t.name+t.desc+t.hooks.join("")).includes(filter)).forEach(t=>{
+    const d=document.createElement("div"); d.className="track";
+    d.innerHTML=`<span class="tag">${t.tag}</span><b>赛道${t.id} ${t.name}</b><span class="desc">${t.desc}</span>`;
+    d.onclick=()=>showTrack(t.id);
+    g.appendChild(d);
+  });
+}
+function showTrack(id){
+  const t=TRACKS.find(x=>x.id===id);
+  const d=$("#trackDetail"); d.classList.remove("hidden");
+  d.innerHTML=`<h2>赛道${t.id} ${t.name} ${riskPill(t.risk)}</h2>
+    <p class="muted">${t.desc}</p>
+    <h3>资源钩子</h3><div>${t.hooks.map(h=>`<span class="pill p-ok">${h}</span>`).join("")}</div>
+    <h3>大佬打法</h3><p>${t.play}</p>
+    <h3>变现组合</h3><p>${t.earn}</p>
+    <h3>风控</h3><p class="muted">${t.riskNote}</p>`;
+  d.scrollIntoView({behavior:"smooth"});
+}
+$("#libSearch").oninput=e=>renderTracks(e.target.value);
+renderTracks();
+
+// 文案生成
+const ct=$("#copyTpl");
+TRACKS.forEach(t=>{const o=document.createElement("option");o.value=t.id;o.textContent=`赛道${t.id} ${t.name}`;ct.appendChild(o);});
+$("#genCopy").onclick=()=>{
+  const tpl=COPY_TPL[ct.value];
+  const name=$("#vName").value||"资料合集";
+  const cmd=$("#vCmd").value||"/f9X3oSyuiaCa:/";
+  const out=tpl.replace(/{{name}}/g,name).replace(/{{cmd}}/g,cmd);
+  $("#copyOut").classList.remove("hidden");
+  $("#copyOut").textContent=out;
+  $("#copyBtn").classList.remove("hidden");
+};
+$("#copyBtn").onclick=()=>{navigator.clipboard.writeText($("#copyOut").textContent);alert("已复制");};
+
+// 口令管理 (localStorage)
+function loadCmd(){return JSON.parse(localStorage.getItem("wp_cmd")||"[]");}
+function saveCmd(a){localStorage.setItem("wp_cmd",JSON.stringify(a));renderCmd();}
+function renderCmd(){
+  const a=loadCmd(); const box=$("#cmdList");
+  if(!a.length){box.innerHTML='<p class="muted">还没有保存口令</p>';return;}
+  box.innerHTML='<table><tr><th>网盘</th><th>赛道</th><th>口令</th><th>备注</th><th></th></tr>'+
+    a.map((c,i)=>`<tr><td>${c.net}</td><td>${c.track}</td><td><span class="kbd">${c.cmd}</span></td><td>${c.note}</td><td class="row-actions"><button class="ghost" onclick="delCmd(${i})">删</button></td></tr>`).join("")+'</table>';
+}
+window.delCmd=i=>{const a=loadCmd();a.splice(i,1);saveCmd(a);};
+$("#addCmd").onclick=()=>{
+  const a=loadCmd();
+  a.push({net:$("#cNet").value,track:$("#cTrack").value,cmd:$("#cCmd").value,note:$("#cNote").value});
+  saveCmd(a);
+  $("#cTrack").value="";$("#cCmd").value="";$("#cNote").value="";
+};
+renderCmd();
+
+// 数据表打卡已移除（统一在「网盘推广跟踪表」记录每日数据，避免重复）
+window.__wbRerender=function(){try{renderTracks();renderCmd();}catch(e){}};
+</script>
+</body>
+</html>
