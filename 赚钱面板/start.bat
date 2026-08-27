@@ -1,10 +1,10 @@
 @echo off
 setlocal
 set "DIR=%~dp0"
-set "PY=C:\Users\çŸ³\.workbuddy\binaries\python\versions\3.13.12\python.exe"
-if not exist "%PY%" ( echo æ‰¾ä¸åˆ° Pythonï¼š%PY% & pause & exit /b 1 )
+set "PY=C:\Users\Ê¯\.workbuddy\binaries\python\versions\3.13.12\python.exe"
+if not exist "%PY%" ( echo ÕÒ²»µ½ Python£º%PY% & pause & exit /b 1 )
 
-echo æ­£åœ¨å¯åŠ¨æœ¬åœ°æœåŠ¡å™¨ http://127.0.0.1:8000 ...
-echo å¯åŠ¨åæµè§ˆå™¨ä¼šè‡ªåŠ¨æ‰“å¼€é¢æ¿ï¼›ç”¨å®Œå…³é—­è¿™ä¸ªé»‘çª—å£å³å¯åœæ­¢ã€‚
+echo ÕıÔÚÆô¶¯±¾µØ·şÎñÆ÷ http://127.0.0.1:8000 ...
+echo Æô¶¯ºóä¯ÀÀÆ÷»á×Ô¶¯´ò¿ªÃæ°å£»ÓÃÍê¹Ø±ÕÕâ¸öºÚ´°¿Ú¼´¿ÉÍ£Ö¹¡£
 start "" http://127.0.0.1:8000/index.html
 "%PY%" -m http.server 8000 --directory "%DIR%"
