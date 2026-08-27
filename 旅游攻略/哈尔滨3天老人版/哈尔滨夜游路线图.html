@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>哈尔滨夜游路线图（中央大街·索菲亚·铁路大桥·中华巴洛克）</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+         background:#0b1026; color:#e6e6ff; padding:20px; }
+  h1 { font-size:20px; margin:0 0 4px; color:#fff; }
+  .sub { color:#9fb0ff; font-size:13px; margin-bottom:16px; }
+  .wrap { max-width:920px; margin:0 auto; }
+  .mapbox { background:#0e1430; border:1px solid #2a3566; border-radius:10px; padding:8px; }
+  svg { width:100%; height:auto; display:block; }
+  .legend { display:flex; flex-wrap:wrap; gap:14px; margin:16px 0; font-size:13px; }
+  .legend span { display:inline-flex; align-items:center; gap:6px; }
+  .dot { width:12px; height:12px; border-radius:50%; display:inline-block; }
+  table { width:100%; border-collapse:collapse; margin-top:10px; font-size:13px; }
+  th,td { border:1px solid #2a3566; padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#16204a; color:#b4c8ff; font-weight:600; }
+  tr:nth-child(even) td { background:#101732; }
+  .seq { color:#ffd666; font-weight:700; }
+  .walk { color:#52c41a; }
+  .didi { color:#ffa940; }
+  .note { background:#121a3a; border-left:4px solid #597ef7; padding:10px 14px; margin-top:14px;
+          border-radius:0 6px 6px 0; font-size:13px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>哈尔滨夜游路线图 · 4 点串联</h1>
+  <div class="sub">圣索菲亚 → 中央大街 → 铁路大桥夜景 → 中华巴洛克（仅路线与距离，不含餐饮/住宿/其他景点）</div>
+
+  <div class="mapbox">
+    <svg viewBox="0 0 680 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="哈尔滨夜游路线图">
+      <defs>
+        <linearGradient id="river" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#16335c"/>
+          <stop offset="1" stop-color="#0e1f3d"/>
+        </linearGradient>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L7,3 L0,6 Z" fill="#ffd666"/>
+        </marker>
+      </defs>
+
+      <!-- 松花江 -->
+      <rect x="0" y="0" width="680" height="78" fill="url(#river)"/>
+      <text x="14" y="30" fill="#7fb0ff" font-size="14">↑ 松花江（北岸：松北区）</text>
+      <text x="14" y="52" fill="#5f86c9" font-size="11">江南岸＝道里 / 道外（本次夜游都在江南）</text>
+
+      <!-- 街区底色 -->
+      <rect x="0" y="78" width="680" height="462" fill="#0e1430"/>
+
+      <!-- 中央大街（竖向主干，从江边防洪纪念塔向南） -->
+      <line x1="300" y1="78" x2="300" y2="320" stroke="#3a4a86" stroke-width="6" stroke-linecap="round"/>
+      <text x="312" y="200" fill="#8aa0e0" font-size="12" transform="rotate(90 312 200)">中 央 大 街</text>
+
+      <!-- 铁路大桥（江上，西北侧） -->
+      <line x1="120" y1="40" x2="250" y2="40" stroke="#5a6fae" stroke-width="5"/>
+      <line x1="120" y1="40" x2="250" y2="40" stroke="#9fb0ff" stroke-width="1.5" stroke-dasharray="4 5"/>
+      <text x="120" y="34" fill="#9fb0ff" font-size="10">滨洲铁路桥（网红桥）</text>
+
+      <!-- 路线（黄色虚线 + 箭头） -->
+      <!-- 1 索菲亚 -> 中央大街 -->
+      <path d="M438,215 L300,215" fill="none" stroke="#ffd666" stroke-width="3"
+            stroke-dasharray="8 5" marker-end="url(#arrow)"/>
+      <!-- 2 中央大街 南->北 到江边 -->
+      <path d="M300,215 L300,92" fill="none" stroke="#ffd666" stroke-width="3"
+            stroke-dasharray="8 5" marker-end="url(#arrow)"/>
+      <!-- 3 江边 -> 铁路大桥 -->
+      <path d="M300,92 L250,60" fill="none" stroke="#ffd666" stroke-width="3"
+            stroke-dasharray="8 5" marker-end="url(#arrow)"/>
+      <!-- 4 铁路大桥 -> 中华巴洛克（滴滴，虚线不同色） -->
+      <path d="M250,60 L560,400" fill="none" stroke="#ffa940" stroke-width="3"
+            stroke-dasharray="3 6" marker-end="url(#arrow)"/>
+
+      <!-- 点 1：圣索菲亚 -->
+      <circle cx="438" cy="215" r="11" fill="#597ef7" stroke="#fff" stroke-width="2"/>
+      <text x="438" y="245" fill="#fff" font-size="14" text-anchor="middle" font-weight="700">① 圣索菲亚</text>
+      <text x="438" y="262" fill="#9fb0ff" font-size="10.5" text-anchor="middle">透笼街88号 · 夜景外观</text>
+
+      <!-- 点 2：中央大街 -->
+      <circle cx="300" cy="215" r="11" fill="#597ef7" stroke="#fff" stroke-width="2"/>
+      <text x="300" y="245" fill="#fff" font-size="14" text-anchor="middle" font-weight="700">② 中央大街</text>
+      <text x="300" y="262" fill="#9fb0ff" font-size="10.5" text-anchor="middle">面包石 · 欧式灯光</text>
+
+      <!-- 点 3：铁路大桥夜景 -->
+      <circle cx="250" cy="60" r="11" fill="#597ef7" stroke="#fff" stroke-width="2"/>
+      <text x="250" y="92" fill="#fff" font-size="14" text-anchor="middle" font-weight="700">③ 铁路大桥夜景</text>
+      <text x="250" y="108" fill="#9fb0ff" font-size="10.5" text-anchor="middle">江边 · 桥梁灯光映江</text>
+
+      <!-- 点 4：中华巴洛克 -->
+      <circle cx="560" cy="400" r="11" fill="#597ef7" stroke="#fff" stroke-width="2"/>
+      <text x="560" y="430" fill="#fff" font-size="14" text-anchor="middle" font-weight="700">④ 中华巴洛克</text>
+      <text x="560" y="447" fill="#9fb0ff" font-size="10.5" text-anchor="middle">道外靖宇街 · 老建筑灯</text>
+
+      <!-- 距离标注 -->
+      <text x="370" y="208" fill="#ffd666" font-size="11">≈0.7km 步行10分</text>
+      <text x="244" y="160" fill="#ffd666" font-size="11" transform="rotate(-90 244 160)">≈1.4km 步行18分</text>
+      <text x="150" y="52" fill="#ffd666" font-size="11">≈0.8km 步行10分</text>
+      <text x="360" y="240" fill="#ffa940" font-size="11">≈3.0km 滴滴15分 ¥15-25</text>
+
+      <!-- 指北 -->
+      <g transform="translate(630,470)">
+        <circle r="22" fill="#16204a" stroke="#3a4a86"/>
+        <text x="0" y="-6" fill="#ff6b6b" font-size="12" text-anchor="middle" font-weight="700">N</text>
+        <line x1="0" y1="-4" x2="0" y2="14" stroke="#9fb0ff" stroke-width="2"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="legend">
+    <span><i class="dot" style="background:#ffd666"></i>步行路段</span>
+    <span><i class="dot" style="background:#ffa940"></i>滴滴路段</span>
+    <span><i class="dot" style="background:#597ef7"></i>景点</span>
+  </div>
+
+  <table>
+    <tr><th class="seq">顺序</th><th>路段</th><th>方式</th><th>距离</th><th>时长</th><th>费用</th></tr>
+    <tr><td class="seq">①→②</td><td>圣索菲亚 → 中央大街</td><td class="walk">步行（向西）</td><td>≈0.7 km</td><td>约10分钟</td><td>免费</td></tr>
+    <tr><td class="seq">②（全程）</td><td>中央大街 南段→北端防洪纪念塔</td><td class="walk">步行（沿街看灯）</td><td>≈1.4 km</td><td>约18–20分钟</td><td>免费</td></tr>
+    <tr><td class="seq">②→③</td><td>中央大街北端 → 铁路大桥</td><td class="walk">步行（沿江向西）</td><td>≈0.8 km</td><td>约10分钟</td><td>免费</td></tr>
+    <tr><td class="seq">③→④</td><td>铁路大桥/中央大街 → 中华巴洛克</td><td class="didi">滴滴（向东过道外）</td><td>≈3.0 km</td><td>约15分钟</td><td>¥15–25</td></tr>
+  </table>
+
+  <div class="note">
+    <b>路线逻辑</b>：①②③ 都在道里区江南岸，彼此步行可达（合计步行约 2.2 km / 40 分钟含看灯）；
+    ④ 中华巴洛克在道外区，距①②③约 3 km，老人不走路，用滴滴衔接。<br>
+    <b>总览</b>：全程步行约 2.2 km（平缓、江边风凉），滴滴 1 段 3 km，夜游总时长约 3–4 小时（含停留拍照）。<br>
+    <b>提示</b>：铁路大桥与中央大街夜景最亮，可放前段；中华巴洛克灯光约 21:30–22:00 收，别拖太晚。
+  </div>
+</div>
+</body>
+</html>
