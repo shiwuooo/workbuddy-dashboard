@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工具A · 通用收集器（自带AI）</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#fff; --line:#e4e7ec; --ink:#1f2329; --sub:#6b7280;
+    --brand:#2f6fed; --brand2:#0f9d8a; --warn:#b8860b; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;padding:14px;max-width:860px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  h1{font-size:18px;margin:0}
+  .tag{font-size:12px;color:var(--sub)}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:10px;padding:10px 14px;
+    font-size:14px;background:var(--brand);color:#fff;transition:.15s}
+  button.ghost{background:#eef1f6;color:var(--ink)}
+  button.green{background:var(--brand2)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  textarea{width:100%;border:1px solid var(--line);border-radius:var(--radius);
+    padding:12px;font-size:14px;font-family:inherit;resize:vertical;background:#fff;color:var(--ink)}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:14px;margin-bottom:14px}
+  label{display:block;font-size:13px;color:var(--sub);margin:10px 0 4px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .hint{font-size:12px;color:var(--sub);margin-top:6px}
+  .status{font-size:13px;padding:8px 10px;border-radius:8px;margin-top:8px;display:none}
+  .status.run{background:#eef4ff;color:var(--brand)}
+  .status.err{background:#fdecec;color:#c0392b}
+  .status.ok{background:#eafaf3;color:var(--brand2)}
+  dialog{border:none;border-radius:14px;padding:0;max-width:440px;width:92%}
+  dialog .pad{padding:18px}
+  dialog h2{margin:0 0 10px;font-size:16px}
+  input,select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;
+    font-size:14px;font-family:inherit;background:#fff;color:var(--ink)}
+  .x{position:absolute;top:10px;right:12px;background:none;color:var(--sub);font-size:20px;padding:0}
+  .badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:#eef1f6;color:var(--sub)}
+  pre.out{white-space:pre-wrap;word-break:break-word;min-height:120px}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>工具A · 通用收集器</h1><div class="tag">不确定分类 → 我帮你总结 / 分类 / 关联</div></div>
+  <button class="ghost" id="openSet">⚙ 设置</button>
+</header>
+
+<div class="box">
+  <label>把一堆东西贴进来（文字 / 金句 / 博主观点 / 链接正文 / 想法 / 视频字幕… 用空行隔开多条更好）</label>
+  <textarea id="inp" rows="9" placeholder="例如：&#10;看到一个博主说「内容要做成可复用的资产而不是一次性消耗」&#10;&#10;小红书有人讨论年轻人为什么不爱存钱"></textarea>
+  <div class="row" style="margin-top:10px">
+    <button id="run">🤖 AI 总结 · 分类 · 关联</button>
+    <button class="ghost" id="draft">💾 存草稿</button>
+    <button class="ghost" id="clear">清空</button>
+  </div>
+  <div class="status" id="st"></div>
+</div>
+
+<div class="box">
+  <label>处理结果（可直接编辑，改完再保存）</label>
+  <textarea id="out" class="out" rows="14" placeholder="点上方按钮后，这里会出现带分类和关联建议的 markdown 卡片…"></textarea>
+  <div class="row" style="margin-top:10px">
+    <button class="green" id="save">📁 写入 vault（电脑）</button>
+    <button class="ghost" id="copy">📋 复制</button>
+  </div>
+  <div class="hint">电脑：写入 vault 会弹窗选文件夹（建议选 <b>10-灵感库/00-Inbox/</b>），存成 .md 卡片，手机 Obsidian 实时同步。&#10;手机：浏览器不支持直接写文件，点「复制」后粘到 Obsidian App 新建笔记即可。</div>
+</div>
+
+<dialog id="set">
+  <div class="pad" style="position:relative">
+    <button class="x" id="closeSet">×</button>
+    <h2>AI 引擎设置（每台设备填一次）</h2>
+    <label>引擎</label>
+    <select id="s_engine">
+      <option value="cloud">云端 API（OpenAI 兼容，手机电脑通用）</option>
+      <option value="ollama">本地 Ollama（免费离线，仅电脑）</option>
+    </select>
+    <label>接口地址 (base_url)</label>
+    <input id="s_url" placeholder="云端留空用默认；Ollama 填 http://localhost:11434">
+    <label>模型名</label>
+    <input id="s_model" placeholder="如 deepseek-chat / qwen2.5:14b / gpt-4o-mini">
+    <label>API Key（本地 Ollama 可留空）</label>
+    <input id="s_key" type="password" placeholder="仅存在本机浏览器，不上传">
+    <div class="hint">数据仍全部存在 D 盘 vault；只有“调用 AI 这一步”走你选的引擎。Key 只存本设备浏览器。
+    <br>· 想手机电脑都能用（<b>推荐</b>）：选「云端 API」，默认已填好 <b>智谱 GLM-4.7-Flash</b>（官方永久免费、免信用卡、国内直连）。去 <b>open.bigmodel.cn</b> 用手机号注册，建个 API Key 粘进来即可。
+    <br>· 想用 DeepSeek 也行：把接口地址改成 <b>https://api.deepseek.com/v1</b>、模型填 <b>deepseek-chat</b>（新用户送 300万 token/30天，用完按量付费，费率便宜）。
+    <br>· 想完全免费离线（仅电脑）：选「本地 Ollama」，让我帮你装到 D 盘。</div>
+    <div class="row" style="margin-top:14px">
+      <button id="saveSet">保存</button>
+      <button class="ghost" id="cancelSet">取消</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+const $ = s=>document.querySelector(s);
+const LS='toolA_settings_v1';
+function loadSet(){try{return JSON.parse(localStorage.getItem(LS))||{}}catch(e){return{}}}
+function saveSet(o){localStorage.setItem(LS,JSON.stringify(o))}
+function showSt(t,c){const e=$('#st');e.className='status '+c;e.style.display='block';e.textContent=t}
+
+function getSys(){
+  return `你是一个个人知识管理助手，服务于一个备考公务员、做自媒体、关注赚钱情报与认知成长的纯小白用户。
+用户会粘贴若干条混杂内容（文章片段、博主观点、金句、想法、链接文字、视频字幕等，可能多条混在一起）。
+请逐条处理，按下面格式输出，每条用 \`\`\`markdown 代码块包裹：
+
+---
+title: 用一句断言句作标题（如「内容应做成可复用资产而非一次性消耗」）
+tags: [分类1, 分类2]   # 从以下自选或补充：灵感 / 博主 / 选题 / 申论可用 / 赚钱情报 / AI工具 / 生活 / 旅游 / 认知成长 / 其他
+value: 高|中|低        # 这条值不值得留
+summary: 一句话说清这条是什么
+associate: 可关联的已有知识方向（如「可关联: 申论素材库/长征」「可关联: 灵感库/内容资产化」），没有就写「暂无」
+---
+
+正文：用用户原话要点 + 你的提炼（2-4 句）。
+
+要求：
+1. 中文输出。
+2. 分类要实用，能帮用户日后检索；不确定就放「其他」。
+3. 若某条明显能用于申论，tags 必带「申论可用」并在 associate 指明可关联的申论方向。
+4. 多条内容之间要指出是否有内在联系（在最后加一段「🔗 本条之间的联系」）。`;
+}
+
+async function callLLM(sys,user){
+  const s=loadSet();
+  if(!s.engine){showSt('请先点右上角 ⚙ 设置：选「云端 API」，已默认填好智谱 GLM-4.7-Flash（open.bigmodel.cn 用手机号注册拿 key 粘进来，1 步永久免费），或选「本地 Ollama」让我帮你装', 'err');throw new Error('no setting')}
+  const msgs=[{role:'system',content:sys},{role:'user',content:user}];
+  if(s.engine==='ollama'){
+    const url=(s.url||'http://localhost:11434')+'/api/chat';
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:s.model||'qwen2.5:14b',messages:msgs,stream:false})});
+    if(!r.ok) throw new Error('Ollama 错误 '+r.status+'（确认 Ollama 已启动且模型已拉取）');
+    const d=await r.json(); return d.message.content;
+  }else{
+    const url=(s.url||'https://api.openai.com/v1')+'/chat/completions';
+    const r=await fetch(url,{method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+(s.key||'')},
+      body:JSON.stringify({model:s.model||'deepseek-chat',messages:msgs,temperature:0.5})});
+    if(!r.ok){const t=await r.text();throw new Error('API 错误 '+r.status+' '+t.slice(0,120))}
+    const d=await r.json(); return d.choices[0].message.content;
+  }
+}
+
+$('#run').onclick=async()=>{
+  const txt=$('#inp').value.trim();
+  if(!txt){showSt('先贴点东西进来', 'err');return}
+  $('#run').disabled=true; showSt('AI 处理中…（调用你设置的引擎）','run');
+  try{
+    const res=await callLLM(getSys(),txt);
+    $('#out').value=res; showSt('完成。可直接编辑后保存。','ok');
+  }catch(e){ showSt('出错：'+e.message,'err'); }
+  finally{ $('#run').disabled=false; }
+};
+
+$('#draft').onclick=()=>{localStorage.setItem('toolA_draft',JSON.stringify({inp:$('#inp').value,out:$('#out').value}));showSt('已存本机草稿（换设备/清缓存会丢）','ok')};
+if(localStorage.getItem('toolA_draft')){try{const d=JSON.parse(localStorage.getItem('toolA_draft'));$('#inp').value=d.inp||'';$('#out').value=d.out||''}catch(e){}}
+
+$('#clear').onclick=()=>{$('#inp').value='';$('#out').value=''};
+$('#copy').onclick=async()=>{await navigator.clipboard.writeText($('#out').value);showSt('已复制','ok')};
+$('#save').onclick=async()=>{
+  const v=$('#out').value.trim(); if(!v){showSt('没有内容可保存','err');return}
+  const d=new Date(); const pad=n=>String(n).padStart(2,'0');
+  const name='IN-'+d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'-'+pad(d.getHours())+pad(d.getMinutes())+'.md';
+  try{
+    const h=await window.showSaveFilePicker({suggestedName:name,
+      types:[{description:'Markdown',accept:{'text/markdown':['.md']}}]});
+    const w=await h.createWritable(); await w.write('---\ncreated: '+new Date().toISOString()+'\nsource: 工具A-通用收集器\n---\n\n'+v); await w.close();
+    showSt('已写入 vault：'+name+'（在 Obsidian 里可继续编辑）','ok');
+  }catch(e){ if(e.name!=='AbortError') showSt('保存取消或失败：'+e.message,'err'); }
+};
+
+// settings dialog
+const set=$('#set');
+$('#openSet').onclick=()=>{const s=loadSet();$('#s_engine').value=s.engine||'cloud';
+  // 云端默认预填 DeepSeek，用户只需粘 key
+  $('#s_url').value=s.url||'https://open.bigmodel.cn/api/paas/v4';
+  $('#s_model').value=s.model||'glm-4.7-flash';
+  $('#s_key').value=s.key||'';set.showModal()};
+$('#closeSet').onclick=()=>set.close(); $('#cancelSet').onclick=()=>set.close();
+$('#saveSet').onclick=()=>{saveSet({engine:$('#s_engine').value,url:$('#s_url').value.trim(),model:$('#s_model').value.trim(),key:$('#s_key').value.trim()});set.close();showSt('设置已保存','ok')};
+</script>
+</body>
+</html>
