@@ -1,0 +1,11 @@
+【赚钱面板·自动采集状态】
+时间戳：2026-08-11 15:17
+成功源数(ok)：5
+失败源数(fail)：7
+fallback：否（最佳轮次 ok=5 已达阈值 ≥4，未触发兜底）
+更新时间：2026-08-11 15:17
+
+成功源（5）：少数派、阮一峰周刊、Hacker News 创业、Reddit r/SideHustle、Side Hustle Nation
+失败源（7）：Reddit r/Entrepreneur(429)、Reddit r/EntrepreneurRideAlong(429)、Smart Passive Income(解析错)、36氪快讯(解析错)、知乎·副业搜索(403)、B站·副业赚钱(403)、微博·副业赚钱(403)
+
+说明：本次共抓取 5 个源的真实资讯（含 39 条条目），海外站点连通性较上次改善（Hacker News / Reddit r/SideHustle 本次成功）；失败源多为国内站点的反爬拦截(403)及 Reddit 限流(429)，属环境问题非采集器缺陷。离线成品页面已生成：D:\workbuddy\赚钱面板\赚钱面板-成品.html（双击即用）。
