@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>光鸭云盘 · 资源领取</title>
+<style>
+:root{
+  --brand:#2b6cff; --bg:#f5f7fb; --card:#fff;
+  --text:#1f2533; --sub:#6b7385; --line:#e6eaf2;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:var(--card);max-width:430px;width:100%;border-radius:20px;padding:28px 22px;box-shadow:0 12px 40px rgba(20,30,60,.10);border:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.logo .dot{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#5b8bff);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:18px}
+.logo b{font-size:17px}
+h1{font-size:21px;line-height:1.4;margin-bottom:8px}
+p.lead{color:var(--sub);font-size:14px;line-height:1.7;margin-bottom:20px}
+.btns{display:flex;flex-direction:column;gap:12px;margin-bottom:18px}
+.btn{display:flex;align-items:center;gap:12px;padding:15px 16px;border-radius:14px;text-decoration:none;font-weight:600;font-size:15px;color:#fff;background:var(--brand);transition:.15s}
+.btn:active{transform:scale(.985)}
+.btn.pc{background:#fff;color:var(--text);border:1.5px solid var(--line)}
+.btn .ic{font-size:20px}
+.btn small{display:block;font-weight:400;font-size:12px;opacity:.85;margin-top:2px}
+.copy{display:flex;gap:10px;align-items:center;background:#f3f6fc;border:1px dashed #c7d4f5;border-radius:14px;padding:12px 14px;margin-bottom:18px}
+.copy .link{flex:1;font-size:13px;color:var(--sub);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy button{border:none;background:var(--brand);color:#fff;font-weight:600;padding:9px 14px;border-radius:10px;font-size:13px;cursor:pointer}
+.steps{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.steps li{display:flex;gap:10px;font-size:13.5px;color:#3a4156;line-height:1.5}
+.steps .n{flex:none;width:22px;height:22px;border-radius:50%;background:#eaf0ff;color:var(--brand);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+.note{margin-top:18px;font-size:12px;color:#9aa1b1;line-height:1.6;border-top:1px solid var(--line);padding-top:14px}
+.toast{position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(20px);background:#1f2533;color:#fff;padding:11px 20px;border-radius:30px;font-size:14px;opacity:0;pointer-events:none;transition:.25s}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo"><div class="dot">光</div><b>光鸭云盘</b></div>
+  <h1>该资源需用客户端打开</h1>
+  <p class="lead">网页版无法直接转存，也不计入拉新与会员统计。<br>请先下载光鸭云盘客户端，登录后复制下方链接，客户端会自动弹出资源，点“保存到网盘”即可领取。</p>
+  <div class="btns">
+    <a class="btn" href="https://sj.qq.com/appdetail/com.guangshanyun.pan" target="_blank" rel="noopener">
+      <span class="ic">📱</span><span>下载手机端 APP<small>应用市场搜索“光鸭云盘”</small></span></a>
+    <a class="btn pc" href="https://www.guangyapan.com/" target="_blank" rel="noopener">
+      <span class="ic">💻</span><span>下载电脑端<small>Windows / macOS 客户端</small></span></a>
+  </div>
+  <div class="copy">
+    <span class="link" id="lk"></span>
+    <button onclick="copyLink()">复制</button>
+  </div>
+  <ol class="steps">
+    <li><span class="n">1</span><span>下载并安装光鸭云盘（手机或电脑端）。</span></li>
+    <li><span class="n">2</span><span>注册 / 登录账号（新手机号 + 新设备才算拉新）。</span></li>
+    <li><span class="n">3</span><span>复制上方链接，打开客户端会自动弹出该资源。</span></li>
+    <li><span class="n">4</span><span>点“保存到网盘”完成转存；如需不限速可开通会员。</span></li>
+  </ol>
+  <p class="note">提示：分享的资源建议打包成 &gt;100MB 的文件或文件夹，可避免网页端“免登录直链”被直接下载、绕过客户端统计。</p>
+</div>
+<div class="toast" id="toast">链接已复制</div>
+<script>
+const SHARE_LINK="https://www.guangyapan.com/s/1928825463857553452_amdU5dDRwxZFgqbL";
+document.getElementById("lk").textContent=SHARE_LINK;
+function copyLink(){
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(SHARE_LINK).then(show).catch(fallback);
+  }else{fallback();}
+  function fallback(){
+    const t=document.createElement("textarea");t.value=SHARE_LINK;document.body.appendChild(t);t.select();
+    try{document.execCommand("copy");}catch(e){}document.body.removeChild(t);show();
+  }
+}
+function show(){const t=document.getElementById("toast");t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1600);}
+</script>
+</body>
+</html>
