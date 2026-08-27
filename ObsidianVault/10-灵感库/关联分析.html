@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>碎片关联分析</title>
+<style>
+:root{
+  --bg:#f5f6f8; --card:#ffffff; --ink:#1f2933; --muted:#6b7280;
+  --line:#e5e7eb; --accent:#2563eb; --accent2:#1e3a8a; --mark:#fff3a3;
+  --codebg:#f3f4f6;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:16px;line-height:1.75;-webkit-text-size-adjust:100%}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;padding:10px 18px;flex-wrap:wrap}
+.topbar .ttl{font-weight:700;font-size:16px;color:var(--accent2);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:140px}
+.tag{background:#eef2ff;color:#3730a3;border:1px solid #c7d2fe;
+  font-size:12px;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.meta{font-size:12px;color:var(--muted);white-space:nowrap}
+.search{display:flex;align-items:center;gap:6px}
+.search input{width:200px;max-width:46vw;padding:7px 12px;border:1px solid var(--line);
+  border-radius:999px;font-size:14px;outline:none}
+.search input:focus{border-color:var(--accent)}
+.tocbtn{display:none;border:1px solid var(--line);background:#fff;border-radius:8px;
+  padding:6px 10px;font-size:14px;cursor:pointer}
+.layout{max-width:920px;margin:0 auto;padding:22px 18px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:30px 34px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.toc{position:fixed;left:0;top:0;height:100%;width:280px;background:#fff;
+  border-right:1px solid var(--line);overflow:auto;padding:64px 20px 20px;
+  transform:translateX(-100%);transition:transform .2s;z-index:30}
+.toc.open{transform:translateX(0)}
+.toc h4{margin:0 0 10px;font-size:13px;color:var(--muted)}
+.toc a{display:block;color:#374151;text-decoration:none;padding:4px 8px;border-radius:6px;font-size:14px}
+.toc a:hover{background:#f1f5f9}
+.toc a.lv3{padding-left:22px;font-size:13px;color:#6b7280}
+.tocmask{display:none;position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:25}
+.tocmask.open{display:block}
+h1,h2,h3,h4{color:var(--accent2);line-height:1.35;margin:1.6em 0 .6em}
+h1{font-size:25px;margin-top:.2em;border-bottom:2px solid var(--line);padding-bottom:.3em}
+h2{font-size:20px;border-left:4px solid var(--accent);padding-left:12px}
+h3{font-size:17px;color:#1e40af}
+p{margin:.7em 0}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+strong,b{color:#111827}
+ul,ol{padding-left:1.6em;margin:.6em 0}
+li{margin:.3em 0}
+code{background:var(--codebg);padding:2px 6px;border-radius:5px;font-size:.92em;
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace}
+pre{background:var(--codebg);padding:16px 18px;border-radius:10px;overflow:auto;
+  border:1px solid var(--line);font-size:.88em;line-height:1.6}
+pre code{background:none;padding:0}
+blockquote{margin:.8em 0;padding:10px 16px;border-left:4px solid var(--accent);
+  background:#f8fafc;color:#374151;border-radius:0 8px 8px 0}
+hr{border:none;border-top:1px solid var(--line);margin:1.8em 0}
+table{border-collapse:collapse;width:100%;margin:1em 0;font-size:14px;
+  display:block;overflow-x:auto;white-space:nowrap}
+th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}
+th{background:#eef2ff;color:#1e3a8a;font-weight:600;position:sticky;top:0}
+tbody tr:nth-child(even){background:#fafafa}
+mark{background:var(--mark);padding:0 2px;border-radius:3px}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+@media (max-width:760px){
+  .layout{padding:14px 10px 60px}
+  .card{padding:20px 16px}
+  h1{font-size:21px}
+  .tocbtn{display:inline-block}
+  .search input{width:140px}
+}
+@media print{
+  .topbar,.toc,.tocmask{display:none!important}
+  body{background:#fff}
+  .card{box-shadow:none;border:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="ttl">碎片关联分析</span>
+  <span class="tag">知识管理·关联</span>
+  <span class="meta">2026-08-16 21:06 · 3,857 字</span>
+  <button class="tocbtn" onclick="document.getElementById('toc').classList.toggle('open');document.getElementById('mask').classList.toggle('open')">☰ 目录</button>
+  <div class="search"><input id="q" placeholder="搜索本页…" oninput="search(this.value)"></div>
+</div>
+<div class="tocmask" id="mask" onclick="document.getElementById('toc').classList.remove('open');this.classList.remove('open')"></div>
+<nav class="toc" id="toc"><h4>目录</h4><div class="toc">
+<ul>
+<li><a href="#_1">碎片关联分析</a><ul>
+<li><a href="#ai">一、AI 智能分类总表</a></li>
+<li><a href="#_2">一·补 主题标签坐标（多轴升级后追加）</a></li>
+<li><a href="#ai_1">二、三大主题簇（AI 总结）</a><ul>
+<li><a href="#a-10-12-13-07-04a">簇 A · 行动 · 执行（#10 #12 #13 #07 #04a）</a></li>
+<li><a href="#b-01-03-06-04b-07">簇 B · 自我叙事 · 看开（#01 #03 #06 #04b #07）</a></li>
+<li><a href="#c-02-11">簇 C · 内容传播 · 运营（#02 #11）</a></li>
+</ul>
+</li>
+<li><a href="#_3">三、跨簇关联地图（"连在一起"）</a></li>
+<li><a href="#_4">四、与已有精炼卡的关联</a></li>
+<li><a href="#_5">五、用法</a></li>
+<li><a href="#2026-08-16">六、本轮新建卡片与跨簇链接更新（2026-08-16）</a><ul>
+<li><a href="#61-10">6.1 新建卡片清单（10 张）</a></li>
+<li><a href="#62">6.2 跨簇链接更新（卡片化后更清晰）</a></li>
+<li><a href="#63-outlier">6.3 outlier 暂挂（不进主库，保留原文）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#05-idea">05 猫·治愈（情感共鸣）→ 若做"萌宠情绪价值"内容可转 idea。</a></li>
+<li><a href="#08-cheat-sheet">08 除法速算（知识疑问，已口头答）→ 可独立做 cheat sheet，不进灵感库。</a></li>
+<li><a href="#09-idea">09 屎尿屁吐槽（观察）→ 若做"国人表达特质"选题可转 idea；否则丢弃。</a></li>
+</ul>
+</div>
+</nav>
+<div class="layout"><div class="card"><hr />
+<p>title: 碎片关联分析（AI 智能分类 + 总结 + 关联）
+type: meta
+created: 2026-08-16
+source: 00-捕获箱/整理分析_2026-07-31（13 段 raw）
+method: LLM 重分类（非关键词粗分）；关联 = 主题簇 + 跨簇链接</p>
+<hr />
+<h1 id="_1">碎片关联分析</h1>
+<blockquote>
+<p>这是用 AI（LLM）对你散存碎片做的<strong>智能重分类 + 总结 + 关联</strong>，不是网页的关键词粗分。
+目的：让你看到"乱七八糟的内容"其实能聚成几个清晰主题，并且彼此相连。</p>
+</blockquote>
+<h2 id="ai">一、AI 智能分类总表</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>片段一句话</th>
+<th>AI 类型</th>
+<th>与谁关联</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td>脸面是富人的，穷人该拿它变现；富人只认利益</td>
+<td>决策过滤器(values)</td>
+<td>↔ 生活主线卡（不被外界框架束缚）</td>
+</tr>
+<tr>
+<td>02</td>
+<td>如何荒废周末（反着做）= 内容反讽框架</td>
+<td>运营卡(idea)</td>
+<td>↔ 11（标题+转发闭环）</td>
+</tr>
+<tr>
+<td>03</td>
+<td>世俗烦恼多是自己意识的投射、钻牛角尖</td>
+<td>决策过滤器(values)</td>
+<td>↔ 06（重构自我叙事）</td>
+</tr>
+<tr>
+<td>04a</td>
+<td>亚古兽第一个进化=用勇气开道</td>
+<td>决策过滤器(values)</td>
+<td>↔ 13（行动优先）</td>
+</tr>
+<tr>
+<td>04b</td>
+<td>巴达兽最后进化=被击碎仍充满希望</td>
+<td>决策过滤器(values)</td>
+<td>↔ 06（重生/希望）</td>
+</tr>
+<tr>
+<td>05</td>
+<td>真爱猫不在意品种，被治愈</td>
+<td>暂挂(情感 outlier)</td>
+<td>—（不进主库）</td>
+</tr>
+<tr>
+<td>06</td>
+<td>真正的重生=让旧地方看见新的你</td>
+<td>决策过滤器(values)</td>
+<td>↔ 03、04b</td>
+</tr>
+<tr>
+<td>07</td>
+<td>别等未来，生活就在当下</td>
+<td>决策过滤器(values)</td>
+<td>↔ 13（都反拖延内耗）</td>
+</tr>
+<tr>
+<td>08</td>
+<td>除法速算提问（多位数÷3/4位）</td>
+<td>暂挂(知识疑问)</td>
+<td>已口头答，可独立做 cheat sheet</td>
+</tr>
+<tr>
+<td>09</td>
+<td>中国人一讲屎尿屁就发狠</td>
+<td>暂挂(吐槽 outlier)</td>
+<td>—</td>
+</tr>
+<tr>
+<td>10</td>
+<td>提高行动力=让大脑每分钟做 1 个决策</td>
+<td>训练卡(growth)</td>
+<td>↔ 唯唯诺诺卡「停顿3秒」（决策↔停顿互补）</td>
+</tr>
+<tr>
+<td>11</td>
+<td>内容被转发的两条件 + VERITAS 引导思考自己</td>
+<td>运营卡(idea)</td>
+<td>↔ 02（内容运营闭环）</td>
+</tr>
+<tr>
+<td>12</td>
+<td>学规律 / 立即行动 / 不走捷径 三原则</td>
+<td>训练卡(growth)</td>
+<td>↔ 13、10（行动簇）</td>
+</tr>
+<tr>
+<td>13</td>
+<td>跳过情绪直接做事，犹豫最耗人</td>
+<td>训练卡(growth)</td>
+<td>↔ 07、10、12（行动簇）</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">一·补 主题标签坐标（多轴升级后追加）</h2>
+<p>同一段碎片可带多个主题标签，便于跨簇检索：</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>purpose</th>
+<th>topics</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>01</td>
+<td>想</td>
+<td>#心态看开 #自我成长</td>
+</tr>
+<tr>
+<td>02</td>
+<td>用</td>
+<td>#内容运营</td>
+</tr>
+<tr>
+<td>03</td>
+<td>想</td>
+<td>#心态看开 #自我成长</td>
+</tr>
+<tr>
+<td>04a</td>
+<td>想</td>
+<td>#心态看开 #自我成长</td>
+</tr>
+<tr>
+<td>04b</td>
+<td>想</td>
+<td>#心态看开 #自我成长</td>
+</tr>
+<tr>
+<td>05</td>
+<td>存</td>
+<td>#沟通社交（情感 outlier）</td>
+</tr>
+<tr>
+<td>06</td>
+<td>想</td>
+<td>#心态看开 #自我成长</td>
+</tr>
+<tr>
+<td>07</td>
+<td>想·练</td>
+<td>#心态看开 #自我成长</td>
+</tr>
+<tr>
+<td>08</td>
+<td>存</td>
+<td>#学习（知识疑问）</td>
+</tr>
+<tr>
+<td>09</td>
+<td>存</td>
+<td>（吐槽 outlier）</td>
+</tr>
+<tr>
+<td>10</td>
+<td>练</td>
+<td>#自我成长 #沟通社交</td>
+</tr>
+<tr>
+<td>11</td>
+<td>用</td>
+<td>#内容运营</td>
+</tr>
+<tr>
+<td>12</td>
+<td>练</td>
+<td>#自我成长</td>
+</tr>
+<tr>
+<td>13</td>
+<td>练</td>
+<td>#自我成长 #心态看开</td>
+</tr>
+<tr>
+<td>唯唯诺诺卡</td>
+<td>练</td>
+<td>#沟通社交 #自我成长 #心态看开</td>
+</tr>
+<tr>
+<td>生活主线卡</td>
+<td>想</td>
+<td>#自我成长 #心态看开</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ai_1">二、三大主题簇（AI 总结）</h2>
+<h3 id="a-10-12-13-07-04a">簇 A · 行动 · 执行（#10 #12 #13 #07 #04a）</h3>
+<p><strong>核心洞察</strong>：你反复在"想太多→不动"上打转。这批里最值钱的是同一条暗线——<strong>行动本身治内耗</strong>。
+- #13「跳过情绪直接做事」+ #07「活在当下」：都是在说"别等、别内耗"。
+- #10「每分钟逼自己做一个决策」：把"行动"拆解成可执行的最小单位（微决策），正好和"拖延"对着干。
+- #04a「勇气开道」：行动优先于完美准备。
+➡️ 落到练习：把 #10 的微决策 + 唯唯诺诺卡「停顿3秒」组合成日常习惯。</p>
+<h3 id="b-01-03-06-04b-07">簇 B · 自我叙事 · 看开（#01 #03 #06 #04b #07）</h3>
+<p><strong>核心洞察</strong>：你在反复"脱敏外界评价 + 重建自我叙事"。
+- #01「脸面变现」+ #03「烦恼是投射」：都在剥离"别人怎么看我"的枷锁。
+- #06「重生」+ #04b「希望」：被现实击碎后如何自我重启。
+- 与已有「生活主线决策过滤器」卡强相关：主线定了，脸面/烦恼自然淡。</p>
+<h3 id="c-02-11">簇 C · 内容传播 · 运营（#02 #11）</h3>
+<p><strong>核心洞察</strong>：怎么让内容被看见、被转发。
+- #02「反着做标题」是钩子层，#11「转发两条件+引导思考自己」是传播层——合起来是"标题钩人→内容让人想转"的闭环。
+- 直接复用到你的小红书运营。</p>
+<h2 id="_3">三、跨簇关联地图（"连在一起"）</h2>
+<pre><code>         [唯唯诺诺训练卡]──────────[生活主线决策过滤器]
+              │ 决策↔停顿             │ 脸面/主线同根
+              ▼                       ▼
+   簇A行动执行  ────(都反内耗)────  簇B自我叙事
+   #10 #12 #13 #07 #04a        #01 #03 #06 #04b #07
+              │                       │
+              └──── 内容运营闭环 ──── 簇C #02 #11
+</code></pre>
+<ul>
+<li><strong>最强关联</strong>：#07「当下」同时挂在 A 和 B——它既是"别拖延"（行动），也是"别执念未来"（看开）。一条碎片串起两个簇。</li>
+<li><strong>行动↔气质</strong>：#10「逼决策」与唯唯诺诺「停顿3秒」互补——一个让你"敢动"，一个让你"不慌"。</li>
+<li><strong>运营闭环</strong>：#02 标题 + #11 转发 = 你小红书内容的方法论骨架。</li>
+</ul>
+<h2 id="_4">四、与已有精炼卡的关联</h2>
+<ul>
+<li>[[2026-07-31_唯唯诺诺改造训练卡]] — #10 微决策可并入其"每日打卡"</li>
+<li>[[2026-07-31_生活主线决策过滤器]] — #01/#03/#06 是其"不被外界框架束缚"的注脚</li>
+</ul>
+<blockquote>
+<p>在 Obsidian 里打开本笔记，点上面两个 <code>[[ ]]</code> 即可跳转；反向链接也会在卡片底部出现，形成可浏览的<strong>知识图谱</strong>。</p>
+</blockquote>
+<h2 id="_5">五、用法</h2>
+<ol>
+<li>新碎片进 <code>00-捕获箱</code> → 喊「整理」→ 助手按本分类法 AI 精分 + 写卡 + 在此追加关联。</li>
+<li>每周看一次本笔记 + Obsidian 图谱视图，挑一个簇深挖。</li>
+<li>outlier（#05 #08 #09）不进主库，单独处置。</li>
+</ol>
+<hr />
+<h2 id="2026-08-16">六、本轮新建卡片与跨簇链接更新（2026-08-16）</h2>
+<blockquote>
+<p>上轮（2026-08-16）已把 13 段 raw 做 LLM 分类 + 关联。本轮把其中可落地的 10 段<strong>精炼成实际卡片</strong>（growth×3 / values×5 / idea×2），outlier×3 暂挂。卡片已写入 <code>cards/</code>，源文件 <code>00-捕获箱/整理分析_2026-07-31.md</code> 各段标记「已处理」。</p>
+</blockquote>
+<h3 id="61-10">6.1 新建卡片清单（10 张）</h3>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>卡片</th>
+<th>对应片段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>growth·练</td>
+<td>[[2026-08-16_行动力微决策训练卡]]</td>
+<td>#10</td>
+</tr>
+<tr>
+<td>growth·练</td>
+<td>[[2026-08-16_自律三原则训练卡]]</td>
+<td>#12</td>
+</tr>
+<tr>
+<td>growth·练</td>
+<td>[[2026-08-16_跳过情绪直接做训练卡]]</td>
+<td>#13</td>
+</tr>
+<tr>
+<td>values·想</td>
+<td>[[2026-08-16_脸面变现决策过滤器]]</td>
+<td>#01</td>
+</tr>
+<tr>
+<td>values·想</td>
+<td>[[2026-08-16_烦恼是投射决策过滤器]]</td>
+<td>#03</td>
+</tr>
+<tr>
+<td>values·想</td>
+<td>[[2026-08-16_勇气与希望决策过滤器]]</td>
+<td>#04（a+b）</td>
+</tr>
+<tr>
+<td>values·想</td>
+<td>[[2026-08-16_原地重生决策过滤器]]</td>
+<td>#06</td>
+</tr>
+<tr>
+<td>values·想</td>
+<td>[[2026-08-16_活在当下决策过滤器]]</td>
+<td>#07</td>
+</tr>
+<tr>
+<td>idea·用</td>
+<td>[[2026-08-16_反着做标题选题卡]]</td>
+<td>#02</td>
+</tr>
+<tr>
+<td>idea·用</td>
+<td>[[2026-08-16_内容转发原理运营卡]]</td>
+<td>#11</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62">6.2 跨簇链接更新（卡片化后更清晰）</h3>
+<ul>
+<li><strong>行动簇（A）内部闭环</strong>：[[2026-08-16_行动力微决策训练卡]] ↔ [[2026-08-16_跳过情绪直接做训练卡]] ↔ [[2026-08-16_自律三原则训练卡]] ——「逼决策治不动 / 跳过情绪治犹豫 / 三原则管纪律」三脚架。</li>
+<li><strong>行动 ↔ 看开 桥</strong>（最强）：[[2026-08-16_活在当下决策过滤器]] 同时挂在 A、B；[[2026-08-16_勇气与希望决策过滤器]]（#04a 勇气）↔ [[2026-08-16_跳过情绪直接做训练卡]]（行动优先）。</li>
+<li><strong>看开簇（B）过滤链</strong>：[[2026-07-31_生活主线决策过滤器]] → #01 脸面 / #03 烦恼 / #06 重生 / #04b 希望，构成「脱敏外界评价」完整闭环。</li>
+<li><strong>运营闭环（C）</strong>：[[2026-08-16_反着做标题选题卡]]（钩子层）+ [[2026-08-16_内容转发原理运营卡]]（传播层）= 你小红书内容方法论骨架。</li>
+<li><strong>老卡 ↔ 新卡</strong>：[[2026-07-31_唯唯诺诺改造训练卡]]「停顿3秒」↔ [[2026-08-16_行动力微决策训练卡]]「微决策」——一个防急，一个防瘫。</li>
+</ul>
+<h3 id="63-outlier">6.3 outlier 暂挂（不进主库，保留原文）</h3>
+<ul>
+<li>
+<h1 id="05-idea">05 猫·治愈（情感共鸣）→ 若做"萌宠情绪价值"内容可转 idea。</h1>
+</li>
+<li>
+<h1 id="08-cheat-sheet">08 除法速算（知识疑问，已口头答）→ 可独立做 cheat sheet，不进灵感库。</h1>
+</li>
+<li>
+<h1 id="09-idea">09 屎尿屁吐槽（观察）→ 若做"国人表达特质"选题可转 idea；否则丢弃。</h1>
+</li>
+</ul>
+<blockquote>
+<p>关联地图已同步重生成：<code>10-灵感库/关联地图.html</code>（12 张卡片节点 + 3 个暂挂节点，按 A/B/C 三簇 + 跨簇虚线）。</p>
+</blockquote></div>
+<p class="foot">由 WorkBuddy 自动生成 · 最后更新 2026-08-16 21:06</p></div>
+<script>
+var _t;
+function search(q){
+  clearTimeout(_t);
+  _t=setTimeout(function(){
+    var marks=document.querySelectorAll('mark');marks.forEach(function(m){m.replaceWith(document.createTextNode(m.textContent))});
+    if(!q)return;
+    var body=document.querySelector('.card');var txt=body.innerHTML;
+    var re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+    body.innerHTML=txt.replace(re,'<mark>$1</mark>');
+  },250);
+}
+</script>
+</body>
+</html>
