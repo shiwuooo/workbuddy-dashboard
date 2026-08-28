@@ -29,6 +29,12 @@ nav button.active{background:var(--accent);color:#fff}
 .cap-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .btn{border:none;border-radius:8px;padding:8px 16px;font-size:13px;cursor:pointer;background:var(--accent);color:#fff}
 .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.green{background:var(--green)}
+.st{font-size:12px;padding:7px 10px;border-radius:8px;margin-top:8px;display:none;line-height:1.6}
+.st.run{display:block;background:#eef4ff;color:var(--accent)}
+.st.err{display:block;background:#fdecec;color:#c0392b}
+.st.ok{display:block;background:#eafaf3;color:var(--green)}
+.st.warn{display:block;background:#fffbeb;color:#b45309}
 .cap-hint{color:var(--sub);font-size:12px;margin-top:10px;line-height:1.7}
 .cap-list{margin-top:14px;display:flex;flex-direction:column;gap:10px}
 .cap-item{background:#fafbff;border:1px solid var(--line);border-radius:10px;padding:12px;position:relative}
@@ -120,15 +126,66 @@ th{background:#f1f5f9}
     <textarea id="ta" placeholder="例如：小红书起号要不要先发满 30 篇再投流？"></textarea>
     <div class="cap-row">
       <button class="btn" onclick="addIn()">＋ 存入捕获箱</button>
+      <button class="btn green" onclick="runAI()">🤖 AI 总结·分类·关联</button>
+      <button class="btn ghost" onclick="openAISet()">⚙ AI 设置</button>
       <button class="btn ghost" onclick="clearTa()">清空输入框</button>
+    </div>
+
+    <div id="aiWrap" style="display:none;margin-top:12px">
+      <div class="flabel">AI 处理结果（可直接编辑，改完再存）</div>
+      <textarea id="aiOut" rows="12" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:13px;font-family:inherit;resize:vertical"></textarea>
+      <div class="cap-row">
+        <button class="btn" onclick="saveAI()">💾 存入捕获箱</button>
+        <button class="btn ghost" onclick="copyAI()">📋 复制</button>
+      </div>
+    </div>
+    <div class="st" id="aiSt"></div>
+
+    <div class="cap-row" style="margin-top:14px;padding-top:12px;border-top:1px dashed var(--line)">
+      <button class="btn green" onclick="syncDisk()">📁 全部落盘到 D 盘</button>
       <button class="btn ghost" onclick="copyAll()">复制全部发助手</button>
       <button class="btn ghost" onclick="exportMd()">导出备份</button>
       <button class="btn ghost" onclick="clearAll()">清空全部</button>
     </div>
-    <div class="cap-hint">自动按关键词预判分类（练/想/用/存）+ 主题标签。这些是 raw 原文，<b>精炼成卡才算真的用上</b>。整理：点「复制全部发助手」→ 在对话里喊「整理捕获箱」。</div>
+    <div class="st" id="diskSt"></div>
+
+    <div class="cap-hint">
+      两条路，<b>按需切换</b>：<br>
+      ① <b>默认（零配置）</b>：粘进来攒着 → 点「复制全部发助手」→ 在对话里喊「整理捕获箱」，由 WorkBuddy 做分类/总结/关联，不花一分钱、不配任何 Key。<br>
+      ② <b>网页实时 AI（可选）</b>：点「⚙ AI 设置」填一个 API（或本地 Ollama）→ 点「🤖 AI 总结·分类·关联」，自己当场出结果。<br>
+      ⚠️ 上面的标签是<b>关键词粗预判</b>，仅供参考；真分类以 AI/WorkBuddy 为准。<br>
+      💾 <b>落盘</b>：点「全部落盘到 D 盘」会把内容真正写进 <code>10-灵感库/收件箱/</code>（需先双击 <code>D:\workbuddy\工具\灵感库落盘服务\启动.bat</code>）。不落盘则只存在浏览器里，清缓存会丢。
+    </div>
     <div class="cap-list" id="capList"></div>
   </div>
 </section>
+
+<dialog id="aiSet">
+  <div style="padding:18px;position:relative;min-width:340px">
+    <button class="x" style="position:absolute;top:10px;right:12px;border:none;background:none;font-size:20px;cursor:pointer;color:#6b7280" onclick="closeAISet()">×</button>
+    <h2 style="margin:0 0 10px;font-size:16px">AI 引擎设置（每台设备填一次）</h2>
+    <div class="flabel">引擎</div>
+    <select id="s_engine" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px">
+      <option value="cloud">云端 API（OpenAI 兼容）</option>
+      <option value="ollama">本地 Ollama（免费离线，仅电脑）</option>
+    </select>
+    <div class="flabel">接口地址 (base_url)</div>
+    <input id="s_url" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px" placeholder="云端留空用默认；Ollama 填 http://localhost:11434">
+    <div class="flabel">模型名</div>
+    <input id="s_model" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px" placeholder="如 glm-4.7-flash / deepseek-chat / qwen2.5:14b">
+    <div class="flabel">API Key（本地 Ollama 可留空）</div>
+    <input id="s_key" type="password" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px" placeholder="仅存在本机浏览器，不上传">
+    <div class="cap-hint" style="margin-top:8px">
+      Key 只存本设备浏览器。推荐 <b>智谱 GLM-4.7-Flash</b>（open.bigmodel.cn 手机号注册即可，永久免费、国内直连），默认已填好，粘 Key 就能用。<br>
+      想用 DeepSeek：接口改 <code>https://api.deepseek.com/v1</code>，模型填 <code>deepseek-chat</code>。<br>
+      <b>不想配就别配</b>——不填也能用，走上面的路径①喊我就行。
+    </div>
+    <div class="cap-row">
+      <button class="btn" onclick="saveAISet()">保存</button>
+      <button class="btn ghost" onclick="closeAISet()">取消</button>
+    </div>
+  </div>
+</dialog>
 
 <!-- 收藏库 -->
 <section class="page" id="library">
@@ -199,10 +256,10 @@ function fmtT(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.ge
 function fmtF(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`}
 function classify(t){let best='hold',max=0;for(const k in KW){let n=0;for(const w of KW[k])if(t.includes(w))n++;if(n>max){max=n;best=k}}return best}
 function topicsFor(t){const out=[];for(const tk in TOPIC_KW){let hit=false;for(const w of TOPIC_KW[tk])if(t.includes(w)){hit=true;break}if(hit)out.push(tk);if(out.length>=3)break}return out}
-function addIn(){const raw=document.getElementById('ta').value.trim();if(!raw){alert('先粘点东西');return}
+function addIn(force){const raw=(force!==undefined?force:document.getElementById('ta').value).trim();if(!raw){alert('先粘点东西');return}
   const blocks=raw.split(/\n\s*\n+/).map(s=>s.trim()).filter(Boolean);const now=fmtT();
   blocks.forEach(b=>capItems.unshift({id:Date.now()+Math.random(),text:b,type:classify(b),topics:topicsFor(b),time:now}));
-  capSave();document.getElementById('ta').value='';
+  capSave();if(force===undefined)document.getElementById('ta').value='';
   capLog.unshift({time:now,count:blocks.length,preview:blocks[0].slice(0,28)+(blocks[0].length>28?'…':'')});localStorage.setItem(CAP_LOG,JSON.stringify(capLog));capRender();}
 function clearTa(){document.getElementById('ta').value=''}
 function capDel(id){capItems=capItems.filter(i=>i.id!==id);capSave();capRender()}
@@ -218,8 +275,103 @@ function capRender(){
   const c={growth:0,values:0,idea:0,hold:0};capItems.forEach(i=>c[i.type]++);
   document.getElementById('capList').innerHTML=capItems.length?capItems.map(i=>`
     <div class="cap-item"><button class="del" onclick="capDel(${i.id})">删除</button>
-      <div class="top"><span>存入 ${i.time} · <span class="badge b-${i.type}">${CNAME[i.type]}</span>${''}<span class="topic">${(i.topics||[]).join('</span><span class="topic">')}</span></span></div>
+      <div class="top"><span>存入 ${i.time} · <span class="badge b-${i.type}">${CNAME[i.type]}</span><span class="topic">${(i.topics||[]).join('</span><span class="topic">')}</span>${i.synced?'<span class="topic" style="background:#e7f8f0;color:#047857">已落盘</span>':''}</span></div>
       <div class="txt">${i.text.replace(/</g,'&lt;')}</div></div>`).join('') : '<div class="empty">还没有内容，粘一段试试 👆</div>';
+}
+
+/* ===================== AI 引擎（可选，不配也能用） ===================== */
+const AI_LS='insp_ai_v1', AI_LS_OLD='toolA_settings_v1';
+function aiLoad(){try{return JSON.parse(localStorage.getItem(AI_LS))||JSON.parse(localStorage.getItem(AI_LS_OLD))||{}}catch(e){return{}}}
+function aiSave(o){localStorage.setItem(AI_LS,JSON.stringify(o))}
+function st(id,t,c){const e=document.getElementById(id);e.className='st '+c;e.textContent=t}
+function aiSys(){
+  return `你是个人知识管理助手，服务一位备考公务员、做自媒体、关注赚钱情报与认知成长的用户。
+用户会粘贴若干条混杂内容（文章片段 / 博主观点 / 金句 / 想法 / 链接正文 / 视频字幕），可能多条混在一起。
+请逐条处理，每条用 \`\`\`markdown 代码块包裹，格式：
+
+---
+title: 断言句标题
+purpose: 练|想|用|存        # 练=行为技能能练；想=价值观当判断标准；用=运营/选题素材；存=情感吐槽暂不定
+topics: [#主题1,#主题2]     # 从 #沟通社交 #自我成长 #心态看开 #内容运营 #理财搞钱 #健康 #学习 中选，可补充
+value: 高|中|低
+summary: 一句话说清这条是什么
+associate: 可与什么已有知识关联（如「关联: 申论素材库/基层治理」「关联: 灵感库/内容资产化」），没有写「暂无」
+---
+
+正文：用户原话要点 + 你的提炼（2-4 句）。
+
+要求：
+1. 中文输出。半鸡汤判定：读完只感动一下 → value: 低；能提炼成行动或判断标准 → 高/中。
+2. 若某条明显可用于申论，topics 加 #申论可用，并在 associate 指明关联方向。
+3. 最后加一段「🔗 本条之间的联系」，指出这些碎片之间的内在关联（主题簇）。`;
+}
+async function callLLM(sys,user){
+  const s=aiLoad();
+  if(!s.engine){st('aiSt','还没配 AI 引擎。点「⚙ AI 设置」填一个（推荐智谱 GLM-4.7-Flash，免费），或直接走路径①：点「复制全部发助手」喊我整理。','warn');throw new Error('no setting')}
+  const msgs=[{role:'system',content:sys},{role:'user',content:user}];
+  if(s.engine==='ollama'){
+    const r=await fetch((s.url||'http://localhost:11434')+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:s.model||'qwen2.5:14b',messages:msgs,stream:false})});
+    if(!r.ok)throw new Error('Ollama 错误 '+r.status+'（确认 Ollama 已启动且模型已拉取）');
+    return (await r.json()).message.content;
+  }
+  const r=await fetch((s.url||'https://open.bigmodel.cn/api/paas/v4')+'/chat/completions',{method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+(s.key||'')},
+    body:JSON.stringify({model:s.model||'glm-4.7-flash',messages:msgs,temperature:0.5})});
+  if(!r.ok){const t=await r.text();throw new Error('API 错误 '+r.status+' '+t.slice(0,120))}
+  return (await r.json()).choices[0].message.content;
+}
+async function runAI(){
+  const txt=document.getElementById('ta').value.trim();
+  if(!txt){st('aiSt','先粘点东西进来','err');return}
+  st('aiSt','AI 处理中…（调你设置的引擎）','run');
+  try{
+    const res=await callLLM(aiSys(),txt);
+    document.getElementById('aiWrap').style.display='block';
+    document.getElementById('aiOut').value=res;
+    st('aiSt','完成。可编辑后点「💾 存入捕获箱」，或直接「📁 落盘到 D 盘」。','ok');
+  }catch(e){st('aiSt','出错：'+e.message,'err');}
+}
+function saveAI(){
+  const v=document.getElementById('aiOut').value.trim();if(!v){st('aiSt','没有内容可存','err');return}
+  addIn(v);st('aiSt','已存入捕获箱（已在下方列表）','ok');
+}
+function copyAI(){const v=document.getElementById('aiOut').value;navigator.clipboard?.writeText(v).then(()=>st('aiSt','已复制','ok')).catch(()=>prompt('复制下面内容：',v))}
+function openAISet(){const s=aiLoad();
+  document.getElementById('s_engine').value=s.engine||'cloud';
+  document.getElementById('s_url').value=s.url||'https://open.bigmodel.cn/api/paas/v4';
+  document.getElementById('s_model').value=s.model||'glm-4.7-flash';
+  document.getElementById('s_key').value=s.key||'';
+  document.getElementById('aiSet').showModal();}
+function closeAISet(){document.getElementById('aiSet').close()}
+function saveAISet(){aiSave({engine:document.getElementById('s_engine').value,url:document.getElementById('s_url').value.trim(),
+  model:document.getElementById('s_model').value.trim(),key:document.getElementById('s_key').value.trim()});
+  closeAISet();st('aiSt','设置已保存（只存在这台设备的浏览器）','ok')}
+
+/* ===================== 落盘到 D 盘 ===================== */
+const DISK_URL='http://127.0.0.1:8790';
+async function pingDisk(){
+  try{
+    const r=await fetch(DISK_URL+'/ping',{cache:'no-store'});
+    if(r.ok){st('diskSt','🟢 落盘服务已连接 —— 内容会真正写进 D:\\workbuddy\\ObsidianVault\\10-灵感库\\收件箱\\','ok')}
+    else throw 0;
+  }catch(e){st('diskSt','⚪ 落盘服务未启动（内容暂只存浏览器，清缓存会丢）。双击 D:\\workbuddy\\工具\\灵感库落盘服务\\启动.bat 开启，或点「导出备份」手动存一份。','warn')}
+}
+async function syncDisk(){
+  const todo=capItems.filter(i=>!i.synced);
+  if(!todo.length){st('diskSt','都已落盘过了，没有新内容','ok');return}
+  const txt=todo.map(i=>`[${CNAME[i.type]} · ${(i.topics||[]).join(' ')} · ${i.time}]\n${i.text}`).join('\n\n');
+  st('diskSt','正在写入 D 盘…','run');
+  try{
+    const r=await fetch(DISK_URL+'/save',{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:txt});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'未知错误');
+    todo.forEach(i=>i.synced=true);capSave();capRender();
+    st('diskSt','✅ 已落盘 '+todo.length+' 条 → '+d.file,'ok');
+  }catch(e){
+    st('diskSt','❌ 落盘失败：'+e.message+'。请先双击 D:\\workbuddy\\工具\\灵感库落盘服务\\启动.bat 启动服务（用本地打开的这个页面才生效），或点「导出备份」先手动存一份。','err');
+  }
 }
 
 /* ===================== 收藏库 ===================== */
@@ -390,7 +542,7 @@ function renderRelMap(){
 }
 
 /* ===================== 初始化 ===================== */
-renderFilters();renderLib();renderPipe();renderReview();capRender();renderRelMap();
+renderFilters();renderLib();renderPipe();renderReview();capRender();renderRelMap();pingDisk();
 </script>
 </body>
 </html>
