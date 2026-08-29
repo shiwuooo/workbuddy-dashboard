@@ -44,6 +44,24 @@ nav button.active{background:var(--accent);color:#fff}
 .topic{background:#eef2ff;color:#4338ca;font-size:11px;padding:2px 8px;border-radius:10px;margin-left:4px}
 .cap-item .txt{font-size:13px;line-height:1.6;white-space:pre-wrap}
 .cap-item .del{position:absolute;top:10px;right:10px;border:none;background:none;color:var(--red);cursor:pointer;font-size:12px}
+/* 大类 / 图片 / 相似聚合 */
+.cat-block{margin-top:16px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+.cat-head{background:#f8fafc;padding:9px 14px;font-size:14px;font-weight:600;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.cat-n{background:var(--accent);color:#fff;font-size:11px;padding:1px 8px;border-radius:10px;font-weight:500}
+.cat-block .cap-item{border:none;border-radius:0;border-top:1px solid var(--line);background:#fff}
+.cat-block .cap-item:first-of-type{border-top:none}
+.dup-box{background:#fffbeb;border-bottom:1px solid #fde68a}
+.dup-h{font-size:12px;color:#92400e;padding:8px 14px;background:#fef3c7;line-height:1.6}
+.dup-box .cap-item{background:#fffdf5;border-top:1px solid #fde68a}
+.dup-box .cap-item.in-dup{border-left:4px solid var(--amber)}
+.dup-acts{padding:8px 14px}
+.dup-acts button{font-size:12px;padding:5px 12px}
+.drop{border:2px dashed var(--line);border-radius:10px;padding:18px;text-align:center;color:var(--sub);font-size:13px;cursor:pointer;background:#fafbff;transition:.15s}
+.drop:hover,.drop.over{border-color:var(--accent);background:#eff6ff;color:var(--accent)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.thumbs img{max-width:150px;max-height:110px;border:1px solid var(--line);border-radius:8px;object-fit:cover;background:#fff}
+.cap-item .txt a{color:var(--accent);word-break:break-all}
+#catIn{flex:1;min-width:170px;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:13px;font-family:inherit}
 /* library grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px;display:flex;flex-direction:column;cursor:pointer;transition:.15s}
@@ -122,10 +140,27 @@ th{background:#f1f5f9}
 <!-- 捕获 -->
 <section class="page active" id="capture">
   <div class="cap-wrap">
-    <div class="flabel">粘到这里（一段一条，空行分隔多条）</div>
-    <textarea id="ta" placeholder="例如：小红书起号要不要先发满 30 篇再投流？"></textarea>
+    <div class="flabel">① 粘到这里（想法、链接、别人的作品链接、网盘分享链接…空行分隔多条）</div>
+    <textarea id="ta" placeholder="例如：X 上看到有人用 AI 短剧做网盘推广，思路是…链接 https://x.com/xxx  他的网盘文件夹分了三部分…对我的启发是…"></textarea>
+
+    <div class="cap-row" style="align-items:center;margin-top:10px">
+      <span class="flabel" style="margin:0;white-space:nowrap">② 归到哪个大类：</span>
+      <input id="catIn" list="catList" placeholder="留空 = 自动判断；也可直接写「网盘推广」">
+      <datalist id="catList"></datalist>
+      <button class="btn ghost" onclick="addCat()">＋ 新建类目</button>
+    </div>
+    <div class="cap-hint" style="margin-top:4px">
+      也可以直接在正文开头写 <code>归到网盘推广：</code> 或 <code>【网盘推广】</code> 来指定。
+      你说了一个跟已有类目很像的名字（比如「夸克网盘推广」vs 已有的「网盘推广」），我会<b>弹出来问你</b>，你来定，我不替你合并。
+    </div>
+
+    <div class="flabel">③ 截图 / 图片（可选）：拖进来，或在这里按 Ctrl+V 粘贴</div>
+    <div id="dropZone" class="drop">把截图拖到这里，或点一下选择文件</div>
+    <input type="file" id="fileIn" multiple accept="image/*" style="display:none">
+    <div class="thumbs" id="thumbs"></div>
+
     <div class="cap-row">
-      <button class="btn" onclick="addIn()">＋ 存入捕获箱</button>
+      <button class="btn" onclick="addIn()">＋ 存入收纳箱</button>
       <button class="btn green" onclick="runAI()">🤖 AI 总结·分类·关联</button>
       <button class="btn ghost" onclick="openAISet()">⚙ AI 设置</button>
       <button class="btn ghost" onclick="clearTa()">清空输入框</button>
@@ -150,11 +185,13 @@ th{background:#f1f5f9}
     <div class="st" id="diskSt"></div>
 
     <div class="cap-hint">
-      两条路，<b>按需切换</b>：<br>
-      ① <b>默认（零配置）</b>：粘进来攒着 → 点「复制全部发助手」→ 在对话里喊「整理捕获箱」，由 WorkBuddy 做分类/总结/关联，不花一分钱、不配任何 Key。<br>
-      ② <b>网页实时 AI（可选）</b>：点「⚙ AI 设置」填一个 API（或本地 Ollama）→ 点「🤖 AI 总结·分类·关联」，自己当场出结果。<br>
-      ⚠️ 上面的标签是<b>关键词粗预判</b>，仅供参考；真分类以 AI/WorkBuddy 为准。<br>
-      💾 <b>落盘</b>：点「全部落盘到 D 盘」会把内容真正写进 <code>10-灵感库/收件箱/</code>（需先双击 <code>D:\workbuddy\工具\灵感库落盘服务\启动.bat</code>）。不落盘则只存在浏览器里，清缓存会丢。
+      <b>怎么用</b>：<br>
+      ① 粘内容 → 选/写大类（<b>留空就自动判断</b>）→ 可选拖截图 → 点「＋ 存入收纳箱」。<br>
+      ② 下面按<b>大类分组</b>展示，每条都带<b>记录日期</b>；同组里很像的几条会被标成「⚠️ 这 N 条内容很像」，<b>只是并排提示、带日期，绝不自动合并或删除</b> —— 删不删你点右上角「删除」自己定。<br>
+      ③ <b>落盘</b>：点「全部落盘到 D 盘」→ 写进 <code>10-灵感库/收件箱/</code>，<b>同时按大类累积到 <code>收件箱/按类/&lt;类目&gt;.md</code></b>（跨天同类想法聚一起），截图落成 <code>收件箱/图片/</code> 下的文件。需先双击 <code>D:\workbuddy\工具\灵感库落盘服务\启动.bat</code>。不落盘就只在浏览器里，清缓存会丢。<br>
+      ④ 想深加工：点「复制全部发助手」→ 对话里喊「整理捕获箱」，由我做总结/关联/出卡（不花钱）。也可点「🤖 AI 总结·分类·关联」接你自己的 API 当场跑。<br>
+      ⚠️ 类目标签是<b>关键词粗预判</b>，仅供参考；真分类以你指定或 AI/WorkBuddy 为准。<br>
+      💡 图片会压缩后存在浏览器里，条数多建议及时落盘后删除本地条目，避免占满浏览器空间。
     </div>
     <div class="cap-list" id="capList"></div>
   </div>
@@ -183,6 +220,18 @@ th{background:#f1f5f9}
     <div class="cap-row">
       <button class="btn" onclick="saveAISet()">保存</button>
       <button class="btn ghost" onclick="closeAISet()">取消</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="catDlg">
+  <div style="padding:20px;position:relative;min-width:400px;max-width:560px">
+    <button class="x" style="position:absolute;top:10px;right:14px;border:none;background:none;font-size:20px;cursor:pointer;color:#6b7280" onclick="document.getElementById('catDlg').close()">×</button>
+    <h2 style="margin:0 0 10px;font-size:16px">📂 类目确认</h2>
+    <div id="catDlgBody" style="font-size:13px;line-height:1.8;color:#374151"></div>
+    <div class="cap-row" style="margin-top:14px">
+      <button class="btn" id="catDlgOk">确定</button>
+      <button class="btn ghost" onclick="document.getElementById('catDlg').close()">取消</button>
     </div>
   </div>
 </dialog>
@@ -243,6 +292,66 @@ document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
   document.getElementById(b.dataset.tab).classList.add('active');
 });
 
+/* ===================== 大类系统（预设 + 动态新建 + 相似提醒） ===================== */
+const CAT_KEY='insp_cats_v1';
+const PRESET_CATS=['网盘推广','公考学习','个人成长','赚钱搞钱','内容运营','素材灵感','其他'];
+const CAT_KW={
+ '网盘推广':['网盘','夸克','百度网盘','迅雷','阿里云盘','转存','分享链接','拉新','cps','佣金','资源分享','短剧','移动云','uc','天翼'],
+ '公考学习':['公考','申论','行测','公务员','上岸','刷题','真题','模考','面试','事业单位','粉笔','中公','华图','图推','言语','资料分析',"常识","数量"],
+ '个人成长':['成长','心态','习惯','自律','行动','执行','认知','情绪','看开','内耗','自信','沟通','拖延','专注','唯唯诺诺','拒绝'],
+ '赚钱搞钱':['赚钱','搞钱','副业','变现','收入','商机','项目','生意','掘金','月入','被动收入','接单','单价'],
+ '内容运营':['小红书','选题','爆款','标题','文案','涨粉','流量','账号','运营','笔记','钩子','开头','排版','转发','传播','起号','人设'],
+ '素材灵感':['灵感','金句','素材','摘抄','句子','收藏','语录','文案库']
+};
+let CATS=catLoad();
+function catLoad(){try{const a=JSON.parse(localStorage.getItem(CAT_KEY));if(Array.isArray(a)&&a.length)return a}catch(e){}
+  try{localStorage.setItem(CAT_KEY,JSON.stringify(PRESET_CATS))}catch(e){}
+  return PRESET_CATS.slice();}
+function catSave(){localStorage.setItem(CAT_KEY,JSON.stringify(CATS))}
+function renderCatList(){const dl=document.getElementById('catList');if(dl)dl.innerHTML=CATS.map(c=>`<option value="${c}">`).join('')}
+function addCat(){const n=prompt('新类目名字（例如：AI工具、旅游攻略）：');if(!n)return;
+  const name=n.trim();if(!name)return;
+  if(CATS.includes(name)){alert('已经有了：'+name);return}
+  const sims=findSimCats(name);
+  if(sims.length&&!confirm(`已有很像的类目：${sims.join(' / ')}\n\n确定还要新建「${name}」吗？（否则请点取消，直接用已有的）`))return;
+  CATS.push(name);catSave();renderCatList();alert('已新建类目：'+name);}
+function simCat(a,b){if(!a||!b)return 0;if(a===b)return 1;
+  if(a.includes(b)||b.includes(a))return .92;
+  const s1=new Set(a.match(/.{1,2}/g)||[]),s2=new Set(b.match(/.{1,2}/g)||[]);
+  let i=0;s1.forEach(x=>{if(s2.has(x))i++});
+  const u=new Set([...s1,...s2]).size;return u?i/u:0}
+function findSimCats(name){return CATS.filter(c=>c!==name&&simCat(name,c)>=.45).sort((x,y)=>simCat(name,y)-simCat(name,x))}
+function autoCat(t){const s=(t||'').toLowerCase();let best='其他',max=0;
+  for(const c in CAT_KW){let n=0;for(const w of CAT_KW[c])if(s.includes(w))n++;if(n>max){max=n;best=c}}
+  return best}
+function parseCatHint(t){
+  let m=t.match(/^(?:归到|归类|分类|放到|归入)\s*([^\s：:，,。\n]{1,14})\s*[：:，,\-]?\s*/);
+  if(!m)m=t.match(/^【([^】]{1,14})】\s*/);
+  if(!m)m=t.match(/^#([^\s#]{1,14})\s+/);
+  if(m)return{cat:m[1].trim(),rest:t.slice(m[0].length).trim()||t};
+  return{cat:'',rest:t}}
+function askCat(name){
+  return new Promise(resolve=>{
+    const sims=findSimCats(name);
+    if(!sims.length){catAdd(name);resolve(name);return}
+    const dlg=document.getElementById('catDlg'),ok=document.getElementById('catDlgOk');
+    document.getElementById('catDlgBody').innerHTML=
+      `你想归到 <b>「${esc(name)}」</b>，不过已经有很像的类目了：<div style="margin:10px 0">`+
+      sims.map((c,i)=>`<label style="display:block;margin:7px 0;cursor:pointer"><input type="radio" name="cd" value="${esc(c)}" ${i===0?'checked':''}> 归到已有的 <b>${esc(c)}</b></label>`).join('')+
+      `<label style="display:block;margin:7px 0;cursor:pointer"><input type="radio" name="cd" value="__new__"> 仍然新建「${esc(name)}」</label></div>`+
+      `<div style="font-size:12px;color:#6b7280;border-top:1px dashed var(--line);padding-top:8px">我只负责提醒，<b>不替你合并、不替你删除</b> —— 你说了算。</div>`;
+    const handler=()=>{
+      const sel=document.querySelector('input[name=cd]:checked');
+      const v=sel?sel.value:'__new__';
+      ok.removeEventListener('click',handler);dlg.close();
+      if(v==='__new__'){catAdd(name);resolve(name)}else resolve(v);
+    };
+    ok.addEventListener('click',handler);
+    dlg.showModal();
+  });
+}
+function catAdd(n){n=(n||'').trim();if(n&&!CATS.includes(n)){CATS.push(n);catSave();renderCatList()}}
+
 /* ===================== 捕获箱（localStorage） ===================== */
 const CAP_KEY='insp_capture_v2', CAP_LOG='insp_capture_log_v2';
 const KW={idea:['标题','转发','选题','内容','传播','运营','小红书','爆款','流量','文案','涨粉','变现','账号','粉丝','笔记','钩子','开头','排版','分享','网盘','副业','赚钱','项目','投放','聚光','私域'],growth:['行动','执行','自律','习惯','决策','直接做','练习','微决策','坚持','专注','拖延','执行力','做起来','立刻做','从小事','练'],values:['脸面','烦恼','当下','重生','主线','心态','看开','意义','价值','焦虑','内耗','勇气','希望','自我','放下','接纳','认知','投射','人生','活着','情绪']};
@@ -250,33 +359,145 @@ const TOPIC_KW={'#沟通社交':['沟通','社交','拒绝','礼貌','表情','�
 const CNAME={growth:'练',values:'想',idea:'用',hold:'存'};
 let capItems=capLoad(),capLog=capLoadLog();
 function capLoad(){try{return JSON.parse(localStorage.getItem(CAP_KEY))||[]}catch(e){return[]}}
-function capSave(){try{localStorage.setItem(CAP_KEY,JSON.stringify(capItems))}catch(e){alert('浏览器存不了，请用导出')}}
+function capSave(){try{localStorage.setItem(CAP_KEY,JSON.stringify(capItems))}catch(e){alert('存不下（可能图片太多）。请先「落盘到 D 盘」再删掉本地条目，或点「导出备份」。')}}
 function capLoadLog(){try{return JSON.parse(localStorage.getItem(CAP_LOG))||[]}catch(e){return[]}}
 function fmtT(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`}
 function fmtF(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}`}
 function classify(t){let best='hold',max=0;for(const k in KW){let n=0;for(const w of KW[k])if(t.includes(w))n++;if(n>max){max=n;best=k}}return best}
 function topicsFor(t){const out=[];for(const tk in TOPIC_KW){let hit=false;for(const w of TOPIC_KW[tk])if(t.includes(w)){hit=true;break}if(hit)out.push(tk);if(out.length>=3)break}return out}
-function addIn(force){const raw=(force!==undefined?force:document.getElementById('ta').value).trim();if(!raw){alert('先粘点东西');return}
-  const blocks=raw.split(/\n\s*\n+/).map(s=>s.trim()).filter(Boolean);const now=fmtT();
-  blocks.forEach(b=>capItems.unshift({id:Date.now()+Math.random(),text:b,type:classify(b),topics:topicsFor(b),time:now}));
-  capSave();if(force===undefined)document.getElementById('ta').value='';
-  capLog.unshift({time:now,count:blocks.length,preview:blocks[0].slice(0,28)+(blocks[0].length>28?'…':'')});localStorage.setItem(CAP_LOG,JSON.stringify(capLog));capRender();}
+
+/* ---- 图片：拖入 / 粘贴 / 选择 ---- */
+let pendingImages=[];
+function shrink(dataUrl,cb){
+  const img=new Image();
+  img.onload=()=>{const MAX=1100;let w=img.width,h=img.height;
+    if(w>MAX){h=Math.round(h*MAX/w);w=MAX}
+    const c=document.createElement('canvas');c.width=w;c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    try{cb(c.toDataURL('image/jpeg',.82))}catch(e){cb(dataUrl)}};
+  img.onerror=()=>cb(dataUrl);
+  img.src=dataUrl;}
+function handleFiles(files){
+  const imgs=Array.from(files).filter(f=>/^image\//.test(f.type||''));
+  if(!imgs.length)return;
+  imgs.forEach(f=>{const fr=new FileReader();
+    fr.onload=e=>shrink(e.target.result,d=>{pendingImages.push({name:f.name||'img',data:d});renderThumbs()});
+    fr.readAsDataURL(f);});}
+function renderThumbs(){
+  const box=document.getElementById('thumbs');
+  if(!box)return;
+  box.innerHTML=pendingImages.map((im,i)=>
+    `<div style="position:relative"><img src="${im.data}"><button onclick="rmImg(${i})" style="position:absolute;top:-6px;right:-6px;border:none;background:#ef4444;color:#fff;border-radius:50%;width:20px;height:20px;cursor:pointer;font-size:12px;line-height:1">×</button></div>`).join('');}
+function rmImg(i){pendingImages.splice(i,1);renderThumbs()}
+function initDrop(){
+  const dz=document.getElementById('dropZone'),fi=document.getElementById('fileIn'),ta=document.getElementById('ta');
+  if(!dz)return;
+  dz.onclick=()=>fi.click();
+  fi.onchange=e=>{handleFiles(e.target.files);fi.value=''};
+  ['dragenter','dragover'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add('over')}));
+  ['dragleave','drop'].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove('over')}));
+  dz.addEventListener('drop',e=>{handleFiles((e.dataTransfer&&e.dataTransfer.files)||[])});
+  ta.addEventListener('paste',e=>{
+    const items=(e.clipboardData&&e.clipboardData.items)||[];
+    const fs=[];for(const it of items){if(it.type&&it.type.indexOf('image')===0){const f=it.getAsFile();if(f)fs.push(f)}}
+    if(fs.length){e.preventDefault();handleFiles(fs);}
+  });
+  document.addEventListener('paste',e=>{
+    if(document.activeElement===ta)return;
+    if(!document.getElementById('capture').classList.contains('active'))return;
+    const items=(e.clipboardData&&e.clipboardData.items)||[];
+    const fs=[];for(const it of items){if(it.type&&it.type.indexOf('image')===0){const f=it.getAsFile();if(f)fs.push(f)}}
+    if(fs.length){e.preventDefault();handleFiles(fs);}
+  });
+}
+
+/* ---- 存入 ---- */
+async function addIn(force){
+  const raw=(force!==undefined?force:document.getElementById('ta').value).trim();
+  if(!raw){alert('先粘点东西');return}
+  const blocks=raw.split(/\n\s*\n+/).map(s=>s.trim()).filter(Boolean);
+  const now=fmtT();
+  const explicit=(document.getElementById('catIn').value||'').trim();
+  for(let idx=0;idx<blocks.length;idx++){
+    const hint=parseCatHint(blocks[idx]);
+    const text=hint.rest||blocks[idx];
+    let cat;
+    const want=(hint.cat||explicit||'').trim();
+    if(want){ cat=await askCat(want); }
+    else { cat=autoCat(text); }
+    capItems.unshift({id:Date.now()+Math.random(),text:text,cat:cat,type:classify(text),topics:topicsFor(text),time:now,images:idx===0?pendingImages.slice():[]});
+  }
+  pendingImages=[];renderThumbs();
+  capSave();
+  if(force===undefined){document.getElementById('ta').value='';document.getElementById('catIn').value=''}
+  capLog.unshift({time:now,count:blocks.length,preview:blocks[0].slice(0,28)+(blocks[0].length>28?'…':'')});
+  try{localStorage.setItem(CAP_LOG,JSON.stringify(capLog))}catch(e){}
+  capRender();
+}
 function clearTa(){document.getElementById('ta').value=''}
-function capDel(id){capItems=capItems.filter(i=>i.id!==id);capSave();capRender()}
-function clearAll(){if(confirm('确定清空全部？建议先点导出')){capItems=[];capSave();capRender()}}
+function capDel(id){if(!confirm('删除这一条？删了就没了（建议先落盘）。'))return;capItems=capItems.filter(i=>i.id!==id);capSave();capRender()}
+function clearAll(){if(confirm('确定清空全部？建议先点「落盘到 D 盘」或「导出备份」')){capItems=[];capSave();capRender()}}
+function ignoreDup(ids){ids.split(',').forEach(id=>{const it=capItems.find(x=>String(x.id)===id);if(it)it.ignored=true});capSave();capRender()}
 function copyAll(){if(!capItems.length){alert('空的');return}
-  const txt=capItems.map(i=>`[${CNAME[i.type]} · ${(i.topics||[]).join(' ')} · ${i.time}] ${i.text}`).join('\n\n');
+  const txt=capItems.map(i=>`[📂${i.cat||'其他'} · ${CNAME[i.type]} · ${(i.topics||[]).join(' ')} · ${i.time}] ${i.text}`).join('\n\n');
   navigator.clipboard?.writeText(txt).then(()=>alert(`已复制 ${capItems.length} 条。去对话里喊「整理捕获箱」`)).catch(()=>prompt('复制下面发给我：',txt));}
 function exportMd(){if(!capItems.length){alert('空的');return}
-  let md=`# 捕获箱备份 ${fmtT()}\n\n> 共 ${capItems.length} 条\n\n`;
-  capItems.forEach((i,n)=>{md+=`### [${CNAME[i.type]} ${(i.topics||[]).join(' ')}] 条目${n+1} · ${i.time}\n${i.text}\n\n`});
-  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'}));a.download=`捕获箱备份_${fmtF()}.md`;a.click();}
+  const by={};capItems.forEach(i=>{(by[i.cat||'其他']=by[i.cat||'其他']||[]).push(i)});
+  let md=`# 收纳箱备份 ${fmtT()}\n\n> 共 ${capItems.length} 条\n`;
+  for(const c in by){md+=`\n---\n\n## 📂 ${c}（${by[c].length} 条）\n`;
+    by[c].forEach((i,n)=>{md+=`\n### 🕒 ${i.time} · 条目${n+1}\n${i.text}\n`;
+      (i.images||[]).forEach((im,k)=>{md+=`\n> [图片${k+1}：${im.name}]（图片存在浏览器里，落盘后才是文件）\n`})});}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([md],{type:'text/markdown'}));a.download=`收纳箱备份_${fmtF()}.md`;a.click();}
+
+/* ---- 相似聚合（只提示，不自动删） ---- */
+function simText(a,b){
+  const tok=s=>new Set((s||'').toLowerCase().match(/[\u4e00-\u9fa5]{2,}|[a-z0-9]{3,}/g)||[]);
+  const A=tok(a),B=tok(b);
+  if(!A.size||!B.size)return 0;
+  let i=0;A.forEach(x=>{if(B.has(x))i++});
+  return i/Math.min(A.size,B.size);}
+function findDup(arr){
+  const used=new Set(),cl=[];
+  for(let i=0;i<arr.length;i++){
+    if(used.has(arr[i].id)||arr[i].ignored)continue;
+    const g=[arr[i]];
+    for(let j=i+1;j<arr.length;j++){
+      if(used.has(arr[j].id)||arr[j].ignored)continue;
+      if(simText(arr[i].text,arr[j].text)>=.5){g.push(arr[j]);used.add(arr[j].id)}
+    }
+    if(g.length>1){g.forEach(x=>used.add(x.id));cl.push(g)}
+  }
+  return cl;}
+function linkify(s){return (s||'').replace(/(https?:\/\/[^\s<)）】"']+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>')}
+function itemHtml(i,inDup){
+  return `<div class="cap-item ${inDup?'in-dup':''}">
+    <button class="del" onclick="capDel(${i.id})">删除</button>
+    <div class="top"><span>🕒 ${i.time} · 📂 <b>${esc(i.cat||'其他')}</b> · <span class="badge b-${i.type}">${CNAME[i.type]}</span>${(i.topics||[]).map(t=>`<span class="topic">${t}</span>`).join('')}${i.synced?'<span class="topic" style="background:#e7f8f0;color:#047857">已落盘</span>':''}</span></div>
+    <div class="txt">${linkify(esc(i.text))}</div>
+    ${(i.images&&i.images.length)?`<div class="thumbs">${i.images.map(im=>`<img src="${im.data}" title="${esc(im.name)}">`).join('')}</div>`:''}
+  </div>`;}
 function capRender(){
-  const c={growth:0,values:0,idea:0,hold:0};capItems.forEach(i=>c[i.type]++);
-  document.getElementById('capList').innerHTML=capItems.length?capItems.map(i=>`
-    <div class="cap-item"><button class="del" onclick="capDel(${i.id})">删除</button>
-      <div class="top"><span>存入 ${i.time} · <span class="badge b-${i.type}">${CNAME[i.type]}</span><span class="topic">${(i.topics||[]).join('</span><span class="topic">')}</span>${i.synced?'<span class="topic" style="background:#e7f8f0;color:#047857">已落盘</span>':''}</span></div>
-      <div class="txt">${i.text.replace(/</g,'&lt;')}</div></div>`).join('') : '<div class="empty">还没有内容，粘一段试试 👆</div>';
+  const el=document.getElementById('capList');
+  if(!el)return;
+  if(!capItems.length){el.innerHTML='<div class="empty">还没有内容，粘一段试试 👆</div>';return}
+  const by={};capItems.forEach(i=>{(by[i.cat||'其他']=by[i.cat||'其他']||[]).push(i)});
+  const cats=Object.keys(by).sort((a,b)=>by[b].length-by[a].length);
+  let h='';
+  cats.forEach(cat=>{
+    const arr=by[cat];
+    const clusters=findDup(arr);
+    const inCl=new Set();clusters.forEach(c=>c.forEach(x=>inCl.add(x.id)));
+    h+=`<div class="cat-block"><div class="cat-head">📂 ${esc(cat)}<span class="cat-n">${arr.length}</span>`+
+       `<span style="font-size:11px;color:var(--sub);font-weight:400;margin-left:auto">点单条右上角「删除」自己清理</span></div>`;
+    clusters.forEach(cl=>{
+      h+=`<div class="dup-box"><div class="dup-h">⚠️ 这 ${cl.length} 条内容很像 —— 已把日期都标出来，<b>你自己判断是不是真重合</b>。我不自动合并也不自动删。</div>`;
+      cl.forEach(x=>{h+=itemHtml(x,true)});
+      h+=`<div class="dup-acts"><button class="btn ghost" onclick="ignoreDup('${cl.map(x=>x.id).join(',')}')">不是重复，别再提示</button></div></div>`;
+    });
+    arr.filter(x=>!inCl.has(x.id)).forEach(x=>{h+=itemHtml(x,false)});
+    h+=`</div>`;
+  });
+  el.innerHTML=h;
 }
 
 /* ===================== AI 引擎（可选，不配也能用） ===================== */
@@ -360,17 +581,24 @@ async function pingDisk(){
 async function syncDisk(){
   const todo=capItems.filter(i=>!i.synced);
   if(!todo.length){st('diskSt','都已落盘过了，没有新内容','ok');return}
-  const txt=todo.map(i=>`[${CNAME[i.type]} · ${(i.topics||[]).join(' ')} · ${i.time}]\n${i.text}`).join('\n\n');
-  st('diskSt','正在写入 D 盘…','run');
+  st('diskSt','正在写入 D 盘…（有图片会稍慢）','run');
+  const payload={items:todo.map(i=>({cat:i.cat||'其他',text:i.text,time:i.time,type:i.type,topics:i.topics||[],images:i.images||[]}))};
   try{
-    const r=await fetch(DISK_URL+'/save',{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:txt});
+    let r=await fetch(DISK_URL+'/items',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)});
+    if(r.status===404){ // 旧版服务，退化为纯文本
+      const txt=todo.map(i=>`[📂${i.cat||'其他'} · ${CNAME[i.type]} · ${(i.topics||[]).join(' ')} · ${i.time}]\n${i.text}`).join('\n\n');
+      r=await fetch(DISK_URL+'/save',{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:txt});
+    }
     if(!r.ok)throw new Error('HTTP '+r.status);
     const d=await r.json();
     if(!d.ok)throw new Error(d.error||'未知错误');
     todo.forEach(i=>i.synced=true);capSave();capRender();
-    st('diskSt','✅ 已落盘 '+todo.length+' 条 → '+d.file,'ok');
+    const nImg=todo.reduce((a,i)=>a+((i.images||[]).length),0);
+    st('diskSt',`✅ 已落盘 ${todo.length} 条${nImg?`（含 ${nImg} 张图）`:''} → ${d.file}`+
+      (d.cats&&d.cats.length?`\n📂 类目：${d.cats.join(' / ')}（同时按类累积到 收件箱/按类/）`:''),'ok');
   }catch(e){
-    st('diskSt','❌ 落盘失败：'+e.message+'。请先双击 D:\\workbuddy\\工具\\灵感库落盘服务\\启动.bat 启动服务（用本地打开的这个页面才生效），或点「导出备份」先手动存一份。','err');
+    st('diskSt','❌ 落盘失败：'+e.message+'。请先双击 D:\\workbuddy\\工具\\灵感库落盘服务\\启动.bat 启动服务 v2（用本地打开的这个页面才生效），或点「导出备份」先手动存一份。','err');
   }
 }
 
@@ -542,7 +770,7 @@ function renderRelMap(){
 }
 
 /* ===================== 初始化 ===================== */
-renderFilters();renderLib();renderPipe();renderReview();capRender();renderRelMap();pingDisk();
+renderCatList();initDrop();renderFilters();renderLib();renderPipe();renderReview();capRender();renderRelMap();pingDisk();
 </script>
 </body>
 </html>
