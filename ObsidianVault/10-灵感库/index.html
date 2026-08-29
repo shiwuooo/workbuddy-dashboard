@@ -62,6 +62,29 @@ nav button.active{background:var(--accent);color:#fff}
 .thumbs img{max-width:150px;max-height:110px;border:1px solid var(--line);border-radius:8px;object-fit:cover;background:#fff}
 .cap-item .txt a{color:var(--accent);word-break:break-all}
 #catIn{flex:1;min-width:170px;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:13px;font-family:inherit}
+/* 工作台（看/改 D 盘文件） */
+.wb-wrap{display:grid;grid-template-columns:290px 1fr;gap:14px;margin-top:12px}
+@media(max-width:860px){.wb-wrap{grid-template-columns:1fr}}
+.wb-list{border:1px solid var(--line);border-radius:10px;background:#fafbff;max-height:600px;overflow:auto}
+.wb-group{background:#f1f5f9;padding:5px 12px;font-size:11px;color:var(--sub);position:sticky;top:0;border-bottom:1px solid var(--line)}
+.wb-item{padding:9px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+.wb-item:hover{background:#eef4ff}
+.wb-item.active{background:#e0eaff;border-left:3px solid var(--accent)}
+.wb-item .p{font-weight:600;word-break:break-all}
+.wb-item .m{font-size:11px;color:var(--sub);margin-top:3px}
+.wb-main{display:flex;flex-direction:column;gap:8px;min-width:0}
+.wb-tabs{display:flex;gap:6px}
+.wb-tabs button{border:1px solid var(--line);background:#fff;padding:5px 15px;border-radius:8px;cursor:pointer;font-size:13px}
+.wb-tabs button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+#wbEdit{width:100%;min-height:440px;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;font-family:ui-monospace,Consolas,"Courier New",monospace;resize:vertical;line-height:1.75;background:#fffdf7}
+.wb-view{display:none;border:1px solid var(--line);border-radius:10px;padding:18px;background:#fff;min-height:440px;font-size:14px;line-height:1.85;overflow:auto}
+.wb-view h1,.wb-view h2,.wb-view h3{margin:16px 0 8px;line-height:1.4}
+.wb-view h1{font-size:20px}.wb-view h2{font-size:17px}.wb-view h3{font-size:15px}
+.wb-view img{max-width:100%;border-radius:8px;margin:8px 0;border:1px solid var(--line)}
+.wb-view blockquote{border-left:3px solid var(--accent);margin:10px 0;padding:6px 12px;background:#f8fafc;color:#475569}
+.wb-view code{background:#f1f5f9;padding:1px 6px;border-radius:4px;font-size:13px}
+.wb-view hr{border:none;border-top:1px solid var(--line);margin:18px 0}
+.wb-view a{color:var(--accent)}
 /* library grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px;display:flex;flex-direction:column;cursor:pointer;transition:.15s}
@@ -131,6 +154,7 @@ th{background:#f1f5f9}
 </header>
 <nav>
   <button class="active" data-tab="capture">📥 捕获</button>
+  <button data-tab="workbench">🗂 工作台</button>
   <button data-tab="library">📚 收藏库</button>
   <button data-tab="pipeline">🚀 选题进度</button>
   <button data-tab="review">📊 数据复盘</button>
@@ -235,6 +259,37 @@ th{background:#f1f5f9}
     </div>
   </div>
 </dialog>
+
+<!-- 工作台：直接看/改 D 盘文件 -->
+<section class="page" id="workbench">
+  <div class="cap-wrap">
+    <div class="flabel" style="font-size:13px">🗂 工作台 —— 直接看、直接改 D 盘里的文件，<b>不用再找软件开 md</b></div>
+    <div class="st" id="wbSt"></div>
+    <div class="wb-wrap">
+      <div class="wb-list" id="wbList"><div class="empty">加载中…</div></div>
+      <div class="wb-main">
+        <div id="wbHead"><div class="flabel" style="margin:0">← 左边点一个文件开始</div></div>
+        <div class="wb-tabs">
+          <button id="wbTabEdit" class="active" onclick="wbTab('edit')">✏️ 编辑</button>
+          <button id="wbTabView" onclick="wbTab('view')">👁 预览</button>
+        </div>
+        <textarea id="wbEdit" placeholder="选一个文件后，内容会出现在这里，可以随便改"></textarea>
+        <div id="wbView" class="wb-view"></div>
+        <div class="cap-row">
+          <button class="btn green" onclick="wbSave()">💾 保存回 D 盘</button>
+          <button class="btn ghost" onclick="wbReload()">↺ 放弃改动重新加载</button>
+          <button class="btn ghost" onclick="wbFiles()">📄 刷新文件列表</button>
+        </div>
+        <div class="cap-hint">
+          左边是 <code>D:\workbuddy\ObsidianVault\10-灵感库\</code> 里<b>真实存在</b>的文件：收件箱日记、按类累积、已精炼卡片。
+          <b>改完点「保存回 D 盘」就直接写进文件</b>，不用再开任何 md 软件。<br>
+          保存前会自动留一个 <code>.bak</code> 备份（同名加后缀），改坏了能找回。
+          ⚠️ 需要落盘服务在跑 —— 双击 <code>D:\workbuddy\工具\灵感库落盘服务\启动.bat</code>。
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- 收藏库 -->
 <section class="page" id="library">
@@ -769,8 +824,91 @@ function renderRelMap(){
     </div>`).join('') : '<div class="empty">还没有关联</div>';
 }
 
+/* ===================== 工作台（网页里直接看/改 D 盘文件） ===================== */
+let wbCur='';
+async function wbFiles(){
+  const box=document.getElementById('wbList');
+  try{
+    const r=await fetch(DISK_URL+'/files',{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'读取失败');
+    const groups={};
+    (d.files||[]).forEach(f=>{
+      const i=f.path.lastIndexOf('/');
+      const dir=i<0?'(根目录)':f.path.slice(0,i);
+      (groups[dir]=groups[dir]||[]).push(f);
+    });
+    box.innerHTML=Object.keys(groups).sort().map(dir=>
+      `<div class="wb-group">📁 ${esc(dir)}</div>`+
+      groups[dir].map(f=>{
+        const nm=f.path.slice(f.path.lastIndexOf('/')+1);
+        return `<div class="wb-item ${f.path===wbCur?'active':''}" onclick="wbOpen('${f.path.replace(/'/g,"\\'")}')">
+          <div class="p">${esc(nm)}</div>
+          <div class="m">${f.mtime} · ${f.lines} 行 · ${Math.round(f.size/1024)}KB</div></div>`;
+      }).join('')
+    ).join('') || '<div class="empty">还没有可编辑的文件</div>';
+    st('wbSt','🟢 已连接 —— 下面是 D 盘灵感库的真实文件，点开就能改，改完点「保存回 D 盘」','ok');
+  }catch(e){
+    box.innerHTML='<div class="empty">未连接</div>';
+    st('wbSt','⚪ 落盘服务未启动，工作台读不到 D 盘文件。双击 D:\\workbuddy\\工具\\灵感库落盘服务\\启动.bat，再点「📄 刷新文件列表」。','warn');
+  }
+}
+async function wbOpen(p){
+  wbCur=p;
+  document.querySelectorAll('#wbList .wb-item').forEach(el=>el.classList.remove('active'));
+  try{
+    const r=await fetch(DISK_URL+'/file?p='+encodeURIComponent(p),{cache:'no-store'});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'读取失败');
+    document.getElementById('wbEdit').value=d.content;
+    document.getElementById('wbHead').innerHTML=`<div class="flabel" style="margin:0">正在编辑：<b>${esc(p)}</b></div>`;
+    renderWbView();
+    st('wbSt','已打开：'+p,'ok');
+    wbFiles();
+  }catch(e){st('wbSt','❌ '+e.message,'err')}
+}
+function wbTab(t){
+  document.getElementById('wbTabEdit').classList.toggle('active',t==='edit');
+  document.getElementById('wbTabView').classList.toggle('active',t==='view');
+  document.getElementById('wbEdit').style.display=t==='edit'?'block':'none';
+  document.getElementById('wbView').style.display=t==='view'?'block':'none';
+  if(t==='view')renderWbView();
+}
+function renderWbView(){
+  const base=wbCur.includes('/')?wbCur.slice(0,wbCur.lastIndexOf('/')):'';
+  let s=esc(document.getElementById('wbEdit').value||'');
+  s=s.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,(m,a,b)=>{
+      const rel=(base?base+'/':'')+b;
+      return `<img src="${DISK_URL}/img?p=${encodeURIComponent(rel)}" alt="${a}">`;
+    })
+    .replace(/^### (.*)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.*)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.*)$/gm,'<h1>$1</h1>')
+    .replace(/^&gt; (.*)$/gm,'<blockquote>$1</blockquote>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/^---$/gm,'<hr>')
+    .replace(/\n/g,'<br>');
+  document.getElementById('wbView').innerHTML=s||'<div class="empty">空文件</div>';
+}
+async function wbSave(){
+  if(!wbCur){st('wbSt','先在左边选一个文件','err');return}
+  const c=document.getElementById('wbEdit').value;
+  st('wbSt','正在写回 D 盘…','run');
+  try{
+    const r=await fetch(DISK_URL+'/write',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({path:wbCur,content:c})});
+    const d=await r.json();
+    if(!d.ok)throw new Error(d.error||'写入失败');
+    st('wbSt','✅ 已保存回 D 盘：'+wbCur+'（改前自动留了 .bak 备份）','ok');
+    wbFiles();
+  }catch(e){st('wbSt','❌ 保存失败：'+e.message+'。确认落盘服务在跑。','err')}
+}
+function wbReload(){if(wbCur)wbOpen(wbCur);else wbFiles();}
+
 /* ===================== 初始化 ===================== */
-renderCatList();initDrop();renderFilters();renderLib();renderPipe();renderReview();capRender();renderRelMap();pingDisk();
+renderCatList();initDrop();renderFilters();renderLib();renderPipe();renderReview();capRender();renderRelMap();pingDisk();wbFiles();
 </script>
 </body>
 </html>
